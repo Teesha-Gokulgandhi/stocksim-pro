@@ -1,0 +1,210 @@
+/* ---------- Institutional Unified StockCard ---------- */
+
+.stock-card {
+  background: var(--bg-surface);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: all 0.2s ease;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  position: relative;
+}
+
+.stock-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-hover);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.stock-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.stock-company {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stock-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--bg-surface-alt);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.stock-company h3 {
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 170px;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.stock-company p {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin: 2px 0 0 0;
+}
+
+.watch-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 18px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  padding: 4px;
+}
+
+.watch-btn:hover {
+  color: #fbbf24;
+}
+
+.watch-btn.active {
+  color: #fbbf24;
+}
+
+.stock-price {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stock-price h2 {
+  color: var(--text-primary);
+  font-size: 20px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.positive,
+.negative {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.positive { color: var(--color-profit); }
+.negative { color: var(--color-loss); }
+
+/* Minimalist Institutional Sector Badge */
+.sector-badge {
+  display: inline-block;
+  width: fit-content;
+  background: var(--bg-surface-alt);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.stock-info {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
+}
+
+.stock-info div {
+  display: flex;
+  flex-direction: column;
+}
+
+.stock-info span {
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.stock-info strong {
+  color: var(--text-primary);
+  margin-top: 2px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.stock-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.quick-trade-card-btn {
+  flex: 1;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface-alt);
+  color: var(--text-primary);
+  padding: 9px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.quick-trade-card-btn:hover {
+  background: var(--bg-surface-elevated);
+  border-color: var(--border-hover);
+}
+
+.stock-card-actions .buy-btn {
+  margin-top: 0;
+  flex: 1;
+  padding: 9px;
+  font-size: 12px;
+}
+
+.buy-btn {
+  border: none;
+  background: var(--accent-primary);
+  color: white;
+  padding: 9px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+}
+
+.buy-btn:hover {
+  background: var(--accent-primary-hover);
+  transform: translateY(-1px);
+}

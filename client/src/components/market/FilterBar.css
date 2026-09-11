@@ -1,0 +1,50 @@
+.filter-bar-wrapper {
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.filter-bar-scrollable {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 2px 8px 2px;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.filter-bar-scrollable::-webkit-scrollbar {
+  height: 4px;
+}
+
+.filter-bar-scrollable::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.sector-pill {
+  white-space: nowrap;
+  padding: 6px 14px;
+  border-radius: 99px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.sector-pill:hover {
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+}
+
+.sector-pill.active {
+  background: var(--accent-blue);
+  color: #ffffff;
+  border-color: var(--accent-blue);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.35);
+}

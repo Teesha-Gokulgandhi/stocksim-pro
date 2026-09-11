@@ -1,0 +1,187 @@
+/* ================================================================
+   404 — NOT FOUND PAGE
+   ================================================================ */
+
+.notfound-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-page);
+  padding: 40px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Background Orbs ── */
+.notfound-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.notfound-orb--1 {
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(79, 109, 245, 0.18) 0%, transparent 70%);
+  top: -100px;
+  left: -100px;
+  animation: orb-drift 12s ease-in-out infinite alternate;
+}
+
+.notfound-orb--2 {
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.14) 0%, transparent 70%);
+  bottom: -80px;
+  right: -80px;
+  animation: orb-drift 15s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes orb-drift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(30px, 20px) scale(1.08); }
+}
+
+/* ── Content ── */
+.notfound-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 520px;
+  animation: fadeInUp 0.5s ease both;
+}
+
+/* ── 404 Code ── */
+.notfound-code {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: clamp(80px, 18vw, 140px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-bottom: 24px;
+  background: var(--accent-gradient, linear-gradient(135deg, #4f6df5 0%, #8b5cf6 100%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  user-select: none;
+  filter: drop-shadow(0 0 40px rgba(79, 109, 245, 0.25));
+}
+
+.notfound-zero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 0.72em;
+  height: 0.72em;
+  border-radius: 50%;
+  border: 0.08em solid;
+  border-color: transparent;
+  background:
+    var(--accent-gradient, linear-gradient(135deg, #4f6df5 0%, #8b5cf6 100%))
+    border-box;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) padding-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+  position: relative;
+}
+
+.notfound-chart-icon {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  font-size: 0.35em;
+  /* Override gradient clip for the icon */
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: chart-spin 20s linear infinite;
+}
+
+@keyframes chart-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Title & Description ── */
+.notfound-title {
+  font-size: clamp(20px, 4vw, 28px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.notfound-desc {
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1.65;
+  margin-bottom: 36px;
+}
+
+/* ── Action Buttons ── */
+.notfound-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.notfound-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  border-radius: var(--radius-md, 12px);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  letter-spacing: -0.01em;
+  border: 1px solid transparent;
+}
+
+.notfound-btn--primary {
+  background: var(--accent-gradient, var(--accent-primary));
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(79, 109, 245, 0.32);
+}
+
+.notfound-btn--primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(79, 109, 245, 0.42);
+}
+
+.notfound-btn--ghost {
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  border-color: var(--border-color);
+}
+
+.notfound-btn--ghost:hover {
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+  transform: translateY(-1px);
+}
+
+/* ── Light Theme ── */
+[data-theme="light"] .notfound-orb--1 {
+  background: radial-gradient(circle, rgba(69, 87, 224, 0.10) 0%, transparent 70%);
+}
+[data-theme="light"] .notfound-orb--2 {
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.08) 0%, transparent 70%);
+}

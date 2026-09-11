@@ -1,0 +1,212 @@
+/* Level 2 Market Depth & Time and Sales Styling */
+
+.market-depth-container {
+  background: var(--bg-surface-elevated, rgba(15, 23, 42, 0.6));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  padding: 12px;
+  margin: 12px 0;
+}
+
+.depth-header-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.06));
+}
+
+.depth-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary, #94a3b8);
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.depth-tab-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary, #f8fafc);
+}
+
+.depth-tab-btn.active {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.35);
+  color: #60a5fa;
+}
+
+.depth-spread-badge {
+  margin-left: auto;
+  font-size: 0.7rem;
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  color: var(--text-muted, #64748b);
+  background: var(--bg-surface, rgba(0, 0, 0, 0.2));
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.06));
+}
+
+/* Depth Ladder Grid */
+.depth-ladder-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.depth-column {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.depth-col-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted, #64748b);
+  letter-spacing: 0.04em;
+  padding: 0 4px 4px 4px;
+}
+
+.depth-row {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-family: var(--font-mono, monospace);
+  overflow: hidden;
+  line-height: 1.2;
+}
+
+.depth-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  opacity: 0.25;
+  transition: width 0.3s ease;
+}
+
+.bid-bar {
+  right: 0;
+  background: #10b981;
+}
+
+.ask-bar {
+  left: 0;
+  background: #ef4444;
+}
+
+.depth-orders {
+  position: relative;
+  z-index: 2;
+  color: var(--text-muted, #64748b);
+  font-size: 0.68rem;
+}
+
+.depth-qty {
+  position: relative;
+  z-index: 2;
+  color: var(--text-secondary, #cbd5e1);
+  font-weight: 600;
+}
+
+.depth-price {
+  position: relative;
+  z-index: 2;
+  font-weight: 700;
+}
+
+.depth-price.bid-price {
+  color: #34d399;
+}
+
+.depth-price.ask-price {
+  color: #f87171;
+}
+
+/* Time & Sales Stream */
+.time-sales-stream {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tape-head {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1.2fr;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted, #64748b);
+  padding: 0 6px 4px 6px;
+}
+
+.tape-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.tape-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1.2fr;
+  align-items: center;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-family: var(--font-mono, monospace);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.tape-row.buy {
+  border-left: 2px solid #10b981;
+}
+
+.tape-row.sell {
+  border-left: 2px solid #ef4444;
+}
+
+.tape-time {
+  color: var(--text-muted, #64748b);
+  font-size: 0.68rem;
+}
+
+.tape-price {
+  font-weight: 700;
+  color: var(--text-primary, #f8fafc);
+}
+
+.tape-size {
+  color: var(--text-secondary, #cbd5e1);
+}
+
+.tape-badge {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.tape-badge.buy {
+  color: #34d399;
+}
+
+.tape-badge.sell {
+  color: #f87171;
+}

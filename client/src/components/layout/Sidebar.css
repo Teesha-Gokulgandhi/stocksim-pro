@@ -1,0 +1,332 @@
+/* ================================================================
+   INSTITUTIONAL UNIFIED SIDEBAR
+   ================================================================ */
+
+.sidebar {
+  width: 252px;
+  height: 100vh;
+  background: var(--bg-surface-alt);
+  color: var(--text-primary);
+  border-right: 1px solid var(--border-color);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: 18px 14px;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  flex-shrink: 0;
+
+  transition: width var(--transition-base), transform var(--transition-base), background var(--transition-base);
+  z-index: 1000;
+
+  /* Subtle vertical gradient overlay */
+  background-image: linear-gradient(
+    180deg,
+    rgba(79, 109, 245, 0.03) 0%,
+    transparent 40%
+  );
+}
+
+.sidebar.collapsed {
+  width: 72px;
+  padding: 18px 10px;
+}
+
+/* ── Sidebar Top (Logo + Collapse Toggle) ── */
+.sidebar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-color);
+  position: relative;
+}
+
+.sidebar.collapsed .sidebar-top {
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  padding-bottom: 14px;
+}
+
+.logo-container-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  cursor: default;
+}
+
+.collapse-toggle-btn {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.collapse-toggle-btn:hover {
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+}
+
+.collapse-toggle-btn svg {
+  font-size: 15px;
+  stroke-width: 2.2;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 14px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+}
+
+/* Context Section Badge */
+.sidebar-context-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 9px;
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  margin: 2px 4px 8px 4px;
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+}
+
+.sidebar-context-badge.analytics {
+  color: var(--accent-primary);
+  background: var(--accent-primary-subtle);
+  border-color: var(--accent-primary-border);
+}
+
+.sidebar-context-badge.inr {
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.10);
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+.sidebar-context-badge.usd {
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.10);
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+/* Account Section Label */
+.nav-group-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 10px 10px 3px 10px;
+  margin-top: 4px;
+}
+
+/* ── Nav Links & Buttons ── */
+nav a, .nav-desk-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text-secondary);
+  text-decoration: none;
+
+  padding: 9px 10px;
+  border-radius: var(--radius-sm, 8px);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+  white-space: nowrap;
+  position: relative;
+}
+
+.sidebar.collapsed nav a,
+.sidebar.collapsed .nav-desk-link {
+  justify-content: center;
+  padding: 10px 0;
+}
+
+nav a svg, .nav-desk-link svg {
+  font-size: 16px;
+  flex-shrink: 0;
+  stroke-width: 2;
+}
+
+nav a:hover, .nav-desk-link:hover {
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+}
+
+nav a.active, .nav-desk-link.active {
+  background: var(--accent-primary);
+  color: #ffffff;
+  /* Use token-based glow — no hardcoded color */
+  box-shadow: var(--shadow-glow), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+/* Admin portal link — distinct amber accent */
+.nav-admin-link {
+  color: #f6a723 !important;
+}
+
+.nav-admin-link:hover {
+  background: rgba(246, 167, 35, 0.10) !important;
+  color: #f6a723 !important;
+}
+
+.nav-admin-link.active {
+  background: rgba(246, 167, 35, 0.18) !important;
+  color: #f6a723 !important;
+  box-shadow: 0 0 12px rgba(246, 167, 35, 0.18) !important;
+}
+
+/* Tooltip for collapsed sidebar */
+.sidebar.collapsed nav a:hover::after,
+.sidebar.collapsed .nav-desk-link:hover::after {
+  content: attr(title);
+  position: absolute;
+  left: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: var(--shadow-card);
+  z-index: 100;
+}
+
+/* ── Logout ── */
+.logout-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  padding: 9px 10px;
+  border-radius: var(--radius-sm, 8px);
+  transition: background var(--transition-fast), color var(--transition-fast);
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.sidebar.collapsed .logout-btn {
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.logout-btn:hover {
+  color: var(--color-loss);
+  background: var(--color-loss-bg);
+}
+
+/* ── Mobile ── */
+.close-sidebar { display: none; }
+.sidebar-overlay { display: none; }
+
+@media (max-width: 992px) {
+  .sidebar { width: 220px; }
+  .sidebar.collapsed { width: 72px; }
+}
+
+@media (max-width: 768px) {
+  /* On mobile, sidebar is always a full-width drawer overlay.
+     The "collapsed" class is forced off when drawer is open (see JSX),
+     so labels are always readable. */
+  .sidebar,
+  .sidebar.collapsed {
+    position: fixed;
+    left: 0;
+    top: 0;
+    transform: translateX(-100%);
+    width: 270px !important;
+    box-shadow: none;
+    z-index: 1001;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 8px 0 40px rgba(0, 0, 0, 0.55);
+  }
+
+  /* Collapse toggle is pointless in drawer mode — hide it */
+  .collapse-toggle-btn {
+    display: none !important;
+  }
+
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(3px);
+    z-index: 1000;
+  }
+
+  .close-sidebar {
+    display: flex;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 7px;
+    color: var(--text-primary);
+    font-size: 18px;
+    width: 30px;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  /* Disable collapsed-state tooltip on mobile (not needed) */
+  .sidebar.collapsed nav a:hover::after,
+  .sidebar.collapsed .nav-desk-link:hover::after {
+    display: none;
+  }
+
+  /* Ensure logo row is always horizontal in drawer */
+  .sidebar .sidebar-top {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 0;
+  }
+}

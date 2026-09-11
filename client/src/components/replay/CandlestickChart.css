@@ -1,0 +1,420 @@
+/* ==========================================================================
+   Candlestick Chart — Institutional Grade Interactive Terminal
+   ========================================================================== */
+
+.candlestick-chart-container {
+  background: #080c14;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55), 0 0 1px 1px rgba(255, 255, 255, 0.05);
+  transition: all 0.25s ease;
+}
+
+.candlestick-chart-container:hover {
+  border-color: rgba(59, 130, 246, 0.25);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 24px rgba(59, 130, 246, 0.08);
+}
+
+/* --------------------------------------------------------------------------
+   Unified Pro Toolbar (Chart Header)
+   -------------------------------------------------------------------------- */
+.chart-unified-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 18px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.7) 0%, rgba(11, 15, 23, 0.9) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(12px);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Left: Live Price & OHLC Stat Pills */
+.toolbar-price-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-family: "JetBrains Mono", monospace;
+}
+
+.price-primary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.price-date {
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.price-value {
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.15);
+}
+
+.price-pct-badge {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.price-pct-badge.gain {
+  background: rgba(0, 192, 118, 0.16);
+  color: #00c076;
+  border: 1px solid rgba(0, 192, 118, 0.3);
+  box-shadow: 0 0 10px rgba(0, 192, 118, 0.15);
+}
+
+.price-pct-badge.loss {
+  background: rgba(255, 59, 87, 0.16);
+  color: #ff3b57;
+  border: 1px solid rgba(255, 59, 87, 0.3);
+  box-shadow: 0 0 10px rgba(255, 59, 87, 0.15);
+}
+
+.price-ohlc-stats {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  color: #64748b;
+  padding-left: 10px;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.price-ohlc-stats span strong {
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.price-waiting {
+  color: #64748b;
+  font-size: 12px;
+  font-style: italic;
+}
+
+/* Right: Controls Cluster */
+.toolbar-controls-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.toolbar-ema-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toolbar-ema-btn:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #f1f5f9;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.toolbar-ema-btn.active {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.38);
+  color: #38bdf8;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
+}
+
+.ema-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.ema-dot.blue {
+  background: #38bdf8;
+  box-shadow: 0 0 6px #38bdf8;
+}
+
+.ema-dot.amber {
+  background: #fbbf24;
+  box-shadow: 0 0 6px #fbbf24;
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 0 2px;
+}
+
+/* Playback Control Cluster */
+.toolbar-playback-cluster {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.player-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 33px;
+  height: 33px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  color: #94a3b8;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.player-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.player-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.player-action-btn.idle {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.35);
+}
+
+.player-action-btn.idle:hover {
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
+  transform: translateY(-0.5px);
+}
+
+.player-action-btn.playing {
+  background: linear-gradient(135deg, #d97706, #f59e0b);
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(217, 119, 6, 0.35);
+}
+
+.player-action-btn.playing:hover {
+  background: linear-gradient(135deg, #b45309, #d97706);
+}
+
+.player-action-btn.step {
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #60a5fa;
+}
+
+.player-action-btn.step:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.22);
+  color: #93c5fd;
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+.player-action-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Speed Selector Tabs */
+.toolbar-speed-pills {
+  display: flex;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.speed-tab {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 5px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.speed-tab:hover {
+  color: #ffffff;
+}
+
+.speed-tab.active {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* Progress Mini Scrubber */
+.toolbar-progress-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 5px 10px;
+  border-radius: 8px;
+}
+
+.progress-num {
+  font-size: 11px;
+  font-family: "JetBrains Mono", monospace;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.progress-mini-track {
+  width: 55px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-mini-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8, #00c076);
+  border-radius: 3px;
+  transition: width 0.15s ease-out;
+  box-shadow: 0 0 6px rgba(0, 192, 118, 0.5);
+}
+
+/* --------------------------------------------------------------------------
+   Canvas Area
+   -------------------------------------------------------------------------- */
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 460px;
+  cursor: crosshair;
+}
+
+.canvas-wrapper canvas {
+  display: block;
+  width: 100%;
+  height: 460px;
+}
+
+@media (max-width: 900px) {
+  .chart-unified-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .toolbar-controls-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Light Theme Overrides
+   -------------------------------------------------------------------------- */
+[data-theme="light"] .candlestick-chart-container {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+}
+
+[data-theme="light"] .chart-unified-toolbar {
+  background: #ffffff;
+  border-bottom-color: #e2e8f0;
+}
+
+[data-theme="light"] .price-value {
+  color: #0f172a;
+  text-shadow: none;
+}
+
+[data-theme="light"] .price-date {
+  color: #64748b;
+}
+
+[data-theme="light"] .price-ohlc-stats {
+  border-left-color: #e2e8f0;
+  color: #64748b;
+}
+
+[data-theme="light"] .price-ohlc-stats span strong {
+  color: #1e293b;
+}
+
+[data-theme="light"] .toolbar-ema-btn {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+[data-theme="light"] .toolbar-ema-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+[data-theme="light"] .toolbar-divider {
+  background: #e2e8f0;
+}
+
+[data-theme="light"] .player-icon-btn {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+[data-theme="light"] .player-icon-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+[data-theme="light"] .player-speed-toggle {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+[data-theme="light"] .speed-chip {
+  color: #64748b;
+}
+
+[data-theme="light"] .speed-chip:hover {
+  color: #0f172a;
+}
+
+[data-theme="light"] .progress-num {
+  color: #64748b;
+}
+
+[data-theme="light"] .progress-mini-track {
+  background: #e2e8f0;
+}
+

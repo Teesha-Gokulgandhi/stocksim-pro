@@ -1,0 +1,1186 @@
+/* Groww-Style Portfolio & Analytics Desk Styling */
+
+.groww-dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-bottom: 40px;
+  animation: fadeInUp 0.3s ease both;
+}
+
+/* Header & Segmented Controls */
+.groww-top-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 16px;
+  padding: 20px 24px;
+  box-shadow: var(--shadow-card, 0 2px 8px rgba(0, 0, 0, 0.04));
+}
+
+.groww-title-area {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.groww-breadcrumb-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(37, 99, 235, 0.08);
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  color: var(--accent-primary);
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  width: fit-content;
+}
+
+.groww-page-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+  letter-spacing: -0.5px;
+  margin: 2px 0 0 0;
+}
+
+.groww-page-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary, #64748b);
+  margin: 0;
+}
+
+.groww-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Segmented Tabs */
+.groww-segment-control {
+  display: flex;
+  align-items: center;
+  background: var(--bg-surface-alt, #f8fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
+  padding: 4px;
+  border-radius: 12px;
+  gap: 4px;
+}
+
+.groww-segment-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary, #64748b);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.groww-segment-btn:hover {
+  color: var(--text-primary, #0f172a);
+}
+
+.groww-segment-btn.active {
+  background: var(--bg-surface, #ffffff);
+  color: var(--accent-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.groww-refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #cbd5e1);
+  color: var(--text-primary, #1e293b);
+  padding: 9px 16px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.groww-refresh-btn:hover {
+  background: var(--bg-surface-alt, #f8fafc);
+  border-color: #94a3b8;
+}
+
+.groww-refresh-btn.spinning svg {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* GROWW HERO EXECUTIVE CARD (One cohesive card) */
+.groww-hero-card {
+  display: grid;
+  grid-template-columns: 1.3fr 1px 1fr;
+  align-items: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg, 20px);
+  padding: 28px 32px;
+  box-shadow: var(--shadow-card);
+  gap: 32px;
+  transition: box-shadow var(--transition-base), border-color var(--transition-base);
+}
+
+.groww-hero-card:hover {
+  box-shadow: var(--shadow-elevated);
+  border-color: var(--accent-primary-border);
+}
+
+.groww-card-vdivider {
+  width: 1px;
+  height: 80%;
+  background: var(--border-color, #e2e8f0);
+}
+
+/* Left Column */
+.groww-card-left {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.groww-box-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.groww-box-label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted, #94a3b8);
+}
+
+.groww-market-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.groww-market-badge.inr {
+  background: var(--bg-surface-alt);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.groww-market-badge.usd {
+  background: var(--bg-surface-alt);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.groww-val-row {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.groww-primary-val {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--text-primary, #0f172a);
+  letter-spacing: -1px;
+  font-feature-settings: "tnum";
+}
+
+.groww-pnl-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 800;
+  font-feature-settings: "tnum";
+}
+
+.groww-pnl-pill.profit {
+  background: var(--color-profit-bg);
+  color: var(--color-profit);
+  border: 1px solid rgba(23, 201, 128, 0.25);
+}
+
+.groww-pnl-pill.loss {
+  background: var(--color-loss-bg);
+  color: var(--color-loss);
+  border: 1px solid rgba(255, 80, 105, 0.25);
+}
+
+.groww-sub-metrics-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--bg-surface-alt, #f8fafc);
+  border: 1px solid var(--border-color, #f1f5f9);
+  padding: 10px 16px;
+  border-radius: 12px;
+  width: fit-content;
+}
+
+.groww-sub-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sub-lbl {
+  font-size: 11px;
+  color: var(--text-secondary, #64748b);
+  font-weight: 600;
+}
+
+.sub-val {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  font-feature-settings: "tnum";
+}
+
+.sub-val.profit-text {
+  color: var(--color-profit);
+}
+
+.sub-val.loss-text {
+  color: var(--color-loss);
+}
+
+.groww-sub-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border-color, #e2e8f0);
+}
+
+.groww-baseline-note {
+  font-size: 11px;
+  color: var(--text-muted, #94a3b8);
+  font-weight: 500;
+}
+
+/* Right Column */
+.groww-card-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.groww-margin-val-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.groww-margin-val {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--accent-primary);
+  letter-spacing: -0.8px;
+  font-feature-settings: "tnum";
+}
+
+.groww-allocation-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.groww-alloc-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary, #475569);
+}
+
+.groww-alloc-bar-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.groww-alloc-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* INR bar — accent blue */
+.groww-alloc-bar-fill.inr {
+  background: var(--accent-primary);
+}
+
+/* USD bar — profit green to differentiate */
+.groww-alloc-bar-fill.usd {
+  background: var(--color-profit);
+}
+
+.groww-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.groww-trade-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: var(--radius-sm, 12px);
+  font-size: 14px;
+  font-weight: 800;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 12px rgba(79, 109, 245, 0.28);
+  color: #ffffff;
+}
+
+.groww-trade-btn.inr {
+  background: var(--accent-gradient, var(--accent-primary));
+}
+
+.groww-trade-btn.inr:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(79, 109, 245, 0.42);
+}
+
+.groww-trade-btn.usd {
+  background: var(--accent-primary);
+}
+
+.groww-trade-btn.usd:hover {
+  background: var(--accent-primary-hover);
+  transform: translateY(-1px);
+}
+
+/* Dual Overview Mode */
+.groww-dual-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 20px;
+}
+
+.groww-dual-card {
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 18px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: var(--shadow-card, 0 2px 8px rgba(0, 0, 0, 0.04));
+}
+
+.dual-card-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dual-flag {
+  font-size: 28px;
+}
+
+.dual-card-top h3 {
+  font-size: 16px;
+  font-weight: 800;
+  margin: 0;
+  color: var(--text-primary, #0f172a);
+}
+
+.dual-sub {
+  font-size: 11px;
+  color: var(--text-muted, #94a3b8);
+}
+
+.dual-total-val {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--text-primary, #0f172a);
+  letter-spacing: -0.8px;
+}
+
+.dual-split-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-secondary, #64748b);
+  border-top: 1px solid var(--border-color, #e2e8f0);
+  padding-top: 10px;
+}
+
+.dual-split-info strong {
+  color: var(--text-primary, #0f172a);
+}
+
+.dual-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid var(--border-color, #cbd5e1);
+  background: var(--bg-surface-alt, #f8fafc);
+  color: var(--text-primary, #0f172a);
+  transition: all 0.2s ease;
+}
+
+.dual-action-btn:hover {
+  background: var(--bg-surface, #ffffff);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+/* STATS BAR (Compact, Minimal Discipline Metrics) */
+.groww-stats-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.groww-stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md, 14px);
+  padding: 14px 18px;
+  box-shadow: var(--shadow-card);
+  transition: all var(--transition-fast);
+}
+
+.groww-stat-pill:hover {
+  border-color: var(--accent-primary-border);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-elevated);
+}
+
+.groww-stat-pill .stat-icon {
+  font-size: 20px;
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.stat-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted, #94a3b8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+  font-feature-settings: "tnum";
+}
+
+/* HOLDINGS / ASSETS SECTION (Like Groww) */
+.groww-holdings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.groww-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.section-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-title-wrap h2 {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+  margin: 0;
+}
+
+.section-count-badge {
+  background: var(--bg-surface-alt, #f1f5f9);
+  color: var(--text-secondary, #475569);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 99px;
+}
+
+.holdings-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #cbd5e1);
+  padding: 6px 14px;
+  border-radius: 10px;
+  width: 260px;
+}
+
+.holdings-search-box svg {
+  color: var(--text-muted, #94a3b8);
+}
+
+.holdings-search-box input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+  color: var(--text-primary, #0f172a);
+  width: 100%;
+}
+
+.groww-table-card {
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 16px;
+  overflow-x: auto;
+  box-shadow: var(--shadow-card, 0 2px 8px rgba(0, 0, 0, 0.03));
+}
+
+.groww-holdings-table,
+.groww-orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.groww-holdings-table thead tr,
+.groww-orders-table thead tr {
+  background: var(--bg-surface-alt, #f8fafc);
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.groww-holdings-table th,
+.groww-orders-table th {
+  padding: 12px 18px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  white-space: nowrap;
+}
+
+.groww-holdings-table th.num-col,
+.groww-orders-table th.num-col {
+  text-align: right;
+}
+
+.groww-holdings-table th.action-col {
+  text-align: center;
+}
+
+.groww-holdings-table tbody tr {
+  border-bottom: 1px solid var(--border-color, #f1f5f9);
+  transition: background 0.15s ease;
+  cursor: pointer;
+}
+
+.groww-holdings-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.groww-holdings-table tbody tr:hover {
+  background: var(--bg-surface-alt, #f8fafc);
+}
+
+.groww-holdings-table td,
+.groww-orders-table td {
+  padding: 14px 18px;
+  vertical-align: middle;
+  font-feature-settings: "tnum";
+}
+
+.groww-holdings-table td.num-col,
+.groww-orders-table td.num-col {
+  text-align: right;
+}
+
+.asset-brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.asset-flag-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.asset-flag-badge.inr {
+  background: var(--bg-surface-alt);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.asset-flag-badge.usd {
+  background: var(--bg-surface-alt);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.asset-symbol {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+}
+
+.asset-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.asset-name {
+  font-size: 12px;
+  color: var(--text-secondary, #64748b);
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.asset-sector-tag {
+  background: var(--bg-surface-alt, #f1f5f9);
+  color: var(--text-muted, #94a3b8);
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.price-val {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.day-change-tag {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.day-change-tag.gain {
+  color: var(--color-profit);
+}
+
+.day-change-tag.loss {
+  color: var(--color-loss);
+}
+
+.pnl-val-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.pnl-val-block.gain strong {
+  color: var(--color-profit);
+}
+
+.pnl-val-block.gain .pnl-pct {
+  color: var(--color-profit);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.pnl-val-block.loss strong {
+  color: var(--color-loss);
+}
+
+.pnl-val-block.loss .pnl-pct {
+  color: var(--color-loss);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.holding-trade-btn {
+  background: rgba(37, 99, 235, 0.08);
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  color: var(--accent-primary);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.holding-trade-btn:hover {
+  background: var(--accent-primary);
+  color: #ffffff;
+}
+
+/* Empty State */
+.groww-empty-holdings {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface, #ffffff);
+  border: 1px dashed var(--border-color, #cbd5e1);
+  border-radius: 16px;
+  padding: 48px 24px;
+  text-align: center;
+  gap: 8px;
+}
+
+.groww-empty-holdings svg {
+  color: var(--text-muted, #94a3b8);
+}
+
+.groww-empty-holdings h3 {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+  margin: 0;
+}
+
+.groww-empty-holdings p {
+  font-size: 13px;
+  color: var(--text-secondary, #64748b);
+  margin: 0 0 12px 0;
+  max-width: 400px;
+}
+
+.groww-explore-btn {
+  background: var(--accent-primary);
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.groww-explore-btn:hover {
+  background: #1d4ed8;
+}
+
+/* RECENT ORDERS TABLE */
+.groww-recent-orders-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.market-pill-small {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.market-pill-small.inr {
+  background: var(--bg-surface-alt);
+  color: var(--text-primary);
+}
+
+.market-pill-small.usd {
+  background: var(--bg-surface-alt);
+  color: var(--text-primary);
+}
+
+.side-badge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.side-badge.buy {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--color-profit);
+}
+
+.side-badge.sell {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--color-loss);
+}
+
+.time-col {
+  color: var(--text-muted, #94a3b8);
+  font-size: 12px;
+}
+
+.total-col {
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .groww-hero-card {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .groww-card-vdivider {
+    display: none;
+  }
+}
+
+/* TRADING COMPETITION & LEADERBOARD */
+.groww-stat-pill.clickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-color: rgba(234, 179, 8, 0.4);
+}
+
+.groww-stat-pill.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(234, 179, 8, 0.2);
+  border-color: #eab308;
+}
+
+.groww-stat-pill .stat-icon.gold {
+  color: #eab308;
+}
+
+.competition-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.competition-header-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 18px;
+  padding: 24px 28px;
+  box-shadow: var(--shadow-card, 0 2px 8px rgba(0, 0, 0, 0.04));
+}
+
+.comp-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 620px;
+}
+
+.comp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(234, 179, 8, 0.12);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  color: #ca8a04;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  width: fit-content;
+}
+
+.comp-title-block h2 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+  margin: 0;
+}
+
+.comp-title-block p {
+  font-size: 13px;
+  color: var(--text-secondary, #64748b);
+  margin: 0;
+}
+
+.competition-market-toggle {
+  display: flex;
+  align-items: center;
+  background: var(--bg-surface-alt, #f8fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
+  padding: 4px;
+  border-radius: 12px;
+  gap: 4px;
+}
+
+.comp-toggle-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary, #64748b);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.comp-toggle-btn:hover {
+  color: var(--text-primary, #0f172a);
+}
+
+.comp-toggle-btn.active.inr {
+  background: var(--bg-surface, #ffffff);
+  color: var(--text-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.comp-toggle-btn.active.usd {
+  background: var(--bg-surface, #ffffff);
+  color: var(--text-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Podium Cards */
+.leaderboard-podium-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 18px;
+}
+
+.podium-card {
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 18px;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--shadow-card, 0 2px 8px rgba(0, 0, 0, 0.04));
+  position: relative;
+  overflow: hidden;
+}
+
+.podium-card.rank-1 {
+  border-color: rgba(234, 179, 8, 0.5);
+  box-shadow: 0 6px 20px rgba(234, 179, 8, 0.12);
+  background: linear-gradient(180deg, rgba(254, 240, 138, 0.1) 0%, var(--bg-surface, #ffffff) 60%);
+}
+
+.podium-card.rank-2 {
+  border-color: rgba(148, 163, 184, 0.4);
+}
+
+.podium-card.rank-3 {
+  border-color: rgba(217, 119, 6, 0.35);
+}
+
+.podium-card.is-me {
+  border-color: var(--accent-primary);
+  background: linear-gradient(180deg, rgba(37, 99, 235, 0.06) 0%, var(--bg-surface, #ffffff) 60%);
+}
+
+.podium-rank-badge {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+}
+
+.podium-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.you-pill {
+  background: var(--accent-primary);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 99px;
+  text-transform: uppercase;
+}
+
+.podium-email {
+  font-size: 12px;
+  color: var(--text-muted, #94a3b8);
+  margin-top: -6px;
+}
+
+.podium-networth {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.podium-val {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--text-primary, #0f172a);
+  letter-spacing: -0.5px;
+}
+
+.podium-meta-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-secondary, #64748b);
+  border-top: 1px solid var(--border-color, #e2e8f0);
+  padding-top: 10px;
+}
+
+.podium-meta-row strong {
+  color: var(--text-primary, #0f172a);
+}
+
+/* Leaderboard Table Elements */
+.leaderboard-table th {
+  padding: 12px 16px;
+}
+
+.leaderboard-row.highlight-me {
+  background: rgba(37, 99, 235, 0.04);
+}
+
+.leaderboard-row.highlight-me:hover {
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.rank-cell {
+  text-align: center;
+}
+
+.rank-number-pill {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+}
+
+.trader-name-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.trader-name-block strong {
+  font-size: 14px;
+  color: var(--text-primary, #0f172a);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.trader-email-sub {
+  font-size: 11px;
+  color: var(--text-muted, #94a3b8);
+}
+
+.utilization-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.mini-util-bar {
+  width: 90px;
+  height: 5px;
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.mini-util-fill {
+  height: 100%;
+  border-radius: 99px;
+}
+
+.mini-util-fill.inr {
+  background: #ea580c;
+}
+
+.mini-util-fill.usd {
+  background: #0284c7;
+}
+
+.top-holdings-chips {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.holding-mini-chip {
+  background: var(--bg-surface-alt, #f1f5f9);
+  border: 1px solid var(--border-color, #e2e8f0);
+  color: var(--text-primary, #0f172a);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.no-holdings-chip {
+  font-size: 11px;
+  color: var(--text-muted, #94a3b8);
+  font-style: italic;
+}

@@ -1,0 +1,219 @@
+/* ================================================================
+   STOCK DETAILS PAGE — Premium Overhaul
+   ================================================================ */
+
+.stock-details-page {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  animation: fadeInUp 0.3s ease both;
+}
+
+/* ── Back Button & Top Bar ── */
+.stock-details-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  position: sticky;
+  top: 12px;
+  z-index: 5;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: max-content;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm, 10px);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.back-btn:hover {
+  background: var(--bg-surface-elevated);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  transform: translateX(-2px);
+}
+
+.stock-trade-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  border: none;
+  padding: 9px 20px;
+  border-radius: var(--radius-sm, 10px);
+  font-size: 13.5px;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  transition: all var(--transition-fast);
+}
+
+.stock-trade-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+  opacity: 0.95;
+}
+
+/* ── Details Grid ── */
+.details-grid {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: 22px;
+  align-items: start;
+}
+
+/* ── Stock Header Card ── */
+.stock-header-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg, 18px);
+  padding: 24px 28px;
+  box-shadow: var(--shadow-card);
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow var(--transition-base);
+}
+
+.stock-header-card:hover { box-shadow: var(--shadow-elevated); }
+
+/* Subtle left accent line */
+.stock-header-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--accent-gradient, var(--accent-primary));
+  border-radius: 0 4px 4px 0;
+}
+
+/* ── Price Display ── */
+.stock-price-main {
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.stock-change-gain {
+  color: var(--color-profit);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.stock-change-loss {
+  color: var(--color-loss);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+/* ── Key Stats Grid ── */
+.stock-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.stock-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+  background: var(--bg-surface-alt);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm, 10px);
+  transition: all var(--transition-fast);
+}
+
+.stock-stat-item:hover {
+  border-color: var(--accent-primary-border);
+  background: var(--accent-primary-subtle);
+}
+
+.stock-stat-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.stock-stat-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+}
+
+/* ── Side Panel Cards ── */
+.stock-side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 80px;
+}
+
+.stock-side-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md, 14px);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+}
+
+/* ── Loading State ── */
+.loading {
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ── Not Found ── */
+.stock-not-found {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-primary);
+}
+
+.stock-not-found p {
+  color: var(--text-secondary);
+  margin: 10px 0 20px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stock-side-panel {
+    position: static;
+  }
+}
+
+@media (max-width: 480px) {
+  .stock-details-page { gap: 14px; }
+  .stock-stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .stock-price-main { font-size: 28px; }
+}

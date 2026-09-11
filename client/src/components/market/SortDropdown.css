@@ -1,0 +1,21 @@
+.sort-dropdown{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.sort-dropdown label{
+    color:var(--text-secondary);
+    font-size:15px;
+}
+
+.sort-dropdown select{
+    background:var(--bg-surface);
+    border:1px solid var(--border-color);
+    color:var(--text-primary);
+    padding:10px 14px;
+    border-radius:10px;
+    cursor:pointer;
+    outline:none;
+    font-size:14px;
+}

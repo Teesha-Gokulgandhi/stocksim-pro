@@ -1,0 +1,79 @@
+.transactions-card{
+    background:var(--bg-surface);
+    border-radius:22px;
+    padding:30px;
+    border:1px solid var(--border-color);
+}
+
+.transactions-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.transactions-header h2{
+    color:var(--text-primary);
+    font-size:22px;
+}
+
+.view-all-btn{
+    background:none;
+    border:1px solid var(--border-color);
+    color:var(--text-secondary);
+    padding:8px 16px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:13px;
+    transition:.2s;
+}
+
+.view-all-btn:hover{
+    border-color:#3B82F6;
+    color:var(--text-primary);
+}
+
+.transactions-empty{
+    color:var(--text-secondary);
+    text-align:center;
+    padding:30px 0;
+}
+
+.transactions-card table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.transactions-card th{
+    text-align:left;
+    color:var(--text-secondary);
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    padding:12px 10px;
+    border-bottom:1px solid var(--border-color);
+}
+
+.transactions-card td{
+    padding:14px 10px;
+    color:var(--text-primary);
+    font-family:"JetBrains Mono", monospace;
+    font-size:14px;
+    border-bottom:1px solid var(--border-color);
+}
+
+.transactions-card tr:last-child td{
+    border-bottom:none;
+}
+
+.buy{ color:#22C55E; font-weight:600; }
+.sell{ color:#EF4444; font-weight:600; }
+
+@media(max-width:600px){
+    .transactions-card{
+        overflow-x:auto;
+    }
+    .transactions-card table{
+        min-width:500px;
+    }
+}

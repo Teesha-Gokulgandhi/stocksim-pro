@@ -1,0 +1,318 @@
+.settings-page{
+    display:flex;
+    flex-direction:column;
+    gap:30px;
+    max-width:640px;
+}
+
+.settings-header h1{
+    color:var(--text-primary);
+    font-size:34px;
+    font-weight:700;
+    letter-spacing:-0.5px;
+}
+
+.settings-header p{
+    color:var(--text-secondary);
+    margin-top:6px;
+}
+
+.settings-card{
+    background:var(--bg-surface);
+    border-radius:20px;
+    border:1px solid var(--border-color);
+    overflow:hidden;
+}
+
+.settings-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:22px 26px;
+    border-bottom:1px solid var(--border-color);
+}
+
+.settings-row:last-child{ border-bottom:none; }
+
+.settings-row h4{
+    color:var(--text-primary);
+    font-size:16px;
+    margin-bottom:4px;
+}
+
+.settings-row p{
+    color:var(--text-secondary);
+    font-size:13px;
+}
+
+.settings-row.disabled{
+    opacity:.55;
+}
+
+.soon-badge{
+    background:rgba(148,163,184,.15);
+    color:var(--text-secondary);
+    font-size:11px;
+    font-weight:700;
+    padding:6px 12px;
+    border-radius:20px;
+}
+
+.theme-switch{
+    width:52px;
+    height:28px;
+    border-radius:20px;
+    background:var(--bg-page);
+    border:1px solid var(--border-color);
+    cursor:pointer;
+    position:relative;
+    flex-shrink:0;
+}
+
+.theme-thumb{
+    position:absolute;
+    top:2px;
+    left:2px;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:#2563EB;
+    transition:.25s;
+}
+
+.theme-thumb.light{
+    transform:translateX(24px);
+}
+
+.logout-card-btn{
+    background:rgba(239,68,68,.1);
+    border:1px solid rgba(239,68,68,.3);
+    color:#EF4444;
+    padding:16px;
+    border-radius:16px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.logout-card-btn:hover{
+    background:#EF4444;
+    color:white;
+}
+
+.change-pw-btn{
+    background:none;
+    border:1px solid var(--border-color);
+    color:var(--text-primary);
+    padding:8px 18px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:600;
+}
+
+.password-form{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    padding:0 26px 22px;
+}
+
+.password-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.password-input-group input {
+    width: 100%;
+    background: var(--bg-page);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 12px 60px 12px 16px;
+    border-radius: 10px;
+    outline: none;
+    font-size: 14px;
+}
+
+.password-input-group input:focus {
+    border-color: var(--accent-blue);
+}
+
+.pw-toggle-btn {
+    position: absolute;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: var(--accent-blue);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.pw-error{ color:#EF4444; font-size:13px; }
+.pw-success{ color:#22C55E; font-size:13px; }
+
+.pw-submit-btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background:#2563EB;
+    color:white;
+    border:none;
+    padding:12px;
+    border-radius:10px;
+    font-weight:600;
+    cursor:pointer;
+    transition: all 0.2s ease;
+}
+
+.pw-submit-btn:hover:not(:disabled) {
+    background: #1d4ed8;
+}
+
+.reset-row h4 {
+    color: #f59e0b;
+}
+
+.reset-portfolio-trigger {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: #f59e0b;
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.reset-portfolio-trigger:hover {
+    background: #f59e0b;
+    color: #ffffff;
+}
+
+.reset-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 16px;
+    animation: fadeIn 0.2s ease;
+}
+
+.reset-modal-box {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    max-width: 420px;
+    width: 100%;
+    padding: 28px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.reset-modal-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    font-size: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+
+.reset-modal-box h3 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.reset-modal-box p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+.reset-modal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.reset-modal-cancel {
+    flex: 1;
+    background: var(--bg-surface-alt);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.reset-modal-confirm {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: #ef4444;
+    border: none;
+    color: white;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.reset-modal-confirm:hover:not(:disabled) {
+    background: #dc2626;
+}
+
+/* ---------- Admin Portal Testing Styles ---------- */
+.admin-portal-row h4 {
+    color: #8b5cf6;
+    display: flex;
+    align-items: center;
+}
+
+.admin-role-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.admin-go-btn {
+    background: #8b5cf6;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.admin-go-btn:hover {
+    background: #7c3aed;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}

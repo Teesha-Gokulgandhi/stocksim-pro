@@ -1,0 +1,169 @@
+/* Export Dropdown Component Styles */
+
+.export-dropdown-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.export-main-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f8fafc;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.export-main-btn:hover:not(:disabled) {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.5);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.export-main-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.chevron-icon {
+  font-size: 0.85rem;
+  transition: transform 0.2s ease;
+}
+
+.chevron-icon.open {
+  transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+.export-menu {
+  position: absolute;
+  right: 0;
+  width: 260px;
+  background: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.75), 0 0 20px rgba(99, 102, 241, 0.15);
+  backdrop-filter: blur(20px);
+  padding: 6px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.export-menu.placement-top {
+  bottom: calc(100% + 8px);
+  top: auto;
+  animation: export-menu-appear-top 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.export-menu.placement-bottom {
+  top: calc(100% + 8px);
+  bottom: auto;
+  animation: export-menu-appear-bottom 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes export-menu-appear-top {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes export-menu-appear-bottom {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.export-menu-header {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #64748b;
+  padding: 6px 10px 4px 10px;
+}
+
+.export-option-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+  color: #e2e8f0;
+}
+
+.export-option-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.opt-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.opt-icon.pdf {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.opt-icon.word {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.opt-icon.csv {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.opt-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.opt-text strong {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.opt-text small {
+  font-size: 0.7rem;
+  color: #94a3b8;
+}

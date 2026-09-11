@@ -1,0 +1,419 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+/* ================================================================
+   STOCKSIM PRO — GLOBAL DESIGN SYSTEM
+   Deep Obsidian Slate with Cobalt-Violet accent duotone
+   ================================================================ */
+
+:root {
+  /* ── Surface & Background (Deep Obsidian Slate) ── */
+  --bg-page:              #0a0e17;
+  --bg-surface:           #10151f;
+  --bg-surface-alt:       #151b28;
+  --bg-surface-elevated:  #1b2333;
+  --bg-surface-hover:     #202a3d;
+
+  /* ── Typography ── */
+  --text-primary:   #f7f9fc;
+  --text-secondary: #9aa7bd;
+  --text-muted:     #667389;
+
+  /* ── Borders ── */
+  --border-color: rgba(255, 255, 255, 0.09);
+  --border-hover: rgba(99, 133, 255, 0.45);
+
+  /* ── Primary Brand Accent (Cobalt → Violet duotone) ── */
+  --accent-primary:        #4f6df5;
+  --accent-primary-hover:  #3d59e0;
+  --accent-primary-subtle: rgba(79, 109, 245, 0.14);
+  --accent-primary-border: rgba(79, 109, 245, 0.38);
+  --accent-secondary:      #8b5cf6;
+
+  --accent-blue:     #4f6df5;
+  --accent-indigo:   #6366f1;
+  --accent-cyan:     #22d3ee;
+  --accent-purple:   #8b5cf6;
+
+  --accent-gradient:      linear-gradient(135deg, #4f6df5 0%, #8b5cf6 100%);
+  --accent-gradient-soft: linear-gradient(135deg, rgba(79,109,245,0.16) 0%, rgba(139,92,246,0.10) 100%);
+
+  /* ── Financial Semantic Tokens ── */
+  --color-profit:    #17c980;
+  --color-profit-bg: rgba(23, 201, 128, 0.12);
+  --color-loss:      #ff4d6a;
+  --color-loss-bg:   rgba(255, 77, 106, 0.12);
+  --color-warning:   #f6a723;
+  --color-warning-bg: rgba(246, 167, 35, 0.12);
+  --color-info:      #38bdf8;
+  --color-info-bg:   rgba(56, 189, 248, 0.12);
+
+  /* ── Elevation Shadows ── */
+  --shadow-sm:       0 1px 2px rgba(0, 0, 0, 0.30);
+  --shadow-card:     0 6px 24px -4px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.03) inset;
+  --shadow-elevated: 0 16px 40px -8px rgba(0, 0, 0, 0.60);
+  --shadow-glow:     0 0 32px rgba(79, 109, 245, 0.22);
+
+  /* ── Radius Scale ── */
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-pill: 999px;
+
+  /* ── Motion Tokens ── */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── Focus Ring ── */
+  --focus-ring: 0 0 0 3px rgba(79, 109, 245, 0.35);
+
+  /* ── Typography ── */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Monaco, Consolas, monospace;
+
+  --fs-page-title: 24px;
+  --fs-card-title: 15px;
+  --fs-kpi:        24px;
+  --fs-body:       13px;
+  --fs-subtext:    12px;
+  --fs-meta:       11px;
+}
+
+/* ── Light Theme Overrides ── */
+[data-theme="light"] {
+  --bg-page:             #f5f7fb;
+  --bg-surface:          #ffffff;
+  --bg-surface-alt:      #f0f3f9;
+  --bg-surface-elevated: #e7ebf3;
+  --bg-surface-hover:    #eef1f8;
+
+  --text-primary:   #10151f;
+  --text-secondary: #4c5670;
+  --text-muted:     #8791a8;
+
+  --border-color: #e3e7f0;
+  --border-hover: #a9b8ff;
+
+  --accent-primary:        #4557e0;
+  --accent-primary-hover:  #3644c4;
+  --accent-primary-subtle: rgba(69, 87, 224, 0.08);
+  --accent-primary-border: rgba(69, 87, 224, 0.28);
+  --accent-secondary:      #7c3aed;
+
+  --accent-blue:     #4557e0;
+  --accent-indigo:   #4f46e5;
+  --accent-cyan:     #0ea5c7;
+  --accent-purple:   #7c3aed;
+
+  --accent-gradient:      linear-gradient(135deg, #4557e0 0%, #7c3aed 100%);
+  --accent-gradient-soft: linear-gradient(135deg, rgba(69,87,224,0.08) 0%, rgba(124,58,237,0.06) 100%);
+
+  --color-profit:     #0a9a63;
+  --color-profit-bg:  rgba(10, 154, 99, 0.08);
+  --color-loss:       #d81e4c;
+  --color-loss-bg:    rgba(216, 30, 76, 0.08);
+  --color-warning:    #b76c05;
+  --color-warning-bg: rgba(183, 108, 5, 0.10);
+  --color-info:       #0284c7;
+  --color-info-bg:    rgba(2, 132, 199, 0.08);
+
+  --shadow-sm:       0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-card:     0 1px 3px rgba(15,23,42,0.04), 0 10px 28px -6px rgba(15,23,42,0.07);
+  --shadow-elevated: 0 20px 48px -12px rgba(15, 23, 42, 0.14);
+  --shadow-glow:     0 0 24px rgba(69, 87, 224, 0.10);
+
+  --focus-ring: 0 0 0 3px rgba(69, 87, 224, 0.28);
+}
+
+/* ================================================================
+   RESET & BASE
+   ================================================================ */
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-page);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  letter-spacing: -0.015em;
+  line-height: 1.5;
+  transition: background var(--transition-base), color var(--transition-base);
+  overflow-x: hidden;
+  font-feature-settings: "cv02" 1, "cv03" 1, "cv04" 1, "cv11" 1;
+}
+
+/* ── Headings ── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  letter-spacing: -0.025em;
+  font-weight: 700;
+  line-height: 1.25;
+}
+h1 { font-size: var(--fs-page-title); letter-spacing: -0.03em; }
+h2 { font-size: 18px; letter-spacing: -0.025em; }
+h3 { font-size: var(--fs-card-title); letter-spacing: -0.02em; font-weight: 600; }
+h4 { font-size: 14px; font-weight: 600; }
+
+/* ── Monospace / Financial Tabular Figures ── */
+.mono, .price, .tabular-nums, [data-mono],
+.exec-value, .comp-val, .stock-price, .stock-symbol, .metric-val,
+.stat-value, .stat-item strong, .order-price, .order-qty, .pnl-val,
+.holding-val, .portfolio-val, .trans-amount, .ticker-price,
+.funds-value, .kpi-value, code, kbd, samp, pre {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "zero" 1;
+  letter-spacing: -0.02em;
+}
+
+/* ── Interactive Elements ── */
+button {
+  font-family: var(--font-sans);
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition:
+    transform var(--transition-fast),
+    filter var(--transition-fast),
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(1px) scale(0.99);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+a {
+  color: var(--accent-primary);
+  transition: color var(--transition-fast);
+}
+
+input, select, textarea {
+  font-family: var(--font-sans);
+  letter-spacing: -0.01em;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background var(--transition-fast);
+}
+
+/* Focus ring — applied uniformly via :focus-visible */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* ── Surface Cards ── */
+.card, .surface-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    transform var(--transition-base);
+}
+
+/* ── Page Transitions ── */
+.page, .page-container, main {
+  animation: fadeInUp 0.3s ease both;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Accessibility: Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ── Scrollbars ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.22); }
+
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: #cbd5e1; }
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* ── Global Financial Status Utilities ── */
+.profit, .gain, .positive { color: var(--color-profit) !important; }
+.loss, .negative          { color: var(--color-loss)   !important; }
+.warning                  { color: var(--color-warning) !important; }
+
+/* ── Market Status Banner (msb) ── */
+.msb {
+  margin-bottom: 16px;
+  border-radius: 10px;
+  overflow: hidden;
+  animation: msbSlideIn 0.3s ease both;
+}
+
+@keyframes msbSlideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.msb__inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  position: relative;
+}
+
+/* Icon badge */
+.msb__icon-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* Body */
+.msb__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.msb__top-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.msb__flag {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.msb__label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+}
+
+.msb__status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-loss);
+  margin-left: 2px;
+  animation: msbPulse 2s ease-in-out infinite;
+}
+
+@keyframes msbPulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+
+.msb__status-text {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-loss);
+}
+
+.msb__message {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+/* Dismiss button */
+.msb__close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+  transition: color 0.15s, background 0.15s;
+}
+
+.msb__close:hover {
+  color: var(--text-primary);
+  background: var(--bg-surface-alt);
+}
+
+/* ── Closed state (red) ── */
+.msb--closed .msb__inner {
+  border-left: 3px solid var(--color-loss, #ef4444);
+}
+.msb--closed .msb__icon-badge {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--color-loss, #ef4444);
+}
+.msb--closed .msb__status-dot {
+  background: var(--color-loss, #ef4444);
+}
+.msb--closed .msb__status-text {
+  color: var(--color-loss, #ef4444);
+}
+
+/* ── Open state (green) ── */
+.msb--open .msb__inner {
+  border-left: 3px solid var(--color-profit, #10b981);
+}
+.msb--open .msb__icon-badge {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--color-profit, #10b981);
+}
+.msb--open .msb__status-dot {
+  background: var(--color-profit, #10b981);
+}
+.msb--open .msb__status-text {
+  color: var(--color-profit, #10b981);
+}
+
+/* ── Light theme ── */
+[data-theme="light"] .msb__inner {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}

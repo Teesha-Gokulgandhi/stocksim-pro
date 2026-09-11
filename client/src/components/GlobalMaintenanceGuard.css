@@ -1,0 +1,103 @@
+.maintenance-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px 20px;
+  background: var(--bg-page, #f4f7fb);
+  color: var(--text-primary, #172033);
+}
+
+.maintenance-panel {
+  width: min(100%, 560px);
+  padding: 48px 40px;
+  text-align: center;
+  background: var(--bg-surface, #fff);
+  border: 1px solid var(--border-color, #dbe3ef);
+  border-top: 4px solid var(--accent-blue, #2563eb);
+  border-radius: 16px;
+  box-shadow: 0 18px 50px rgba(25, 45, 80, 0.12);
+}
+
+.maintenance-icon {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--accent-blue, #2563eb);
+  font-size: 30px;
+}
+
+.maintenance-eyebrow {
+  margin: 0 0 10px;
+  color: var(--accent-blue, #2563eb);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.maintenance-panel h1 {
+  margin: 0 0 14px;
+  font-size: clamp(24px, 4vw, 34px);
+  line-height: 1.15;
+}
+
+.maintenance-message {
+  max-width: 430px;
+  margin: 0 auto 28px;
+  color: var(--text-secondary, #5d6a7f);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.maintenance-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.maintenance-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.maintenance-button.primary {
+  background: var(--accent-blue, #2563eb);
+  color: #fff;
+}
+
+.maintenance-button.secondary {
+  background: transparent;
+  border-color: var(--border-color, #dbe3ef);
+  color: var(--text-secondary, #5d6a7f);
+}
+
+.maintenance-status {
+  color: var(--text-secondary, #7b8799);
+  font-size: 12px;
+}
+
+@media (max-width: 520px) {
+  .maintenance-panel {
+    padding: 36px 22px;
+  }
+
+  .maintenance-button {
+    width: 100%;
+    justify-content: center;
+  }
+}

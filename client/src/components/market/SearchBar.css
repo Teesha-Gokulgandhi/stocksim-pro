@@ -1,0 +1,33 @@
+.search-bar{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:var(--bg-surface);
+    border:1px solid var(--border-color);
+    border-radius:18px;
+    padding:16px 20px;
+    width:100%;
+    max-width:380px;
+}
+
+@media (max-width: 900px) {
+    .search-bar { max-width: 100%; }
+}
+
+.search-icon{
+    color:var(--text-secondary);
+    font-size:18px;
+}
+
+.search-bar input{
+    flex:1;
+    background:none;
+    border:none;
+    outline:none;
+    color:var(--text-primary);
+    font-size:15px;
+}
+
+.search-bar input::placeholder{
+    color:var(--text-secondary);
+}

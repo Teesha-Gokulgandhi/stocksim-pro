@@ -1,0 +1,27 @@
+.page-loader{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+    min-height:60vh;
+    color:var(--text-secondary);
+}
+
+.loader-ring{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    border:3px solid var(--border-color);
+    border-top-color:#3B82F6;
+    animation:spin .8s linear infinite;
+}
+
+.page-loader p{
+    font-size:14px;
+    letter-spacing:.5px;
+}
+
+@keyframes spin{
+    to{ transform:rotate(360deg); }
+}

@@ -1,0 +1,52 @@
+.market-card{
+    background:var(--bg-surface);
+    border-radius:22px;
+    padding:30px;
+    border:1px solid var(--border-color);
+    height:100%;
+}
+
+.market-card h2{
+    color:var(--text-primary);
+    font-size:22px;
+    margin-bottom:20px;
+}
+
+.stock{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:16px 0;
+    border-bottom:1px solid var(--border-color);
+}
+
+.stock:last-child{
+    border-bottom:none;
+}
+
+.stock h3{
+    color:var(--text-primary);
+    font-size:15px;
+}
+
+.stock p{
+    color:var(--text-secondary);
+    font-size:13px;
+    margin-top:2px;
+}
+
+.stock > div:last-child{
+    text-align:right;
+}
+
+.stock > div:last-child h3{
+    font-family:"JetBrains Mono", monospace;
+}
+
+.green{ color:#22C55E; font-size:13px; }
+.red{ color:#EF4444; font-size:13px; }
+
+.market-empty{
+    color:var(--text-secondary);
+    padding:20px 0;
+}

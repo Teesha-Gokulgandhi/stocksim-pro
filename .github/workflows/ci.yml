@@ -1,0 +1,64 @@
+name: StockSim Pro CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  # ================= JOB 1: LINT & TEST =================
+  test:
+    name: Test & Validate Codebase
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Backend Dependencies
+        run: npm ci
+        working-directory: ./server
+
+      - name: Install Frontend Dependencies
+        run: npm ci
+        working-directory: ./client
+
+      - name: Build Frontend Assets (Vite)
+        run: npm run build
+        working-directory: ./client
+        env:
+          VITE_API_URL: /api
+
+  # ================= JOB 2: DOCKER BUILD VALIDATION =================
+  docker-build:
+    name: Build & Verify Docker Images
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Backend Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./server
+          push: false
+          tags: stocksim-server:latest
+
+      - name: Build Frontend Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./client
+          push: false
+          tags: stocksim-client:latest

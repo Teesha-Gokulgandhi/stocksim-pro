@@ -1,0 +1,7 @@
+/*
+  Register page shares the same layout / design tokens as Login.
+  Import Login.css for the shared styles, then add register-specific
+  overrides (currently none — same classes, same card structure).
+  Keeping this file separate in case register gets its own design later.
+*/
+@import "./Login.css";

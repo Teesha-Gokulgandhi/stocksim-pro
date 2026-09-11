@@ -1,0 +1,227 @@
+.groww-analytics-card {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.25rem 0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+[data-theme="dark"] .groww-analytics-card {
+  background: #131722;
+  border-color: #2a2e39;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.groww-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--border-color, #f1f5f9);
+}
+
+[data-theme="dark"] .groww-card-header {
+  border-bottom-color: #232733;
+}
+
+.groww-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.groww-header-title .header-icon {
+  font-size: 1.35rem;
+  color: #6366f1;
+}
+
+.groww-header-title h4 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+}
+
+[data-theme="dark"] .groww-header-title h4 {
+  color: #f1f5f9;
+}
+
+.live-source-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #10b981;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.clean-copilot-trigger-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.95rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 8px;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: #6366f1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clean-copilot-trigger-btn:hover {
+  background: rgba(99, 102, 241, 0.16);
+  border-color: #6366f1;
+  transform: translateY(-1px);
+}
+
+/* Performance Sliders */
+.groww-performance-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem 0;
+}
+
+.range-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.range-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 100px;
+}
+
+.range-meta.right {
+  align-items: flex-end;
+}
+
+.range-meta .meta-lbl {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #64748b);
+  margin-bottom: 2px;
+}
+
+.range-meta strong {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+}
+
+[data-theme="dark"] .range-meta strong {
+  color: #f1f5f9;
+}
+
+.range-track-wrap {
+  flex: 1;
+  position: relative;
+  padding: 10px 0;
+}
+
+.range-track-bg {
+  height: 6px;
+  background: linear-gradient(90deg, #f59e0b 0%, #10b981 100%);
+  border-radius: 4px;
+  position: relative;
+}
+
+.range-track-bg.w52 {
+  background: linear-gradient(90deg, #ef4444 0%, #3b82f6 50%, #10b981 100%);
+}
+
+.range-current-pin {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.pin-triangle {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 7px solid #6366f1;
+  margin-bottom: -1px;
+}
+
+.pin-tooltip {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="dark"] .pin-tooltip {
+  background: #2a2e39;
+  color: #f8fafc;
+}
+
+/* Fundamentals Grid */
+.groww-fundamentals-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .groww-fundamentals-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.fund-tile {
+  background: var(--bg-surface, #f8fafc);
+  border: 1px solid var(--border-color, #edf2f7);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: transform 0.15s ease;
+}
+
+[data-theme="dark"] .fund-tile {
+  background: #181c27;
+  border-color: #2a2e39;
+}
+
+.fund-tile:hover {
+  transform: translateY(-2px);
+}
+
+.fund-lbl {
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: var(--text-secondary, #64748b);
+}
+
+[data-theme="dark"] .fund-lbl {
+  color: #94a3b8;
+}
+
+.fund-tile strong {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+}
+
+[data-theme="dark"] .fund-tile strong {
+  color: #f8fafc;
+}

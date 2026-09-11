@@ -1,0 +1,27 @@
+.stock-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(285px,1fr));
+    gap:25px;
+}
+
+.stock-grid-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text-secondary);
+}
+
+.stock-grid-empty svg {
+    font-size: 48px;
+    color: var(--border-color);
+    margin-bottom: 16px;
+}
+
+.stock-grid-empty h3 {
+    color: var(--text-primary);
+    font-size: 20px;
+    margin-bottom: 8px;
+}
