@@ -925,9 +925,9 @@ function Admin() {
               <tbody>
                 {users.map((u) => (
                   <tr key={u._id}>
-                    <td>
-                      <strong>{u.name}</strong>
-                      <div className="user-email-cell">{u.email}</div>
+                    <td className="user-acc-cell">
+                      <strong className="user-name-text" title={u.name}>{u.name}</strong>
+                      <div className="user-email-cell" title={u.email}>{u.email}</div>
                     </td>
                     <td>
                       <div className="user-portfolio-cell">
@@ -956,63 +956,70 @@ function Admin() {
                       </span>
                     </td>
                     <td className="user-date-cell">{new Date(u.createdAt).toLocaleDateString()}</td>
-                    <td className="admin-actions">
-                      <button
-                        type="button"
-                        className="action-btn view"
-                        onClick={() => openUserDetail(u)}
-                        disabled={processingUserId === u._id}
-                        title="View Full Portfolio & Transactions"
-                      >
-                        <FiEye /> View
-                      </button>
-                      <button
-                        type="button"
-                        className="action-btn add-funds"
-                        onClick={() => handleAddFunds(u)}
-                        disabled={processingUserId === u._id}
-                        title="Add Funds / Virtual Margin (keeps stocks & trade history)"
-                      >
-                        <FiPlusCircle /> +Funds
-                      </button>
-                      <button
-                        type="button"
-                        className="action-btn reset-atoz"
-                        onClick={() => handleResetAtoZ(u)}
-                        disabled={processingUserId === u._id}
-                        title="Full Reset A-to-Z (wipe holdings, transactions, and restore defaults)"
-                      >
-                        <FiRefreshCw /> Reset
-                      </button>
-                      <button
-                        type="button"
-                        className={`action-btn role ${u.role === "admin" ? "demote" : "promote"}`}
-                        onClick={() => toggleUserRole(u)}
-                        disabled={processingUserId === u._id}
-                        title={u.role === "admin" ? "Demote from Admin" : "Grant Admin Privileges"}
-                      >
-                        <FiShield /> {processingUserId === u._id ? "..." : (u.role === "admin" ? "Demote" : "Admin")}
-                      </button>
-                      <button
-                        type="button"
-                        className={`action-btn icon-only ${u.isActive ? "suspend" : "reactivate"}`}
-                        onClick={() => toggleUserStatus(u)}
-                        disabled={processingUserId === u._id}
-                        title={u.isActive ? "Suspend Access" : "Reactivate Access"}
-                      >
-                        {u.isActive ? <FiAlertTriangle /> : <FiCheckCircle />}
-                      </button>
-                      {u.email !== "admin@stocksim.com" && (
-                        <button
-                          type="button"
-                          className="action-btn delete icon-only"
-                          onClick={() => handleDeleteUser(u)}
-                          disabled={processingUserId === u._id}
-                          title="Delete User Permanently"
-                        >
-                          <FiTrash2 />
-                        </button>
-                      )}
+                    <td className="admin-actions-cell">
+                      <div className="admin-actions-grid">
+                        <div className="admin-actions-row">
+                          <button
+                            type="button"
+                            className="action-btn view"
+                            onClick={() => openUserDetail(u)}
+                            disabled={processingUserId === u._id}
+                            title="View Full Portfolio & Transactions"
+                          >
+                            <FiEye /> View
+                          </button>
+                          <button
+                            type="button"
+                            className="action-btn add-funds"
+                            onClick={() => handleAddFunds(u)}
+                            disabled={processingUserId === u._id}
+                            title="Add Funds / Virtual Margin"
+                          >
+                            <FiPlusCircle /> +Funds
+                          </button>
+                          <button
+                            type="button"
+                            className="action-btn reset-atoz"
+                            onClick={() => handleResetAtoZ(u)}
+                            disabled={processingUserId === u._id}
+                            title="Full Reset A-to-Z"
+                          >
+                            <FiRefreshCw /> Reset
+                          </button>
+                        </div>
+                        <div className="admin-actions-row">
+                          <button
+                            type="button"
+                            className={`action-btn role ${u.role === "admin" ? "demote" : "promote"}`}
+                            onClick={() => toggleUserRole(u)}
+                            disabled={processingUserId === u._id}
+                            title={u.role === "admin" ? "Demote Admin" : "Make Admin"}
+                          >
+                            <FiShield /> {processingUserId === u._id ? "..." : (u.role === "admin" ? "Demote" : "Admin")}
+                          </button>
+                          <button
+                            type="button"
+                            className={`action-btn ${u.isActive ? "suspend" : "reactivate"}`}
+                            onClick={() => toggleUserStatus(u)}
+                            disabled={processingUserId === u._id}
+                            title={u.isActive ? "Suspend Access" : "Reactivate Access"}
+                          >
+                            {u.isActive ? <FiAlertTriangle /> : <FiCheckCircle />}
+                            {u.isActive ? "Suspend" : "Active"}
+                          </button>
+                          {u.email !== "admin@stocksim.com" && (
+                            <button
+                              type="button"
+                              className="action-btn delete icon-only"
+                              onClick={() => handleDeleteUser(u)}
+                              disabled={processingUserId === u._id}
+                              title="Delete User Permanently"
+                            >
+                              <FiTrash2 />
+                            </button>
+                          )}
+                        </div>
+                      </div>
                     </td>
                   </tr>
                 ))}
