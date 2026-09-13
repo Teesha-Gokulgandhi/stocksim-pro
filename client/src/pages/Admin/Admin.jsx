@@ -2349,19 +2349,19 @@ function Admin() {
                   const isIN = modalMarketTab === "IN";
                   const activeSum = isIN
                     ? summary.inr || {
-                        totalNetWorth: detailUser.user.balance || 100000,
-                        cash: detailUser.user.balance || 100000,
+                        totalNetWorth: detailUser.user.balance || 0,
+                        cash: detailUser.user.balance || 0,
                         invested: 0,
                         currentHoldings: 0,
-                        overallPL: (detailUser.user.balance || 100000) - 100000,
+                        overallPL: 0,
                         overallPLPercent: 0,
                       }
                     : summary.usd || {
-                        totalNetWorth: detailUser.user.balanceUSD ?? 10000,
-                        cash: detailUser.user.balanceUSD ?? 10000,
+                        totalNetWorth: detailUser.user.balanceUSD ?? 0,
+                        cash: detailUser.user.balanceUSD ?? 0,
                         invested: 0,
                         currentHoldings: 0,
-                        overallPL: (detailUser.user.balanceUSD ?? 10000) - 10000,
+                        overallPL: 0,
                         overallPLPercent: 0,
                       };
 

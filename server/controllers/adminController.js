@@ -550,10 +550,21 @@ exports.getUserDetail = asyncHandler(async (req, res) => {
   const inrNetWorth = inrCash + inrCurrent;
   const usdNetWorth = usdCash + usdCurrent;
 
-  const inrProfit = Math.round((inrCurrent - inrInvested) * 100) / 100;
-  const inrRoi = inrInvested > 0 ? Math.round(((inrCurrent - inrInvested) / inrInvested) * 10000) / 100 : 0;
-  const usdProfit = Math.round((usdCurrent - usdInvested) * 100) / 100;
-  const usdRoi = usdInvested > 0 ? Math.round(((usdCurrent - usdInvested) / usdInvested) * 10000) / 100 : 0;
+  const sellTxs = await Transaction.find({ user: user._id, type: "SELL" }, "netPnl currency");
+  let realizedInr = 0;
+  let realizedUsd = 0;
+  sellTxs.forEach((tx) => {
+    if (tx.currency === "USD") {
+      realizedUsd += (tx.netPnl || 0);
+    } else {
+      realizedInr += (tx.netPnl || 0);
+    }
+  });
+
+  const inrProfit = Math.round(((inrCurrent - inrInvested) + realizedInr) * 100) / 100;
+  const inrRoi = inrInvested > 0 ? Math.round((inrProfit / inrInvested) * 10000) / 100 : 0;
+  const usdProfit = Math.round(((usdCurrent - usdInvested) + realizedUsd) * 100) / 100;
+  const usdRoi = usdInvested > 0 ? Math.round((usdProfit / usdInvested) * 10000) / 100 : 0;
 
   const portfolioSummary = {
     inr: {

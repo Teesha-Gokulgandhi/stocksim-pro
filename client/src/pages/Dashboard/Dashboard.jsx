@@ -178,11 +178,43 @@ function Dashboard() {
   const totalNetWorthINR = inMetrics.current + activeINR;
   const totalNetWorthUSD = usMetrics.current + activeUSD;
 
-  const overallPL_INR = totalNetWorthINR - STARTING_CAPITAL_INR;
-  const overallPL_INR_Pct = (overallPL_INR / STARTING_CAPITAL_INR) * 100;
+  // Calculate Realized P&L from executed SELL transactions
+  const realizedPL = useMemo(() => {
+    let inr = 0;
+    let usd = 0;
+    transactions.forEach((tx) => {
+      if (tx.type === "SELL") {
+        const isUSD = tx.currency === "USD" || (!tx.symbol?.endsWith(".NS") && !tx.symbol?.endsWith(".BO"));
+        if (isUSD) {
+          usd += (tx.netPnl || 0);
+        } else {
+          inr += (tx.netPnl || 0);
+        }
+      }
+    });
+    return { inr, usd };
+  }, [transactions]);
 
-  const overallPL_USD = totalNetWorthUSD - STARTING_CAPITAL_USD;
-  const overallPL_USD_Pct = (overallPL_USD / STARTING_CAPITAL_USD) * 100;
+  // Overall Trading P&L: Unrealized P&L on active holdings + Realized P&L from closed trades.
+  // We prioritize the exact server-computed stats from leaderboard, aligned across all metrics.
+  const myInrStats = leaderboard.inrLeague.find((p) => p.email === user?.email);
+  const myUsdStats = leaderboard.usdLeague.find((p) => p.email === user?.email);
+
+  const overallPL_INR = myInrStats != null
+    ? myInrStats.profit
+    : inMetrics.pl + realizedPL.inr;
+
+  const overallPL_INR_Pct = myInrStats != null
+    ? myInrStats.roi
+    : (inMetrics.invested > 0 ? (overallPL_INR / inMetrics.invested) * 100 : 0);
+
+  const overallPL_USD = myUsdStats != null
+    ? myUsdStats.profit
+    : usMetrics.pl + realizedPL.usd;
+
+  const overallPL_USD_Pct = myUsdStats != null
+    ? myUsdStats.roi
+    : (usMetrics.invested > 0 ? (overallPL_USD / usMetrics.invested) * 100 : 0);
 
   // Allocation %
   const inEquityPct = Math.round((inMetrics.current / (totalNetWorthINR || 1)) * 100);
