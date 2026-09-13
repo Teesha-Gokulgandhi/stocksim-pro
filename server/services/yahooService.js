@@ -119,38 +119,78 @@ const fetchChartFromYahoo = async (symbol, range = "1M") => {
     }
 
     const targetSymbol = resolveSymbol(symbol);
-    const result = await withTimeout(
-      yahooFinance.chart(targetSymbol, {
-        period1: period1.toISOString().split("T")[0],
-        interval,
-      }),
-      YAHOO_TIMEOUT_MS
+    const queryPeriod = period1.toISOString().split("T")[0];
+
+    const fetchRawChart = async (sym) => {
+      try {
+        const res = await withTimeout(
+          yahooFinance.chart(sym, {
+            period1: queryPeriod,
+            interval,
+          }),
+          YAHOO_TIMEOUT_MS
+        );
+        return res?.quotes || [];
+      } catch {
+        return [];
+      }
+    };
+
+    let rawQuotes = await fetchRawChart(targetSymbol);
+    let validQuotes = rawQuotes.filter(
+      (q) => q && (q.close != null || q.adjclose != null) && !Number.isNaN(q.close || q.adjclose)
     );
 
-    if (!result || !result.quotes || result.quotes.length === 0) {
+    // If Yahoo Finance returned insufficient historical data (< 5 candles, e.g. BSE ticker with nulls like RAYMOND.BO)
+    // automatically query the counterpart exchange (.BO <-> .NS) for Indian equities
+    if (validQuotes.length < 5) {
+      let altSymbol = null;
+      if (targetSymbol.endsWith(".BO")) {
+        altSymbol = resolveSymbol(targetSymbol.replace(/\.BO$/, ".NS"));
+      } else if (targetSymbol.endsWith(".NS")) {
+        altSymbol = resolveSymbol(targetSymbol.replace(/\.NS$/, ".BO"));
+      } else if (!targetSymbol.includes(".")) {
+        altSymbol = resolveSymbol(`${targetSymbol}.NS`);
+      }
+
+      if (altSymbol && altSymbol !== targetSymbol) {
+        const altQuotes = await fetchRawChart(altSymbol);
+        const altValid = altQuotes.filter(
+          (q) => q && (q.close != null || q.adjclose != null) && !Number.isNaN(q.close || q.adjclose)
+        );
+        if (altValid.length > validQuotes.length) {
+          validQuotes = altValid;
+        }
+      }
+    }
+
+    if (!validQuotes || validQuotes.length === 0) {
       return [];
     }
 
-    return result.quotes
-      .filter((q) => q && q.close != null && !Number.isNaN(q.close))
-      .map((q) => {
-        const d = new Date(q.date);
-        return {
-          timestamp: d.getTime(),
-          date:
-            range === "1D"
-              ? d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })
-              : ["3Y", "5Y"].includes(range)
-              ? d.toLocaleDateString("en-IN", { month: "short", year: "2-digit" })
-              : d.toLocaleDateString("en-IN", { day: "2-digit", month: "short" }),
-          fullDate: d.toISOString(),
-          price: Number((q.close || 0).toFixed(2)),
-          open: Number((q.open || q.close || 0).toFixed(2)),
-          high: Number((q.high || q.close || 0).toFixed(2)),
-          low: Number((q.low || q.close || 0).toFixed(2)),
-          volume: q.volume || 0,
-        };
-      });
+    return validQuotes.map((q) => {
+      const d = new Date(q.date);
+      const closeVal = q.close != null ? q.close : q.adjclose;
+      const openVal = q.open != null ? q.open : closeVal;
+      const highVal = q.high != null ? q.high : Math.max(openVal, closeVal);
+      const lowVal = q.low != null ? q.low : Math.min(openVal, closeVal);
+
+      return {
+        timestamp: d.getTime(),
+        date:
+          range === "1D"
+            ? d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })
+            : ["3Y", "5Y"].includes(range)
+            ? d.toLocaleDateString("en-IN", { month: "short", year: "2-digit" })
+            : d.toLocaleDateString("en-IN", { day: "2-digit", month: "short" }),
+        fullDate: d.toISOString(),
+        price: Number((closeVal || 0).toFixed(2)),
+        open: Number((openVal || 0).toFixed(2)),
+        high: Number((highVal || 0).toFixed(2)),
+        low: Number((lowVal || 0).toFixed(2)),
+        volume: q.volume || 0,
+      };
+    });
   } catch (err) {
     console.log(`Yahoo Chart Error for ${symbol} (${range}):`, err.message);
     return [];
@@ -190,33 +230,71 @@ const fetchReplayCandles = async (symbol, range = "6M") => {
     }
 
     const targetSymbol = resolveSymbol(symbol);
-    const result = await withTimeout(
-      yahooFinance.chart(targetSymbol, {
-        period1: period1.toISOString().split("T")[0],
-        interval: "1d",
-      }),
-      YAHOO_TIMEOUT_MS
+    const queryPeriod = period1.toISOString().split("T")[0];
+
+    const fetchRawReplay = async (sym) => {
+      try {
+        const res = await withTimeout(
+          yahooFinance.chart(sym, {
+            period1: queryPeriod,
+            interval: "1d",
+          }),
+          YAHOO_TIMEOUT_MS
+        );
+        return res?.quotes || [];
+      } catch {
+        return [];
+      }
+    };
+
+    let rawQuotes = await fetchRawReplay(targetSymbol);
+    let validQuotes = rawQuotes.filter(
+      (q) => q && (q.close != null || q.adjclose != null) && !Number.isNaN(q.close || q.adjclose)
     );
 
-    if (!result || !result.quotes || result.quotes.length === 0) {
+    if (validQuotes.length < 5) {
+      let altSymbol = null;
+      if (targetSymbol.endsWith(".BO")) {
+        altSymbol = resolveSymbol(targetSymbol.replace(/\.BO$/, ".NS"));
+      } else if (targetSymbol.endsWith(".NS")) {
+        altSymbol = resolveSymbol(targetSymbol.replace(/\.NS$/, ".BO"));
+      } else if (!targetSymbol.includes(".")) {
+        altSymbol = resolveSymbol(`${targetSymbol}.NS`);
+      }
+
+      if (altSymbol && altSymbol !== targetSymbol) {
+        const altQuotes = await fetchRawReplay(altSymbol);
+        const altValid = altQuotes.filter(
+          (q) => q && (q.close != null || q.adjclose != null) && !Number.isNaN(q.close || q.adjclose)
+        );
+        if (altValid.length > validQuotes.length) {
+          validQuotes = altValid;
+        }
+      }
+    }
+
+    if (!validQuotes || validQuotes.length === 0) {
       return [];
     }
 
-    return result.quotes
-      .filter((q) => q && q.close != null && !Number.isNaN(q.close))
-      .map((q) => {
-        const d = new Date(q.date);
-        return {
-          timestamp: d.getTime(),
-          date: d.toISOString().split("T")[0],
-          displayDate: d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
-          open: Number((q.open || q.close).toFixed(2)),
-          high: Number((q.high || Math.max(q.open || q.close, q.close)).toFixed(2)),
-          low: Number((q.low || Math.min(q.open || q.close, q.close)).toFixed(2)),
-          close: Number(q.close.toFixed(2)),
-          volume: q.volume || 0,
-        };
-      });
+    return validQuotes.map((q) => {
+      const d = new Date(q.date);
+      const closeVal = q.close != null ? q.close : q.adjclose;
+      const openVal = q.open != null ? q.open : closeVal;
+      const highVal = q.high != null ? q.high : Math.max(openVal, closeVal);
+      const lowVal = q.low != null ? q.low : Math.min(openVal, closeVal);
+
+      return {
+        timestamp: d.getTime(),
+        date: d.toISOString().split("T")[0],
+        displayDate: d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+        open: Number((openVal || 0).toFixed(2)),
+        high: Number((highVal || 0).toFixed(2)),
+        low: Number((lowVal || 0).toFixed(2)),
+        close: Number((closeVal || 0).toFixed(2)),
+        volume: q.volume || 0,
+      };
+    });
   } catch (err) {
     console.log(`Yahoo Replay Chart Error for ${symbol}:`, err.message);
     return [];
