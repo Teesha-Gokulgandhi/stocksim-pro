@@ -29,6 +29,40 @@ import ExportDropdown from "../../components/common/ExportDropdown";
 
 import "./MarketHub.css";
 
+function IndiaFlagVector() {
+  return (
+    <svg width="28" height="19" viewBox="0 0 30 20" className="hub-flag-vector" aria-label="Indian Flag">
+      <rect width="30" height="6.67" fill="#FF9933" rx="2" />
+      <rect y="6.67" width="30" height="6.67" fill="#FFFFFF" />
+      <rect y="13.33" width="30" height="6.67" fill="#138808" rx="2" />
+      <circle cx="15" cy="10" r="2.5" fill="none" stroke="#000080" strokeWidth="0.6" />
+      <circle cx="15" cy="10" r="0.8" fill="#000080" />
+      <line x1="15" y1="7.5" x2="15" y2="12.5" stroke="#000080" strokeWidth="0.4" />
+      <line x1="12.5" y1="10" x2="17.5" y2="10" stroke="#000080" strokeWidth="0.4" />
+      <line x1="13.2" y1="8.2" x2="16.8" y2="11.8" stroke="#000080" strokeWidth="0.4" />
+      <line x1="13.2" y1="11.8" x2="16.8" y2="8.2" stroke="#000080" strokeWidth="0.4" />
+    </svg>
+  );
+}
+
+function USFlagVector() {
+  return (
+    <svg width="28" height="19" viewBox="0 0 30 20" className="hub-flag-vector" aria-label="US Flag">
+      <rect width="30" height="20" fill="#B22234" rx="2" />
+      <path d="M0,1.54h30M0,4.62h30M0,7.69h30M0,10.77h30M0,13.85h30M0,16.92h30" stroke="#fff" strokeWidth="1.54" />
+      <rect width="13" height="10.77" fill="#3C3B6E" rx="2" />
+      <circle cx="2.5" cy="2.5" r="0.8" fill="#fff" />
+      <circle cx="6.5" cy="2.5" r="0.8" fill="#fff" />
+      <circle cx="10.5" cy="2.5" r="0.8" fill="#fff" />
+      <circle cx="4.5" cy="5.4" r="0.8" fill="#fff" />
+      <circle cx="8.5" cy="5.4" r="0.8" fill="#fff" />
+      <circle cx="2.5" cy="8.3" r="0.8" fill="#fff" />
+      <circle cx="6.5" cy="8.3" r="0.8" fill="#fff" />
+      <circle cx="10.5" cy="8.3" r="0.8" fill="#fff" />
+    </svg>
+  );
+}
+
 function MarketHub() {
   const toast = useToast();
   const { user, refreshUser } = useUser();
@@ -256,13 +290,21 @@ function MarketHub() {
       <div className="market-hub-header">
         <div className="market-hub-title-group">
           <div className="market-flag-banner">
-            <span className="hub-flag">{isIN ? "🇮🇳" : "🇺🇸"}</span>
-            <div>
-              <h1 className="hub-title">
-                {isIN ? "Indian Stock Market (NSE/BSE)" : "US Stock Market (NYSE/Nasdaq)"}
-              </h1>
+            <div className={`hub-flag-capsule ${isIN ? "inr" : "usd"}`}>
+              {isIN ? <IndiaFlagVector /> : <USFlagVector />}
+              <span className="hub-flag-code">{isIN ? "IN" : "US"}</span>
+            </div>
+            <div className="hub-title-container">
+              <div className="hub-title-line">
+                <h1 className="hub-title">
+                  {isIN ? "Indian Stock Market (NSE/BSE)" : "US Stock Market (NYSE/Nasdaq)"}
+                </h1>
+                <span className={`hub-market-tag ${isIN ? "inr" : "usd"}`}>
+                  {isIN ? "NSE & BSE Active" : "US Equities Active"}
+                </span>
+              </div>
               <span className="hub-sub">
-                {isIN ? "Hours: 9:15 AM - 3:30 PM IST" : "Hours: 7:00 PM - 1:30 AM IST"} • Virtual Cash Margin
+                {isIN ? "Trading Hours: 9:15 AM - 3:30 PM IST" : "Trading Hours: 7:00 PM - 1:30 AM IST"} • Virtual Cash Margin
               </span>
             </div>
           </div>

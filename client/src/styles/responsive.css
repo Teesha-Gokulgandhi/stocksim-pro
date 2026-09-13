@@ -14,9 +14,7 @@
 .txn-page-header,
 .portfolio-header,
 .watchlist-header,
-.admin-header,
-.market-hub-header,
-.groww-hero-header {
+.admin-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -31,7 +29,6 @@
 .watchlist-header h1,
 .admin-header h1,
 .groww-page-title,
-.hub-title,
 .market-header h1,
 .settings-header h1,
 .profile-header h1,
@@ -50,7 +47,6 @@
 .watchlist-header p,
 .admin-header p,
 .groww-page-subtitle,
-.hub-sub,
 .settings-subtext,
 .admin-subtext {
   color: var(--text-secondary) !important;
