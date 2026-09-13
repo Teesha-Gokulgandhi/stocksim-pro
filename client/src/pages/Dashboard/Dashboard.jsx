@@ -675,7 +675,7 @@ function Dashboard() {
                         <th style={{ width: 70 }}>Rank</th>
                         <th>Participant / Trader</th>
                         <th className="num-col">Portfolio Net Worth</th>
-                        <th className="num-col">Total Profit / Loss</th>
+                        <th className="num-col" style={{ textAlign: "center" }}>Total Profit / Loss</th>
                         <th className="num-col">Capital Deployed</th>
                         <th className="num-col">Stocks Held</th>
                         <th>Top Asset Exposure</th>
@@ -707,10 +707,15 @@ function Dashboard() {
                             <strong>{sym}{fmt(trader.totalNetWorth)}</strong>
                           </td>
 
-                          <td className="num-col">
-                            <span className={`groww-pnl-pill ${trader.profit >= 0 ? "profit" : "loss"}`}>
-                              {trader.profit >= 0 ? "+" : "-"}{sym}{fmt(Math.abs(trader.profit))} ({trader.roi >= 0 ? "+" : ""}{trader.roi.toFixed(2)}%)
-                            </span>
+                          <td className="num-col" style={{ textAlign: "center" }}>
+                            <div className={`leaderboard-pnl-pill ${trader.profit >= 0 ? "profit" : "loss"}`}>
+                              <span className="pnl-val">
+                                {trader.profit >= 0 ? "+" : "-"}{sym}{fmt(Math.abs(trader.profit))}
+                              </span>
+                              <span className="pnl-roi">
+                                ({trader.roi >= 0 ? "+" : ""}{trader.roi.toFixed(2)}%)
+                              </span>
+                            </div>
                           </td>
 
                           <td className="num-col">

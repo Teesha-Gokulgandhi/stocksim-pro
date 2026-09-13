@@ -217,6 +217,7 @@
   font-size: 13px;
   font-weight: 800;
   font-feature-settings: "tnum";
+  white-space: nowrap;
 }
 
 .groww-pnl-pill.profit {
@@ -1183,4 +1184,46 @@
   font-size: 11px;
   color: var(--text-muted, #94a3b8);
   font-style: italic;
+}
+
+/* Leaderboard 2-Row P&L Pill */
+.leaderboard-pnl-pill {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 14px;
+  border-radius: 99px;
+  min-width: 118px;
+  gap: 2px;
+  text-align: center;
+  font-feature-settings: "tnum";
+  box-sizing: border-box;
+}
+
+.leaderboard-pnl-pill.profit {
+  background: var(--color-profit-bg, rgba(23, 201, 128, 0.12));
+  color: var(--color-profit, #17c980);
+  border: 1px solid rgba(23, 201, 128, 0.25);
+}
+
+.leaderboard-pnl-pill.loss {
+  background: var(--color-loss-bg, rgba(255, 80, 105, 0.12));
+  color: var(--color-loss, #ff5069);
+  border: 1px solid rgba(255, 80, 105, 0.25);
+}
+
+.leaderboard-pnl-pill .pnl-val {
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.leaderboard-pnl-pill .pnl-roi {
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  opacity: 0.88;
 }
