@@ -12,6 +12,27 @@ const { getQuote, searchAndResolveStock } = require("../services/yahooService");
 const { buildPaginationMeta } = require("../utils/pagination");
 const { getExchangeHoursStatus, resolveRegionalStatus } = require("../utils/marketAccess");
 
+const formatIST = (dateVal) => {
+  if (!dateVal) return "";
+  try {
+    const d = new Date(dateVal);
+    if (isNaN(d.getTime())) return String(dateVal);
+    const formatted = d.toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+    return formatted.replace(/\b([ap]m)\b/gi, (m) => m.toUpperCase()) + " IST";
+  } catch (e) {
+    return String(dateVal);
+  }
+};
+
 // Shared helper so every sensitive admin action leaves the same shape of
 // record. `details` is always built from known, server-controlled values
 // (never raw user input) so the audit log itself can't be used to store
@@ -189,7 +210,7 @@ exports.updateMarketStatus = asyncHandler(async (req, res) => {
       action: "INDIAN_MARKET_STATUS_CHANGED",
       targetType: "MARKET_IN",
       targetLabel: "Indian Market (NSE/BSE)",
-      details: `Indian Market (NSE/BSE) set to TIMED_OPEN until ${settings.marketOverrideUntilIN.toISOString()}`,
+      details: `Indian Market (NSE/BSE) set to TIMED_OPEN until ${formatIST(settings.marketOverrideUntilIN)}`,
     });
   } else if (marketOpenIN !== undefined && wasOpenIN !== marketOpenIN) {
     await logAdminAction(req, {
@@ -205,7 +226,7 @@ exports.updateMarketStatus = asyncHandler(async (req, res) => {
       action: "US_MARKET_STATUS_CHANGED",
       targetType: "MARKET_US",
       targetLabel: "US Market (NYSE/Nasdaq)",
-      details: `US Market (NYSE/Nasdaq) set to TIMED_OPEN until ${settings.marketOverrideUntilUS.toISOString()}`,
+      details: `US Market (NYSE/Nasdaq) set to TIMED_OPEN until ${formatIST(settings.marketOverrideUntilUS)}`,
     });
   } else if (marketOpenUS !== undefined && wasOpenUS !== marketOpenUS) {
     await logAdminAction(req, {

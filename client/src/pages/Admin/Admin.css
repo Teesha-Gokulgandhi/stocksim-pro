@@ -3110,11 +3110,49 @@ nav.admin-workspace-nav,
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.4px;
-  padding: 2px 7px;
+  padding: 3px 8px;
   border-radius: 4px;
   background: var(--bg-surface-alt);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+/* Audit Table Specific Styles */
+.admin-audit-table {
+  min-width: 960px;
+}
+
+.admin-audit-table th,
+.admin-audit-table td {
+  white-space: nowrap;
+}
+
+.admin-audit-table td.audit-when-col {
+  font-family: var(--font-mono, monospace);
+  font-size: 11.5px;
+  color: var(--text-primary);
+}
+
+.admin-audit-table td.audit-actor-col {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.admin-audit-table td.audit-action-col {
+  white-space: nowrap;
+}
+
+.admin-audit-table td.audit-target-col {
+  font-size: 12.5px;
+}
+
+.admin-audit-table td.audit-details-col {
+  white-space: normal;
+  word-break: break-word;
+  max-width: 440px;
+  font-size: 12px;
+  line-height: 1.4;
 }
 
 .sent-notifs-section {

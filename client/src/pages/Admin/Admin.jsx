@@ -50,6 +50,51 @@ function formatUSD(amount) {
   })}`;
 }
 
+export function formatIST(dateVal) {
+  if (!dateVal) return "—";
+  try {
+    const d = new Date(dateVal);
+    if (isNaN(d.getTime())) return String(dateVal);
+    const formatted = d.toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+    return formatted.replace(/\b([ap]m)\b/gi, (m) => m.toUpperCase()) + " IST";
+  } catch (e) {
+    return String(dateVal);
+  }
+}
+
+export function formatISTDate(dateVal) {
+  if (!dateVal) return "—";
+  try {
+    const d = new Date(dateVal);
+    if (isNaN(d.getTime())) return String(dateVal);
+    return d.toLocaleDateString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  } catch (e) {
+    return String(dateVal);
+  }
+}
+
+export function formatAuditDetails(details) {
+  if (!details || typeof details !== "string") return details || "—";
+  // Dynamically replace any ISO UTC timestamp (e.g. 2026-09-13T21:13:33.613Z) with clean IST format
+  return details.replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z/g, (isoStr) => {
+    return formatIST(isoStr);
+  });
+}
+
 const EXCHANGES = [
   {
     id: "NSE",
@@ -937,7 +982,7 @@ function Admin() {
                         {u.isActive ? "Active" : "Suspended"}
                       </span>
                     </td>
-                    <td className="user-date-cell">{new Date(u.createdAt).toLocaleDateString()}</td>
+                    <td className="user-date-cell">{formatISTDate(u.createdAt)}</td>
                     <td className="admin-actions-td">
                       <div className="admin-actions-wrap">
                         <button
@@ -2152,7 +2197,7 @@ function Admin() {
                       <strong>{n.title}</strong>
                       <p>{n.message}</p>
                       <span className="admin-subtext">
-                        {new Date(n.createdAt).toLocaleString()}
+                        {formatIST(n.createdAt)}
                       </span>
                     </div>
                     <button
@@ -2186,25 +2231,25 @@ function Admin() {
           </div>
 
           <div className="admin-table-wrap">
-            <table className="admin-table">
+            <table className="admin-table admin-audit-table">
               <thead>
                 <tr>
-                  <th>When</th>
-                  <th>Admin Actor</th>
-                  <th>Action</th>
-                  <th>Target</th>
+                  <th style={{ minWidth: 200 }}>When (IST)</th>
+                  <th style={{ minWidth: 180 }}>Admin Actor</th>
+                  <th style={{ minWidth: 160 }}>Action</th>
+                  <th style={{ minWidth: 180 }}>Target</th>
                   <th>Details</th>
                 </tr>
               </thead>
               <tbody>
                 {auditLogs.map((log) => (
                   <tr key={log._id}>
-                    <td>{new Date(log.createdAt).toLocaleString()}</td>
-                    <td>{log.actorEmail}</td>
-                    <td>
+                    <td className="audit-when-col">{formatIST(log.createdAt)}</td>
+                    <td className="audit-actor-col">{log.actorEmail || "System Admin"}</td>
+                    <td className="audit-action-col">
                       <span className="audit-action-tag">{log.action.replaceAll("_", " ")}</span>
                     </td>
-                    <td>
+                    <td className="audit-target-col">
                       <strong>
                         {log.targetLabel ||
                           ({
@@ -2214,7 +2259,7 @@ function Admin() {
                           }[log.targetType] || "—")}
                       </strong>
                     </td>
-                    <td>{log.details}</td>
+                    <td className="audit-details-col">{formatAuditDetails(log.details)}</td>
                   </tr>
                 ))}
                 {auditLogs.length === 0 && (
@@ -2277,7 +2322,7 @@ function Admin() {
                         {detailUser.user.isActive ? "Active" : "Suspended"}
                       </span>
                     </div>
-                    <p className="admin-subtext">{detailUser.user.email} • Joined: {new Date(detailUser.user.createdAt).toLocaleDateString()}</p>
+                    <p className="admin-subtext">{detailUser.user.email} • Joined: {formatISTDate(detailUser.user.createdAt)}</p>
                   </div>
 
                   {/* Market Switcher in Modal */}
@@ -2466,7 +2511,7 @@ function Admin() {
                                   const symFmt = isTxUS ? formatUSD : formatINR;
                                   return (
                                     <tr key={t._id}>
-                                      <td className="time-col">{new Date(t.createdAt).toLocaleString()}</td>
+                                      <td className="time-col">{formatIST(t.createdAt)}</td>
                                       <td><strong>{t.symbol}</strong></td>
                                       <td>
                                         <span className={`side-badge ${t.type.toLowerCase()}`}>
