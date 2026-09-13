@@ -1540,15 +1540,15 @@ nav.admin-workspace-nav,
 }
 
 .admin-groww-networth {
-  font-size: 28px;
-  font-weight: 900;
+  font-size: 26px;
+  font-weight: 800;
   color: var(--text-primary);
   font-feature-settings: "tnum";
 }
 
 .admin-groww-margin {
-  font-size: 24px; font-weight: 700; letter-spacing: -0.03em;
-  font-weight: 900;
+  font-size: 26px;
+  font-weight: 800;
   color: #2563eb;
   font-feature-settings: "tnum";
 }
@@ -1557,7 +1557,7 @@ nav.admin-workspace-nav,
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-secondary);
   flex-wrap: wrap;
 }

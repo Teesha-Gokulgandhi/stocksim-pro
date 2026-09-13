@@ -9,12 +9,14 @@
   margin: 0 auto;
 }
 
-/* ── Uniform Page Header ── */
+/* ── Uniform Page Header Across All Pages ── */
 .page-header,
 .txn-page-header,
 .portfolio-header,
 .watchlist-header,
-.admin-header {
+.admin-header,
+.market-hub-header,
+.groww-hero-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -27,23 +29,91 @@
 .txn-page-header h1,
 .portfolio-header h1,
 .watchlist-header h1,
-.admin-header h1 {
+.admin-header h1,
+.groww-page-title,
+.hub-title,
+.market-header h1,
+.settings-header h1,
+.profile-header h1,
+.replay-header h1 {
   font-size: var(--fs-page-title, 24px) !important;
   font-weight: 700 !important;
   letter-spacing: -0.03em !important;
   color: var(--text-primary) !important;
   margin: 0 !important;
-  line-height: 1.2 !important;
+  line-height: 1.25 !important;
 }
 
 .page-header p,
 .txn-page-header p,
 .portfolio-header p,
 .watchlist-header p,
-.admin-header p {
+.admin-header p,
+.groww-page-subtitle,
+.hub-sub,
+.settings-subtext,
+.admin-subtext {
   color: var(--text-secondary) !important;
   font-size: var(--fs-body, 13px) !important;
   margin: 4px 0 0 0 !important;
+  line-height: 1.4 !important;
+}
+
+/* ── Unified Section & Card Headings ── */
+.card h2,
+.institutional-card h2,
+.admin-card h2,
+.admin-card-top h2,
+.groww-card-title,
+.portfolio-card h2,
+.portfolio-card-header h2,
+.txn-card-header h2,
+.watchlist-card-header h2,
+.section-header h2 {
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.3 !important;
+}
+
+.card h3,
+.institutional-card h3,
+.admin-card h3,
+.groww-sub-title,
+.portfolio-card h3,
+.txn-card-header h3,
+.admin-modal-sec-header h3 {
+  font-size: 14.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.015em !important;
+  line-height: 1.3 !important;
+}
+
+/* ── Unified Table Typography Scale ── */
+.groww-holdings-table th,
+.groww-orders-table th,
+.transactions-table th,
+.admin-table th,
+.admin-modal-table th,
+.holdings-table th,
+.watchlist-table th,
+.leaderboard-table th {
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  line-height: 1.3 !important;
+}
+
+.groww-holdings-table td,
+.groww-orders-table td,
+.transactions-table td,
+.admin-table td,
+.admin-modal-table td,
+.holdings-table td,
+.watchlist-table td,
+.leaderboard-table td {
+  font-size: 13px !important;
   line-height: 1.4 !important;
 }
 
