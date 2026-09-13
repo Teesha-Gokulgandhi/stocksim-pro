@@ -1137,6 +1137,13 @@ nav.admin-workspace-nav,
   flex-shrink: 0;
 }
 
+.action-btn:disabled {
+  opacity: 0.4 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  transform: none !important;
+}
+
 /* View button */
 .action-btn.view {
   color: #2563eb;

@@ -632,7 +632,7 @@ exports.deleteUser = asyncHandler(async (req, res) => {
 
 exports.resetUserBalance = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { balance, balanceUSD } = req.body;
+  const { balance, balanceUSD, resetHoldings } = req.body;
 
   const update = {};
   if (balance !== undefined) update.balance = balance;
@@ -641,9 +641,14 @@ exports.resetUserBalance = asyncHandler(async (req, res) => {
   const user = await User.findByIdAndUpdate(id, update, { new: true });
   if (!user) throw new ApiError(404, "User not found");
 
+  if (resetHoldings) {
+    await Holding.deleteMany({ user: id });
+  }
+
   const detailsList = [];
   if (balance !== undefined) detailsList.push(`INR balance reset to ₹${balance.toLocaleString("en-IN")}`);
   if (balanceUSD !== undefined) detailsList.push(`USD balance reset to $${balanceUSD.toLocaleString("en-US")}`);
+  if (resetHoldings) detailsList.push("all stock positions cleared/reset");
 
   await logAdminAction(req, {
     action: "USER_BALANCE_RESET",

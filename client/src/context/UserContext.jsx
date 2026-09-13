@@ -48,6 +48,33 @@ export function UserProvider({ children }) {
 
   useEffect(() => {
     refreshUser();
+
+    // Re-fetch profile whenever window gains focus (e.g. switching back to tab)
+    const onFocus = () => {
+      refreshUser();
+    };
+    window.addEventListener("focus", onFocus);
+
+    // Refresh on trade execution or explicit app event
+    const onTrade = () => {
+      refreshUser();
+    };
+    window.addEventListener("stocksim:trade-executed", onTrade);
+    window.addEventListener("stocksim:user-refresh", onTrade);
+
+    // Background poll every 20 seconds so balances stay synchronized
+    const timer = setInterval(() => {
+      if (localStorage.getItem("token")) {
+        refreshUser();
+      }
+    }, 20000);
+
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener("stocksim:trade-executed", onTrade);
+      window.removeEventListener("stocksim:user-refresh", onTrade);
+      clearInterval(timer);
+    };
   }, [refreshUser]);
 
   return (

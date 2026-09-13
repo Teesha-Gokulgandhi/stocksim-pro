@@ -62,8 +62,9 @@ function QuickTradeModal({ stock, isOpen, onClose, onTradeSuccess }) {
       setMode("BUY");
       fetchHolding();
       fetchMarketStatus();
+      if (refreshUser) refreshUser();
     }
-  }, [isOpen, stock?.symbol, stock?.currentPrice, fetchHolding, fetchMarketStatus]);
+  }, [isOpen, stock?.symbol, stock?.currentPrice, fetchHolding, fetchMarketStatus, refreshUser]);
 
   const ownedQuantity = holding?.quantity || 0;
 

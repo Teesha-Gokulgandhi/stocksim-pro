@@ -199,6 +199,7 @@ function Admin() {
   const [editingStockId, setEditingStockId] = useState(null);
   const [savingStock, setSavingStock] = useState(false);
   const [stockSuccess, setStockSuccess] = useState("");
+  const [processingUserId, setProcessingUserId] = useState(null);
 
   const fetchUsers = async (searchTerm = search) => {
     try {
@@ -614,29 +615,38 @@ function Admin() {
   };
 
   const toggleUserRole = async (user) => {
+    if (processingUserId) return;
+    setProcessingUserId(user._id);
     const nextRole = user.role === "admin" ? "user" : "admin";
     setActionError("");
     try {
       await API.put(`/admin/users/${user._id}/role`, { role: nextRole });
-      fetchUsers();
+      await fetchUsers();
       fetchAuditLog();
     } catch (error) {
       setActionError(error.response?.data?.message || "Failed to update role");
+    } finally {
+      setTimeout(() => setProcessingUserId(null), 500);
     }
   };
 
   const toggleUserStatus = async (user) => {
+    if (processingUserId) return;
+    setProcessingUserId(user._id);
     setActionError("");
     try {
       await API.put(`/admin/users/${user._id}/status`, { isActive: !user.isActive });
-      fetchUsers();
+      await fetchUsers();
       fetchAuditLog();
     } catch (error) {
       setActionError(error.response?.data?.message || "Failed to update status");
+    } finally {
+      setTimeout(() => setProcessingUserId(null), 500);
     }
   };
 
   const handleDeleteUser = async (user) => {
+    if (processingUserId) return;
     if (user.email === "admin@stocksim.com") {
       setActionError("Cannot delete the primary System Admin account");
       return;
@@ -644,14 +654,17 @@ function Admin() {
     if (!window.confirm(`Permanently delete user ${user.name} (${user.email}) and all active trades?`)) {
       return;
     }
+    setProcessingUserId(user._id);
     setActionError("");
     try {
       await API.delete(`/admin/users/${user._id}`);
-      fetchUsers();
+      await fetchUsers();
       fetchAdminLeaderboard();
       fetchAuditLog();
     } catch (error) {
       setActionError(error.response?.data?.message || "Failed to delete user");
+    } finally {
+      setTimeout(() => setProcessingUserId(null), 500);
     }
   };
 
@@ -669,14 +682,15 @@ function Admin() {
   };
 
   const resetBalance = async (user) => {
+    if (processingUserId) return;
     const choice = window.prompt(
       `Reset virtual margin for ${user.email}:\n` +
       `Current: ${formatINR(user.balance)} INR • ${formatUSD(user.balanceUSD ?? 10000)} USD\n\n` +
       `Options:\n` +
-      `• Type 'INR <amount>' (e.g. INR 100000) to reset Indian margin\n` +
+      `• Type 'INR <amount>' (e.g. INR 1000000) to reset Indian margin\n` +
       `• Type 'USD <amount>' (e.g. USD 10000) to reset US margin\n` +
       `• Or enter a plain number to set INR:`,
-      "INR 100000"
+      "INR 1000000"
     );
     if (choice === null) return; // cancelled
     const trimmed = choice.trim();
@@ -700,13 +714,26 @@ function Admin() {
       payload = { balance: amt };
     }
 
+    // Ask if previous stock positions should be cleared for a completely fresh start
+    const wipeHoldings = window.confirm(
+      `Do you also want to clear all existing stock holdings for ${user.email} so they start completely fresh?\n\n` +
+      `• Click OK to CLEAR all stock holdings (invested becomes ₹0 / $0).\n` +
+      `• Click Cancel to KEEP their existing stocks and only adjust cash margin.`
+    );
+    if (wipeHoldings) {
+      payload.resetHoldings = true;
+    }
+
+    setProcessingUserId(user._id);
     setActionError("");
     try {
       await API.put(`/admin/users/${user._id}/balance`, payload);
-      fetchUsers();
+      await fetchUsers();
       fetchAuditLog();
     } catch (error) {
       setActionError(error.response?.data?.message || "Failed to reset balance");
+    } finally {
+      setTimeout(() => setProcessingUserId(null), 500);
     }
   };
 
@@ -906,6 +933,7 @@ function Admin() {
                         type="button"
                         className="action-btn view"
                         onClick={() => openUserDetail(u)}
+                        disabled={processingUserId === u._id}
                         title="View Full Portfolio & Transactions"
                       >
                         <FiEye /> View
@@ -914,6 +942,7 @@ function Admin() {
                         type="button"
                         className="action-btn reset"
                         onClick={() => resetBalance(u)}
+                        disabled={processingUserId === u._id}
                         title="Reset Virtual Margin"
                       >
                         <FiRefreshCw /> Reset
@@ -922,14 +951,16 @@ function Admin() {
                         type="button"
                         className={`action-btn role ${u.role === "admin" ? "demote" : "promote"}`}
                         onClick={() => toggleUserRole(u)}
+                        disabled={processingUserId === u._id}
                         title={u.role === "admin" ? "Demote from Admin" : "Grant Admin Privileges"}
                       >
-                        <FiShield /> {u.role === "admin" ? "Demote" : "Admin"}
+                        <FiShield /> {processingUserId === u._id ? "..." : (u.role === "admin" ? "Demote" : "Admin")}
                       </button>
                       <button
                         type="button"
                         className={`action-btn ${u.isActive ? "suspend" : "reactivate"}`}
                         onClick={() => toggleUserStatus(u)}
+                        disabled={processingUserId === u._id}
                         title={u.isActive ? "Suspend Access" : "Reactivate Access"}
                       >
                         {u.isActive ? <FiAlertTriangle /> : <FiCheckCircle />}
@@ -940,6 +971,7 @@ function Admin() {
                           type="button"
                           className="action-btn delete"
                           onClick={() => handleDeleteUser(u)}
+                          disabled={processingUserId === u._id}
                           title="Delete User & Positions"
                         >
                           <FiTrash2 />
@@ -1005,16 +1037,7 @@ function Admin() {
           {/* Header Bar */}
           <div className="listing-console-header">
             <div className="listing-title-group">
-              <div className="listing-badge-row">
-                <span className="listing-admin-pill">
-                  <FiPlusCircle /> Super Admin Listing Desk
-                </span>
-                <span className="listing-version-tag">Production Engine</span>
-              </div>
               <h2>{editingStockId ? "Edit Listed Equity" : "List New Stock on Exchange"}</h2>
-              <p className="admin-subtext">
-                Provision new equities into the live market simulator. Verify tickers with real-time Yahoo Finance feeds to auto-populate quotes, sector classification, and launch instant simulated trading.
-              </p>
             </div>
 
             <div className="listing-header-aside">

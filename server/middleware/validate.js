@@ -143,8 +143,9 @@ const updateUserStatusSchema = z.object({
 const resetBalanceSchema = z.object({
   balance: z.coerce.number().min(0, "Balance can't be negative").max(10000000, "Balance is too large").optional(),
   balanceUSD: z.coerce.number().min(0, "Balance can't be negative").max(1000000, "Balance is too large").optional(),
-}).refine((data) => data.balance !== undefined || data.balanceUSD !== undefined, {
-  message: "Either balance or balanceUSD must be provided",
+  resetHoldings: z.boolean().optional(),
+}).refine((data) => data.balance !== undefined || data.balanceUSD !== undefined || data.resetHoldings !== undefined, {
+  message: "Provide at least one of balance, balanceUSD, or resetHoldings",
 });
 
 // Query params arrive as strings (or, if someone crafts a weird query
