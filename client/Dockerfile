@@ -13,6 +13,9 @@ COPY . .
 ARG VITE_API_URL=/api
 ENV VITE_API_URL=$VITE_API_URL
 
+ARG VITE_GOOGLE_CLIENT_ID=77922463370-v6c47s8dfd2bdcaek49smmlnv1l4m212.apps.googleusercontent.com
+ENV VITE_GOOGLE_CLIENT_ID=$VITE_GOOGLE_CLIENT_ID
+
 RUN npm run build
 
 # Stage 2: Serve with lightweight Nginx

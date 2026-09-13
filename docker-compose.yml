@@ -43,6 +43,7 @@ services:
       dockerfile: Dockerfile
       args:
         - VITE_API_URL=/api
+        - VITE_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-77922463370-v6c47s8dfd2bdcaek49smmlnv1l4m212.apps.googleusercontent.com}
     container_name: stocksim-client
     restart: unless-stopped
     ports:
