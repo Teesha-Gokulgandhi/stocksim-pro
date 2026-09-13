@@ -12,8 +12,6 @@ import {
   FiChevronLeft,
   FiChevronRight,
   FiBarChart2,
-  FiLayers,
-  FiShuffle,
 } from "react-icons/fi";
 
 import { useEffect } from "react";
@@ -125,24 +123,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen, sidebarCollapsed, toggleCollapse
               >
                 <FiBarChart2 />
                 {!isCollapsed && <span>Performance Cockpit</span>}
-              </a>
-
-              <a
-                href="#comparison"
-                onClick={closeSidebar}
-                title="Indian vs US Comparison"
-              >
-                <FiShuffle />
-                {!isCollapsed && <span>Market Comparison</span>}
-              </a>
-
-              <a
-                href="#allocation"
-                onClick={closeSidebar}
-                title="Cross-Market Asset Allocation"
-              >
-                <FiLayers />
-                {!isCollapsed && <span>Asset Allocation</span>}
               </a>
             </>
           ) : (
