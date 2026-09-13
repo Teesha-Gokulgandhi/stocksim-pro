@@ -29,7 +29,7 @@ services:
       - JWT_SECRET=${JWT_SECRET:-dev_stocksim_secret_key_1234567890}
       - JWT_EXPIRES_IN=7d
       - QUOTE_CACHE_TTL_SECONDS=60
-      - CLIENT_ORIGIN=${CLIENT_ORIGIN:-http://localhost,http://localhost:80,http://localhost:5173}
+      - CLIENT_ORIGIN=${CLIENT_ORIGIN:-http://localhost,http://localhost:80,http://localhost:5173,http://stocksimpro.in,https://stocksimpro.in}
       - TRUST_PROXY_HOPS=1
     depends_on:
       - mongo
