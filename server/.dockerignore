@@ -5,3 +5,6 @@ npm-debug.log
 !.env.example
 .git
 .gitignore
+*.md
+scripts/
+*.ps1

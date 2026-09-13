@@ -167,4 +167,3 @@ exports.getStockHistory = asyncHandler(async (req, res) => {
     data,
   });
 });
-
