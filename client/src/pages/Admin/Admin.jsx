@@ -971,18 +971,18 @@ function Admin() {
                         className="action-btn add-funds"
                         onClick={() => handleAddFunds(u)}
                         disabled={processingUserId === u._id}
-                        title="Add Funds / Margin (keeps stock holdings and transactions intact)"
+                        title="Add Funds / Virtual Margin (keeps stocks & trade history)"
                       >
-                        <FiPlusCircle /> Add Funds
+                        <FiPlusCircle /> +Funds
                       </button>
                       <button
                         type="button"
                         className="action-btn reset-atoz"
                         onClick={() => handleResetAtoZ(u)}
                         disabled={processingUserId === u._id}
-                        title="Full Reset A to Z (wipe holdings, transactions, and restore defaults)"
+                        title="Full Reset A-to-Z (wipe holdings, transactions, and restore defaults)"
                       >
-                        <FiRefreshCw /> Reset A-Z
+                        <FiRefreshCw /> Reset
                       </button>
                       <button
                         type="button"
@@ -995,21 +995,20 @@ function Admin() {
                       </button>
                       <button
                         type="button"
-                        className={`action-btn ${u.isActive ? "suspend" : "reactivate"}`}
+                        className={`action-btn icon-only ${u.isActive ? "suspend" : "reactivate"}`}
                         onClick={() => toggleUserStatus(u)}
                         disabled={processingUserId === u._id}
                         title={u.isActive ? "Suspend Access" : "Reactivate Access"}
                       >
                         {u.isActive ? <FiAlertTriangle /> : <FiCheckCircle />}
-                        {u.isActive ? "Suspend" : "Restore"}
                       </button>
                       {u.email !== "admin@stocksim.com" && (
                         <button
                           type="button"
-                          className="action-btn delete"
+                          className="action-btn delete icon-only"
                           onClick={() => handleDeleteUser(u)}
                           disabled={processingUserId === u._id}
-                          title="Delete User & Positions"
+                          title="Delete User Permanently"
                         >
                           <FiTrash2 />
                         </button>
