@@ -765,7 +765,7 @@ function Admin() {
     }
   };
 
-  const handleResetAtoZ = (user) => {
+  const handleResetAccount = (user) => {
     setResetModalUser(user);
     setActionError("");
   };
@@ -1006,7 +1006,7 @@ function Admin() {
                         <button
                           type="button"
                           className="action-btn reset-atoz"
-                          onClick={() => handleResetAtoZ(u)}
+                          onClick={() => handleResetAccount(u)}
                           disabled={processingUserId === u._id}
                           title="Reset Account to Starting Defaults"
                         >
@@ -2426,10 +2426,11 @@ function Admin() {
                               type="button"
                               className="admin-reset-margin-btn"
                               onClick={() => {
-                                handleResetAtoZ(detailUser.user);
+                                handleResetAccount(detailUser.user);
                               }}
+                              title="Reset account to standard initial capital (₹1L / $10k)"
                             >
-                              <FiRefreshCw /> Reset A-Z
+                              <FiRefreshCw /> Reset Account
                             </button>
                           </div>
                         </div>
