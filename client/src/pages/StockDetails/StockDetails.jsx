@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { FiArrowLeft, FiTrendingUp } from "react-icons/fi";
+import { FiArrowLeft } from "react-icons/fi";
 
 import API from "../../services/api";
 import { useUser } from "../../context/UserContext";
@@ -13,7 +13,6 @@ import StockPriceChart from "../../components/charts/StockPriceChart";
 import PageLoader from "../../components/common/PageLoader";
 import MarketStatusBanner from "../../components/MarketStatusBanner";
 import StockRealAnalytics from "../../components/stock/StockRealAnalytics";
-import QuickTradeModal from "../../components/trade/QuickTradeModal";
 
 import "./StockDetails.css";
 
@@ -26,7 +25,6 @@ function StockDetails() {
   const [holding, setHolding] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-  const [isTradeOpen, setIsTradeOpen] = useState(false);
 
   const isUSD =
     stock?.currency === "USD" ||
@@ -102,14 +100,6 @@ function StockDetails() {
         <button className="back-btn" onClick={() => navigate("/market")}>
           <FiArrowLeft /> Back to Market
         </button>
-
-        <button
-          type="button"
-          className="stock-trade-action-btn"
-          onClick={() => setIsTradeOpen(true)}
-        >
-          <FiTrendingUp /> Trade {stock.symbol}
-        </button>
       </div>
 
       <div className="details-grid">
@@ -138,18 +128,6 @@ function StockDetails() {
         holding={holding}
         setHolding={setHolding}
         isUSD={isUSD}
-      />
-
-      {/* Institutional Trade Modal Triggered from Header */}
-      <QuickTradeModal
-        stock={stock}
-        isOpen={isTradeOpen}
-        onClose={() => setIsTradeOpen(false)}
-        onTradeSuccess={() => {
-          fetchStock();
-          fetchHolding();
-          refreshUser();
-        }}
       />
     </div>
   );
