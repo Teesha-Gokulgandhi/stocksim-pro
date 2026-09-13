@@ -200,6 +200,10 @@ function Admin() {
   const [savingStock, setSavingStock] = useState(false);
   const [stockSuccess, setStockSuccess] = useState("");
   const [processingUserId, setProcessingUserId] = useState(null);
+  const [resetModalUser, setResetModalUser] = useState(null);
+  const [addFundsModalUser, setAddFundsModalUser] = useState(null);
+  const [addFundsCurrency, setAddFundsCurrency] = useState("INR");
+  const [addFundsAmount, setAddFundsAmount] = useState("1000000");
 
   const fetchUsers = async (searchTerm = search) => {
     try {
@@ -681,50 +685,34 @@ function Admin() {
     }
   };
 
-  const handleAddFunds = async (user) => {
-    if (processingUserId) return;
-    const choice = window.prompt(
-      `ADD VIRTUAL FUNDS / MARGIN for ${user.name || user.email}\n` +
-      `Current: ${formatINR(user.balance || 0)} INR • ${formatUSD(user.balanceUSD ?? 10000)} USD\n\n` +
-      `Enter amount to ADD to margin:\n` +
-      `• For INR: Enter amount (e.g. 1000000) or 'INR <amount>'\n` +
-      `• For USD: Type 'USD <amount>' (e.g. USD 10000)\n\n` +
-      `Note: Existing stock positions and trade history will NOT be affected.`,
-      "1000000"
-    );
-    if (choice === null) return;
-    const trimmed = choice.trim();
-    if (!trimmed) return;
+  const handleAddFunds = (user) => {
+    setAddFundsModalUser(user);
+    setAddFundsCurrency("INR");
+    setAddFundsAmount("1000000");
+    setActionError("");
+  };
 
-    let payload;
-    if (trimmed.toUpperCase().startsWith("USD")) {
-      const amt = Number(trimmed.slice(3).trim());
-      if (Number.isNaN(amt) || amt <= 0) {
-        setActionError("Enter a valid positive number for USD funds");
-        return;
-      }
-      payload = { addBalanceUSD: amt };
-    } else {
-      const cleanStr = trimmed.toUpperCase().startsWith("INR") ? trimmed.slice(3).trim() : trimmed;
-      const amt = Number(cleanStr);
-      if (Number.isNaN(amt) || amt <= 0) {
-        setActionError("Enter a valid positive number for INR funds");
-        return;
-      }
-      payload = { addBalance: amt };
+  const confirmAddFunds = async () => {
+    if (!addFundsModalUser || processingUserId) return;
+    const amt = Number(addFundsAmount);
+    if (Number.isNaN(amt) || amt <= 0) {
+      setActionError("Please enter a valid positive number for margin");
+      return;
     }
 
-    setProcessingUserId(user._id);
+    setProcessingUserId(addFundsModalUser._id);
     setActionError("");
     try {
-      await API.put(`/admin/users/${user._id}/balance`, payload);
+      const payload = addFundsCurrency === "USD" ? { addBalanceUSD: amt } : { addBalance: amt };
+      await API.put(`/admin/users/${addFundsModalUser._id}/balance`, payload);
       await fetchUsers();
       await fetchAdminLeaderboard();
       fetchAuditLog();
-      if (detailUser && detailUser.user?._id === user._id) {
-        const { data } = await API.get(`/admin/users/${user._id}`);
+      if (detailUser && detailUser.user?._id === addFundsModalUser._id) {
+        const { data } = await API.get(`/admin/users/${addFundsModalUser._id}`);
         setDetailUser(data);
       }
+      setAddFundsModalUser(null);
     } catch (error) {
       setActionError(error.response?.data?.message || "Failed to add funds");
     } finally {
@@ -732,30 +720,24 @@ function Admin() {
     }
   };
 
-  const handleResetAtoZ = async (user) => {
-    if (processingUserId) return;
-    const confirmed = window.confirm(
-      `⚠️ FULL A-TO-Z ACCOUNT RESET for ${user.name || user.email} (${user.email})\n\n` +
-      `This will completely wipe and reset their trading account:\n` +
-      `1. Clear all active stock holdings (invested becomes ₹0 / $0)\n` +
-      `2. Clear all trade execution & transaction history\n` +
-      `3. Cancel all pending Take-Profit & Stop-Loss orders\n` +
-      `4. Restore starting cash balance to ₹1,00,000 INR & $10,000 USD\n` +
-      `5. Reset competition P&L and ROI to 0.00%\n\n` +
-      `Are you sure you want to proceed with full Reset A to Z?`
-    );
-    if (!confirmed) return;
+  const handleResetAtoZ = (user) => {
+    setResetModalUser(user);
+    setActionError("");
+  };
 
-    setProcessingUserId(user._id);
+  const confirmResetAccount = async () => {
+    if (!resetModalUser || processingUserId) return;
+    setProcessingUserId(resetModalUser._id);
     setActionError("");
     try {
-      await API.put(`/admin/users/${user._id}/balance`, { fullReset: true });
+      await API.put(`/admin/users/${resetModalUser._id}/balance`, { fullReset: true });
       await fetchUsers();
       await fetchAdminLeaderboard();
       fetchAuditLog();
-      if (detailUser && detailUser.user?._id === user._id) {
+      if (detailUser && detailUser.user?._id === resetModalUser._id) {
         setDetailUser(null);
       }
+      setResetModalUser(null);
     } catch (error) {
       setActionError(error.response?.data?.message || "Failed to reset account");
     } finally {
@@ -2512,6 +2494,167 @@ function Admin() {
                 })()}
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* -------- Reset Trading Account Modal -------- */}
+      {resetModalUser && (
+        <div className="admin-modal-overlay" onClick={() => setResetModalUser(null)}>
+          <div className="admin-confirm-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="admin-confirm-header">
+              <div className="admin-confirm-icon-wrap warning">
+                <FiAlertTriangle size={22} />
+              </div>
+              <div>
+                <h3>Reset Trading Account</h3>
+                <p className="admin-subtext">Restore standard initial capital and reset portfolio metrics</p>
+              </div>
+            </div>
+
+            <div className="admin-confirm-body">
+              <div className="admin-confirm-user-badge">
+                <strong>{resetModalUser.name || "Investor"}</strong>
+                <span>{resetModalUser.email}</span>
+              </div>
+
+              <p className="admin-confirm-desc">
+                This action restores this account back to default simulated trading parameters:
+              </p>
+
+              <ul className="admin-confirm-list">
+                <li>
+                  <FiCheckCircle className="check-icon" />
+                  <span><strong>Starting Capital:</strong> Restored to <strong>₹1,00,000 INR</strong> & <strong>$10,000 USD</strong></span>
+                </li>
+                <li>
+                  <FiCheckCircle className="check-icon" />
+                  <span><strong>Holdings:</strong> All active stock positions will be cleared (invested becomes ₹0)</span>
+                </li>
+                <li>
+                  <FiCheckCircle className="check-icon" />
+                  <span><strong>Trade History:</strong> Execution transactions and open orders will be cleared</span>
+                </li>
+                <li>
+                  <FiCheckCircle className="check-icon" />
+                  <span><strong>Competition Stats:</strong> Overall P&L and ROI reset to <strong>0.00%</strong></span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="admin-confirm-actions">
+              <button
+                type="button"
+                className="admin-cancel-btn"
+                onClick={() => setResetModalUser(null)}
+                disabled={processingUserId === resetModalUser._id}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="admin-danger-btn"
+                onClick={confirmResetAccount}
+                disabled={processingUserId === resetModalUser._id}
+              >
+                {processingUserId === resetModalUser._id ? "Resetting..." : "Confirm Account Reset"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* -------- Add Funds / Virtual Margin Modal -------- */}
+      {addFundsModalUser && (
+        <div className="admin-modal-overlay" onClick={() => setAddFundsModalUser(null)}>
+          <div className="admin-confirm-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="admin-confirm-header">
+              <div className="admin-confirm-icon-wrap success">
+                <FiPlusCircle size={22} />
+              </div>
+              <div>
+                <h3>Add Virtual Funds</h3>
+                <p className="admin-subtext">Credit cash margin to investor (stocks and trade history remain untouched)</p>
+              </div>
+            </div>
+
+            <div className="admin-confirm-body">
+              <div className="admin-confirm-user-badge">
+                <strong>{addFundsModalUser.name || "Investor"}</strong>
+                <span>{addFundsModalUser.email}</span>
+              </div>
+
+              <div className="admin-modal-field">
+                <label className="admin-modal-label">Select Market Currency</label>
+                <div className="admin-currency-toggle">
+                  <button
+                    type="button"
+                    className={`curr-pill-btn ${addFundsCurrency === "INR" ? "active inr" : ""}`}
+                    onClick={() => setAddFundsCurrency("INR")}
+                  >
+                    🇮🇳 Indian Rupee (INR ₹)
+                  </button>
+                  <button
+                    type="button"
+                    className={`curr-pill-btn ${addFundsCurrency === "USD" ? "active usd" : ""}`}
+                    onClick={() => setAddFundsCurrency("USD")}
+                  >
+                    🇺🇸 US Dollar (USD $)
+                  </button>
+                </div>
+              </div>
+
+              <div className="admin-modal-field">
+                <label className="admin-modal-label">
+                  Amount to Credit ({addFundsCurrency === "INR" ? "₹" : "$"})
+                </label>
+                <input
+                  type="number"
+                  className="admin-modal-num-input"
+                  min="1"
+                  placeholder={addFundsCurrency === "INR" ? "e.g. 1000000" : "e.g. 5000"}
+                  value={addFundsAmount}
+                  onChange={(e) => setAddFundsAmount(e.target.value)}
+                />
+              </div>
+
+              <div className="quick-amount-pills">
+                {addFundsCurrency === "INR" ? (
+                  <>
+                    <button type="button" onClick={() => setAddFundsAmount("100000")}>+₹1 Lakh</button>
+                    <button type="button" onClick={() => setAddFundsAmount("500000")}>+₹5 Lakhs</button>
+                    <button type="button" onClick={() => setAddFundsAmount("1000000")}>+₹10 Lakhs</button>
+                    <button type="button" onClick={() => setAddFundsAmount("2500000")}>+₹25 Lakhs</button>
+                  </>
+                ) : (
+                  <>
+                    <button type="button" onClick={() => setAddFundsAmount("1000")}>+$1,000</button>
+                    <button type="button" onClick={() => setAddFundsAmount("5000")}>+$5,000</button>
+                    <button type="button" onClick={() => setAddFundsAmount("10000")}>+$10,000</button>
+                    <button type="button" onClick={() => setAddFundsAmount("25000")}>+$25,000</button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="admin-confirm-actions">
+              <button
+                type="button"
+                className="admin-cancel-btn"
+                onClick={() => setAddFundsModalUser(null)}
+                disabled={processingUserId === addFundsModalUser._id}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="admin-success-btn"
+                onClick={confirmAddFunds}
+                disabled={processingUserId === addFundsModalUser._id}
+              >
+                {processingUserId === addFundsModalUser._id ? "Adding..." : "Credit Funds to Margin"}
+              </button>
+            </div>
           </div>
         </div>
       )}

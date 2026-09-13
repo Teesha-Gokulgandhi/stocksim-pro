@@ -2,6 +2,7 @@ const User = require("../models/User");
 const Transaction = require("../models/Transaction");
 const Holding = require("../models/Holding");
 const Stock = require("../models/Stock");
+const TakeProfitStopLoss = require("../models/TakeProfitStopLoss");
 const AppSettings = require("../models/AppSettings");
 const AdminAuditLog = require("../models/AdminAuditLog");
 const asyncHandler = require("../middleware/asyncHandler");
