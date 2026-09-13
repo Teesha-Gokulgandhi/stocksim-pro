@@ -422,13 +422,18 @@ exports.getUsers = asyncHandler(async (req, res) => {
     const inrNetWorth = (u.balance || 0) + inrCurrent;
     const usdNetWorth = (u.balanceUSD ?? 10000) + usdCurrent;
 
+    const inrProfit = Math.round((inrCurrent - inrInvested) * 100) / 100;
+    const inrRoi = inrInvested > 0 ? Math.round(((inrCurrent - inrInvested) / inrInvested) * 10000) / 100 : 0;
+    const usdProfit = Math.round((usdCurrent - usdInvested) * 100) / 100;
+    const usdRoi = usdInvested > 0 ? Math.round(((usdCurrent - usdInvested) / usdInvested) * 10000) / 100 : 0;
+
     uObj.portfolioStats = {
       inr: {
         invested: inrInvested,
         currentHoldings: inrCurrent,
         netWorth: inrNetWorth,
-        profit: inrNetWorth - 100000,
-        roi: ((inrNetWorth - 100000) / 100000) * 100,
+        profit: inrProfit,
+        roi: inrRoi,
         utilization: Math.round((inrCurrent / (inrNetWorth || 1)) * 100),
         stocksCount: inCount,
       },
@@ -436,8 +441,8 @@ exports.getUsers = asyncHandler(async (req, res) => {
         invested: usdInvested,
         currentHoldings: usdCurrent,
         netWorth: usdNetWorth,
-        profit: usdNetWorth - 10000,
-        roi: ((usdNetWorth - 10000) / 10000) * 100,
+        profit: usdProfit,
+        roi: usdRoi,
         utilization: Math.round((usdCurrent / (usdNetWorth || 1)) * 100),
         stocksCount: usCount,
       },
@@ -523,22 +528,27 @@ exports.getUserDetail = asyncHandler(async (req, res) => {
   const inrNetWorth = inrCash + inrCurrent;
   const usdNetWorth = usdCash + usdCurrent;
 
+  const inrProfit = Math.round((inrCurrent - inrInvested) * 100) / 100;
+  const inrRoi = inrInvested > 0 ? Math.round(((inrCurrent - inrInvested) / inrInvested) * 10000) / 100 : 0;
+  const usdProfit = Math.round((usdCurrent - usdInvested) * 100) / 100;
+  const usdRoi = usdInvested > 0 ? Math.round(((usdCurrent - usdInvested) / usdInvested) * 10000) / 100 : 0;
+
   const portfolioSummary = {
     inr: {
       cash: inrCash,
       invested: inrInvested,
       currentHoldings: inrCurrent,
       totalNetWorth: inrNetWorth,
-      overallPL: inrNetWorth - 100000,
-      overallPLPercent: ((inrNetWorth - 100000) / 100000) * 100,
+      overallPL: inrProfit,
+      overallPLPercent: inrRoi,
     },
     usd: {
       cash: usdCash,
       invested: usdInvested,
       currentHoldings: usdCurrent,
       totalNetWorth: usdNetWorth,
-      overallPL: usdNetWorth - 10000,
-      overallPLPercent: ((usdNetWorth - 10000) / 10000) * 100,
+      overallPL: usdProfit,
+      overallPLPercent: usdRoi,
     },
   };
 
@@ -632,33 +642,74 @@ exports.deleteUser = asyncHandler(async (req, res) => {
 
 exports.resetUserBalance = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { balance, balanceUSD, resetHoldings } = req.body;
+  const { balance, balanceUSD, addBalance, addBalanceUSD, fullReset, resetHoldings } = req.body;
 
-  const update = {};
-  if (balance !== undefined) update.balance = balance;
-  if (balanceUSD !== undefined) update.balanceUSD = balanceUSD;
+  if (fullReset) {
+    const user = await User.findByIdAndUpdate(
+      id,
+      { balance: 100000, balanceUSD: 10000 },
+      { new: true }
+    );
+    if (!user) throw new ApiError(404, "User not found");
 
-  const user = await User.findByIdAndUpdate(id, update, { new: true });
+    await Promise.all([
+      Holding.deleteMany({ user: id }),
+      Transaction.deleteMany({ user: id }),
+      TakeProfitStopLoss.deleteMany({ user: id }),
+    ]);
+
+    await logAdminAction(req, {
+      action: "USER_BALANCE_RESET",
+      targetType: "USER",
+      targetId: user._id,
+      targetLabel: user.email,
+      details: "Full A-to-Z Account Reset: Holdings & transactions cleared, balance restored to ₹1,00,000 INR & $10,000 USD",
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: `Full A-to-Z reset complete for ${user.email}`,
+      user,
+    });
+  }
+
+  const user = await User.findById(id);
   if (!user) throw new ApiError(404, "User not found");
+
+  const detailsList = [];
+
+  if (addBalance !== undefined && addBalance > 0) {
+    user.balance = Math.max(0, (user.balance || 0) + Number(addBalance));
+    detailsList.push(`Added ₹${Number(addBalance).toLocaleString("en-IN")} INR cash margin (New balance: ₹${user.balance.toLocaleString("en-IN")})`);
+  } else if (balance !== undefined) {
+    user.balance = Number(balance);
+    detailsList.push(`INR margin set to ₹${user.balance.toLocaleString("en-IN")}`);
+  }
+
+  if (addBalanceUSD !== undefined && addBalanceUSD > 0) {
+    user.balanceUSD = Math.max(0, (user.balanceUSD ?? 10000) + Number(addBalanceUSD));
+    detailsList.push(`Added $${Number(addBalanceUSD).toLocaleString("en-US")} USD cash margin (New balance: $${user.balanceUSD.toLocaleString("en-US")})`);
+  } else if (balanceUSD !== undefined) {
+    user.balanceUSD = Number(balanceUSD);
+    detailsList.push(`USD margin set to $${user.balanceUSD.toLocaleString("en-US")}`);
+  }
+
+  await user.save();
 
   if (resetHoldings) {
     await Holding.deleteMany({ user: id });
+    detailsList.push("all stock positions cleared");
   }
-
-  const detailsList = [];
-  if (balance !== undefined) detailsList.push(`INR balance reset to ₹${balance.toLocaleString("en-IN")}`);
-  if (balanceUSD !== undefined) detailsList.push(`USD balance reset to $${balanceUSD.toLocaleString("en-US")}`);
-  if (resetHoldings) detailsList.push("all stock positions cleared/reset");
 
   await logAdminAction(req, {
     action: "USER_BALANCE_RESET",
     targetType: "USER",
     targetId: user._id,
     targetLabel: user.email,
-    details: detailsList.join(", ") || "Balance updated",
+    details: detailsList.join(", ") || "Margin updated",
   });
 
-  res.status(200).json({ success: true, message: "Balance updated successfully", user });
+  res.status(200).json({ success: true, message: "Margin updated successfully", user });
 });
 
 // ================= AUDIT LOG =================

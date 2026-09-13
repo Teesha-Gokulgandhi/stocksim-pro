@@ -1156,12 +1156,26 @@ nav.admin-workspace-nav,
   transform: translateY(-1px);
 }
 
-/* Reset button */
+/* Add Funds button */
+.action-btn.add-funds {
+  color: #059669;
+  background: rgba(5, 150, 105, 0.08);
+  border-color: rgba(5, 150, 105, 0.25);
+}
+.action-btn.add-funds:hover {
+  background: rgba(5, 150, 105, 0.18);
+  border-color: #059669;
+  transform: translateY(-1px);
+}
+
+/* Reset A-to-Z button */
+.action-btn.reset-atoz,
 .action-btn.reset {
   color: #d97706;
   background: rgba(217, 119, 6, 0.08);
   border-color: rgba(217, 119, 6, 0.25);
 }
+.action-btn.reset-atoz:hover,
 .action-btn.reset:hover {
   background: rgba(217, 119, 6, 0.18);
   border-color: #d97706;
@@ -1494,7 +1508,32 @@ nav.admin-workspace-nav,
 }
 
 .admin-groww-actions {
-  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.admin-add-funds-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(5, 150, 105, 0.1);
+  border: 1px solid rgba(5, 150, 105, 0.3);
+  color: #059669;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-add-funds-btn:hover {
+  background: rgba(5, 150, 105, 0.2);
+  border-color: #059669;
+  transform: translateY(-1px);
 }
 
 .admin-reset-margin-btn {
@@ -1513,8 +1552,10 @@ nav.admin-workspace-nav,
 }
 
 .admin-reset-margin-btn:hover {
-  border-color: #2563eb;
-  color: #2563eb;
+  border-color: #d97706;
+  color: #d97706;
+  background: rgba(217, 119, 6, 0.08);
+  transform: translateY(-1px);
 }
 
 /* Modal Sections & Table */

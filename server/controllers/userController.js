@@ -147,11 +147,23 @@ exports.changePassword = asyncHandler(async (req, res) => {
 });
 
 exports.getLeaderboard = asyncHandler(async (req, res) => {
-  const [users, holdings, allStocks] = await Promise.all([
+  const [users, holdings, allStocks, allSells] = await Promise.all([
     User.find({ isActive: true }),
     Holding.find({ quantity: { $gt: 0 } }),
     Stock.find({}),
+    Transaction.find({ type: "SELL" }, "user netPnl currency"),
   ]);
+
+  const userRealizedPnlMap = {};
+  allSells.forEach((tx) => {
+    const uId = tx.user.toString();
+    if (!userRealizedPnlMap[uId]) userRealizedPnlMap[uId] = { inr: 0, usd: 0 };
+    if (tx.currency === "USD") {
+      userRealizedPnlMap[uId].usd += (tx.netPnl || 0);
+    } else {
+      userRealizedPnlMap[uId].inr += (tx.netPnl || 0);
+    }
+  });
 
   const stockMap = {};
   allStocks.forEach((s) => {
@@ -207,14 +219,16 @@ exports.getLeaderboard = asyncHandler(async (req, res) => {
 
     const inrCash = u.balance || 0;
     const inrTotalNetWorth = inrCash + inrCurrent;
-    const inrProfit = inrTotalNetWorth - 100000;
-    const inrRoi = ((inrTotalNetWorth - 100000) / 100000) * 100;
+    const realizedInr = userRealizedPnlMap[u._id.toString()]?.inr || 0;
+    const inrProfit = Math.round(((inrCurrent - inrInvested) + realizedInr) * 100) / 100;
+    const inrRoi = inrInvested > 0 ? Math.round((inrProfit / inrInvested) * 10000) / 100 : 0;
     const inrUtil = Math.round((inrCurrent / (inrTotalNetWorth || 1)) * 100);
 
     const usdCash = u.balanceUSD ?? 10000;
     const usdTotalNetWorth = usdCash + usdCurrent;
-    const usdProfit = usdTotalNetWorth - 10000;
-    const usdRoi = ((usdTotalNetWorth - 10000) / 10000) * 100;
+    const realizedUsd = userRealizedPnlMap[u._id.toString()]?.usd || 0;
+    const usdProfit = Math.round(((usdCurrent - usdInvested) + realizedUsd) * 100) / 100;
+    const usdRoi = usdInvested > 0 ? Math.round((usdProfit / usdInvested) * 10000) / 100 : 0;
     const usdUtil = Math.round((usdCurrent / (usdTotalNetWorth || 1)) * 100);
 
     inrParticipants.push({

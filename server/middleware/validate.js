@@ -141,12 +141,24 @@ const updateUserStatusSchema = z.object({
 });
 
 const resetBalanceSchema = z.object({
-  balance: z.coerce.number().min(0, "Balance can't be negative").max(10000000, "Balance is too large").optional(),
-  balanceUSD: z.coerce.number().min(0, "Balance can't be negative").max(1000000, "Balance is too large").optional(),
+  balance: z.coerce.number().min(0, "Balance can't be negative").max(1000000000, "Balance is too large").optional(),
+  balanceUSD: z.coerce.number().min(0, "Balance can't be negative").max(100000000, "Balance is too large").optional(),
+  addBalance: z.coerce.number().min(0, "Added amount can't be negative").max(1000000000, "Amount is too large").optional(),
+  addBalanceUSD: z.coerce.number().min(0, "Added amount can't be negative").max(100000000, "Amount is too large").optional(),
+  fullReset: z.boolean().optional(),
   resetHoldings: z.boolean().optional(),
-}).refine((data) => data.balance !== undefined || data.balanceUSD !== undefined || data.resetHoldings !== undefined, {
-  message: "Provide at least one of balance, balanceUSD, or resetHoldings",
-});
+}).refine(
+  (data) =>
+    data.balance !== undefined ||
+    data.balanceUSD !== undefined ||
+    data.addBalance !== undefined ||
+    data.addBalanceUSD !== undefined ||
+    data.fullReset !== undefined ||
+    data.resetHoldings !== undefined,
+  {
+    message: "Provide at least one valid action (balance, addBalance, balanceUSD, addBalanceUSD, fullReset, or resetHoldings)",
+  }
+);
 
 // Query params arrive as strings (or, if someone crafts a weird query
 // string, potentially arrays/objects) — coerce and bound them here so

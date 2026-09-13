@@ -681,47 +681,37 @@ function Admin() {
     }
   };
 
-  const resetBalance = async (user) => {
+  const handleAddFunds = async (user) => {
     if (processingUserId) return;
     const choice = window.prompt(
-      `Reset virtual margin for ${user.email}:\n` +
-      `Current: ${formatINR(user.balance)} INR • ${formatUSD(user.balanceUSD ?? 10000)} USD\n\n` +
-      `Options:\n` +
-      `• Type 'INR <amount>' (e.g. INR 1000000) to reset Indian margin\n` +
-      `• Type 'USD <amount>' (e.g. USD 10000) to reset US margin\n` +
-      `• Or enter a plain number to set INR:`,
-      "INR 1000000"
+      `ADD VIRTUAL FUNDS / MARGIN for ${user.name || user.email}\n` +
+      `Current: ${formatINR(user.balance || 0)} INR • ${formatUSD(user.balanceUSD ?? 10000)} USD\n\n` +
+      `Enter amount to ADD to margin:\n` +
+      `• For INR: Enter amount (e.g. 1000000) or 'INR <amount>'\n` +
+      `• For USD: Type 'USD <amount>' (e.g. USD 10000)\n\n` +
+      `Note: Existing stock positions and trade history will NOT be affected.`,
+      "1000000"
     );
-    if (choice === null) return; // cancelled
+    if (choice === null) return;
     const trimmed = choice.trim();
     if (!trimmed) return;
 
     let payload;
     if (trimmed.toUpperCase().startsWith("USD")) {
       const amt = Number(trimmed.slice(3).trim());
-      if (Number.isNaN(amt) || amt < 0) {
-        setActionError("Enter a valid non-negative number for USD");
+      if (Number.isNaN(amt) || amt <= 0) {
+        setActionError("Enter a valid positive number for USD funds");
         return;
       }
-      payload = { balanceUSD: amt };
+      payload = { addBalanceUSD: amt };
     } else {
       const cleanStr = trimmed.toUpperCase().startsWith("INR") ? trimmed.slice(3).trim() : trimmed;
       const amt = Number(cleanStr);
-      if (Number.isNaN(amt) || amt < 0) {
-        setActionError("Enter a valid non-negative number for INR");
+      if (Number.isNaN(amt) || amt <= 0) {
+        setActionError("Enter a valid positive number for INR funds");
         return;
       }
-      payload = { balance: amt };
-    }
-
-    // Ask if previous stock positions should be cleared for a completely fresh start
-    const wipeHoldings = window.confirm(
-      `Do you also want to clear all existing stock holdings for ${user.email} so they start completely fresh?\n\n` +
-      `• Click OK to CLEAR all stock holdings (invested becomes ₹0 / $0).\n` +
-      `• Click Cancel to KEEP their existing stocks and only adjust cash margin.`
-    );
-    if (wipeHoldings) {
-      payload.resetHoldings = true;
+      payload = { addBalance: amt };
     }
 
     setProcessingUserId(user._id);
@@ -729,13 +719,51 @@ function Admin() {
     try {
       await API.put(`/admin/users/${user._id}/balance`, payload);
       await fetchUsers();
+      await fetchAdminLeaderboard();
       fetchAuditLog();
+      if (detailUser && detailUser.user?._id === user._id) {
+        const { data } = await API.get(`/admin/users/${user._id}`);
+        setDetailUser(data);
+      }
     } catch (error) {
-      setActionError(error.response?.data?.message || "Failed to reset balance");
+      setActionError(error.response?.data?.message || "Failed to add funds");
     } finally {
       setTimeout(() => setProcessingUserId(null), 500);
     }
   };
+
+  const handleResetAtoZ = async (user) => {
+    if (processingUserId) return;
+    const confirmed = window.confirm(
+      `⚠️ FULL A-TO-Z ACCOUNT RESET for ${user.name || user.email} (${user.email})\n\n` +
+      `This will completely wipe and reset their trading account:\n` +
+      `1. Clear all active stock holdings (invested becomes ₹0 / $0)\n` +
+      `2. Clear all trade execution & transaction history\n` +
+      `3. Cancel all pending Take-Profit & Stop-Loss orders\n` +
+      `4. Restore starting cash balance to ₹1,00,000 INR & $10,000 USD\n` +
+      `5. Reset competition P&L and ROI to 0.00%\n\n` +
+      `Are you sure you want to proceed with full Reset A to Z?`
+    );
+    if (!confirmed) return;
+
+    setProcessingUserId(user._id);
+    setActionError("");
+    try {
+      await API.put(`/admin/users/${user._id}/balance`, { fullReset: true });
+      await fetchUsers();
+      await fetchAdminLeaderboard();
+      fetchAuditLog();
+      if (detailUser && detailUser.user?._id === user._id) {
+        setDetailUser(null);
+      }
+    } catch (error) {
+      setActionError(error.response?.data?.message || "Failed to reset account");
+    } finally {
+      setTimeout(() => setProcessingUserId(null), 500);
+    }
+  };
+
+  const resetBalance = handleAddFunds;
 
   if (loading) return <PageLoader />;
 
@@ -940,12 +968,21 @@ function Admin() {
                       </button>
                       <button
                         type="button"
-                        className="action-btn reset"
-                        onClick={() => resetBalance(u)}
+                        className="action-btn add-funds"
+                        onClick={() => handleAddFunds(u)}
                         disabled={processingUserId === u._id}
-                        title="Reset Virtual Margin"
+                        title="Add Funds / Margin (keeps stock holdings and transactions intact)"
                       >
-                        <FiRefreshCw /> Reset
+                        <FiPlusCircle /> Add Funds
+                      </button>
+                      <button
+                        type="button"
+                        className="action-btn reset-atoz"
+                        onClick={() => handleResetAtoZ(u)}
+                        disabled={processingUserId === u._id}
+                        title="Full Reset A to Z (wipe holdings, transactions, and restore defaults)"
+                      >
+                        <FiRefreshCw /> Reset A-Z
                       </button>
                       <button
                         type="button"
@@ -2350,13 +2387,21 @@ function Admin() {
                           <div className="admin-groww-actions">
                             <button
                               type="button"
-                              className="admin-reset-margin-btn"
+                              className="admin-add-funds-btn"
                               onClick={() => {
-                                resetBalance(detailUser.user);
-                                setDetailUser(null);
+                                handleAddFunds(detailUser.user);
                               }}
                             >
-                              <FiRefreshCw /> Reset Virtual Margin
+                              <FiPlusCircle /> Add Funds
+                            </button>
+                            <button
+                              type="button"
+                              className="admin-reset-margin-btn"
+                              onClick={() => {
+                                handleResetAtoZ(detailUser.user);
+                              }}
+                            >
+                              <FiRefreshCw /> Reset A-Z
                             </button>
                           </div>
                         </div>
