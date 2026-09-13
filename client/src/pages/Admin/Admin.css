@@ -1152,30 +1152,21 @@ nav.admin-workspace-nav,
   border: 1px solid rgba(239, 68, 68, 0.25);
 }
 
-/* Action buttons - 2-row compact grid */
-.admin-actions-cell {
-  width: 195px;
-  min-width: 195px;
-  padding: 6px 8px !important;
+/* Action buttons in Table - Perfectly Aligned Single Row */
+.admin-actions-td {
+  text-align: right;
+  vertical-align: middle !important;
+  white-space: nowrap;
+  padding: 8px 12px !important;
 }
 
-.admin-actions-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.admin-actions-row {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-}
-
+.admin-actions-wrap,
 .admin-actions {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   white-space: nowrap;
+  vertical-align: middle;
 }
 
 .action-btn {
