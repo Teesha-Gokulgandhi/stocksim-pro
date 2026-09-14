@@ -32,6 +32,8 @@ services:
       - CLIENT_ORIGIN=${CLIENT_ORIGIN:-http://localhost,http://localhost:80,http://localhost:5173,http://stocksimpro.in,https://stocksimpro.in}
       - TRUST_PROXY_HOPS=1
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - GROK_API_KEY=${GROK_API_KEY:-}
     depends_on:
       - mongo
     networks:
