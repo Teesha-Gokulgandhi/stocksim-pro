@@ -182,23 +182,21 @@ ${userQuery}
     ],
   };
 
-  // 4. Direct Transfer to Google Gemini API with automatic model failover
-  // Uses verified active Gemini Flash models; if one is temporarily rate-limited, immediately hops to the next.
-  const activeModels = [
+  // 4. Direct Transfer to Google Gemini API with rapid failover
+  // Try fast primary Gemini models with 4.5s timeout. If busy or rate-limited, immediately fail over to Grok.
+  const activeGeminiModels = [
     "gemini-flash-latest",
     "gemini-3.6-flash",
-    "gemini-3.7-flash",
-    "gemini-3.5-flash",
   ];
 
   let outputText = null;
   let modelSource = null;
 
-  for (const modelName of activeModels) {
+  for (const modelName of activeGeminiModels) {
     try {
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
       const response = await axios.post(endpoint, payload, {
-        timeout: 9000,
+        timeout: 4500,
         headers: { "Content-Type": "application/json" },
       });
       const candidateText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
