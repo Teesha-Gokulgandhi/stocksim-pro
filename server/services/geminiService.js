@@ -48,6 +48,15 @@ Your sole purpose is to provide structured, objective, educational stock analysi
  * Built-in Institutional Knowledge Base for Supported Equities
  */
 const STOCK_KNOWLEDGE = {
+  "ADANIENT.NS": {
+    name: "Adani Enterprises Ltd.",
+    sector: "Conglomerate & Infrastructure Incubator",
+    exchange: "NSE",
+    country: "IN",
+    currency: "INR",
+    moat: "Flagship incubator for the Adani Group. Operates critical national infrastructure including 7 commercial airports (Mumbai, Ahmedabad, Lucknow, etc.), expressways, green hydrogen manufacturing, data centers (AdaniConneX), and integrated natural resources.",
+    catalysts: "Commissioning of the Navi Mumbai International Airport, commercial scaling of green hydrogen and solar PV cells, and prospective value unlocking via future spinoffs.",
+  },
   "ASIANPAINT.NS": {
     name: "Asian Paints Ltd.",
     sector: "Decorative Paints & Home Décor",
@@ -814,7 +823,13 @@ ${displayName} is currently priced at **${peRatio}x trailing earnings**. Institu
     }
 
     // Intent 3: Pure Company Moat & Business Overview
-    if (q.includes("moat") || q.includes("business") || q.includes("overview") || q.includes("company") || q.includes("about") || q.includes("catalyst") || q.includes("compet")) {
+    if (
+      q.includes("moat") || q.includes("business") || q.includes("overview") ||
+      q.includes("company") || q.includes("about") || q.includes("catalyst") ||
+      q.includes("compet") || q.includes("what do they do") || q.includes("what does") ||
+      q.includes("real life") || q.includes("do work") || q.includes("make money") ||
+      q.includes("sector") || q.includes("secor")
+    ) {
       return `### 🏢 Business Model & Competitive Moat: **${displayName} (${matchedSymbol})**
 - **Industry / Sector:** **${displaySector}**
 - **Exchange Listing:** ${stockIsIndian ? "NSE / BSE (India)" : "NYSE / Nasdaq (US)"}
@@ -1508,28 +1523,29 @@ INSTRUCTIONS FOR THIS RESPONSE:
     };
 
     let outputText = null;
-    let modelSource = "gemini-flash-latest";
+    let modelSource = "gemini-3.6-flash";
 
-    // Try primary canonical Flash model
+    // Primary: Google Gemini 3.6 Flash (confirmed active and verified on Google AI Studio)
     try {
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
       const response = await axios.post(endpoint, payload, {
-        timeout: 12000,
+        timeout: 10000,
         headers: { "Content-Type": "application/json" },
       });
       outputText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
     } catch (primaryErr) {
-      // If 503 spike or error, retry with gemini-3.6-flash
+      console.error("Gemini 3.6 Flash error:", primaryErr.response?.data || primaryErr.message);
+      // Secondary fallback attempt: gemini-flash-latest
       try {
-        modelSource = "gemini-3.6-flash";
-        const endpoint2 = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
+        modelSource = "gemini-flash-latest";
+        const endpoint2 = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
         const response2 = await axios.post(endpoint2, payload, {
-          timeout: 12000,
+          timeout: 8000,
           headers: { "Content-Type": "application/json" },
         });
         outputText = response2.data?.candidates?.[0]?.content?.parts?.[0]?.text;
       } catch (secondaryErr) {
-        console.error("Gemini API Error, using Market Copilot Engine:", secondaryErr.response?.data || secondaryErr.message);
+        console.error("Gemini fallback error, using Market Copilot Engine:", secondaryErr.response?.data || secondaryErr.message);
       }
     }
 

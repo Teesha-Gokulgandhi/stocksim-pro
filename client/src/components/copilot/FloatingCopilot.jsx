@@ -466,42 +466,45 @@ Ready for fresh market analysis. Type any stock name (e.g. SUNPHARMA, RELIANCE, 
         <div className={`copilot-window ${isMinimized ? "minimized" : ""}`}>
           {/* Header */}
           <div className="copilot-header">
-            <div className="copilot-header-title">
+            <div className="copilot-header-left">
               <div className="copilot-icon-badge">
                 <FiZap />
               </div>
-              <div className="copilot-title-text-group">
-                <div className="copilot-name-row">
+              <div className="copilot-brand-info">
+                <div className="copilot-brand-title">
                   <h3>Market Copilot</h3>
-                  {activeStockSymbol && (
-                    <span className="stock-context-pill">
-                      <FiActivity /> {activeStockSymbol}
-                    </span>
-                  )}
+                  <span className="copilot-ai-chip">AI</span>
                 </div>
-                {/* Market Switcher Pill */}
-                <div className="copilot-market-switch" role="group" aria-label="Select active market">
-                  <button
-                    type="button"
-                    className={`copilot-switch-btn ${copilotMarket === "IN" ? "active" : ""}`}
-                    onClick={() => setCopilotMarket("IN")}
-                    title="Switch advice context to Indian Market"
-                  >
-                    🇮🇳 IN (₹)
-                  </button>
-                  <button
-                    type="button"
-                    className={`copilot-switch-btn ${copilotMarket === "US" ? "active" : ""}`}
-                    onClick={() => setCopilotMarket("US")}
-                    title="Switch advice context to US Market"
-                  >
-                    🇺🇸 US ($)
-                  </button>
-                </div>
+                {activeStockSymbol && (
+                  <span className="stock-context-pill">
+                    <FiActivity /> {activeStockSymbol}
+                  </span>
+                )}
               </div>
             </div>
 
-            <div className="copilot-header-actions">
+            <div className="copilot-header-right">
+              {/* Sleek Market Toggle Pill */}
+              <div className="copilot-market-switch" role="group" aria-label="Select active market">
+                <button
+                  type="button"
+                  className={`copilot-switch-btn ${copilotMarket === "IN" ? "active" : ""}`}
+                  onClick={() => setCopilotMarket("IN")}
+                  title="Indian Market (NSE/BSE)"
+                >
+                  🇮🇳 IN
+                </button>
+                <button
+                  type="button"
+                  className={`copilot-switch-btn ${copilotMarket === "US" ? "active" : ""}`}
+                  onClick={() => setCopilotMarket("US")}
+                  title="US Market (NYSE/NASDAQ)"
+                >
+                  🇺🇸 US
+                </button>
+              </div>
+
+              {/* Crisp High-Contrast Cross Button */}
               <button
                 type="button"
                 className="copilot-close-btn"
@@ -509,7 +512,19 @@ Ready for fresh market analysis. Type any stock name (e.g. SUNPHARMA, RELIANCE, 
                 title="Close Copilot"
                 aria-label="Close Copilot"
               >
-                <FiX />
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#ffffff"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
               </button>
             </div>
           </div>
