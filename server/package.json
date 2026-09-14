@@ -11,10 +11,19 @@
     "set-admin": "node scripts/setAdmin.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": [
+    "mern",
+    "stock-market-api",
+    "trading-backend",
+    "express5",
+    "nodejs",
+    "mongoose",
+    "yahoo-finance2",
+    "docker"
+  ],
+  "author": "Teesha Gokulgandhi",
+  "license": "MIT",
+  "description": "Backend REST API for StockSim Pro MERN stock trading platform with Yahoo Finance caching, JWT auth, and atomic portfolio transactions.",
   "dependencies": {
     "axios": "^1.18.1",
     "bcrypt": "^6.0.0",

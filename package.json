@@ -11,10 +11,35 @@
     "lint": "npm run lint --prefix client",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": [
+    "mern",
+    "mern-stack",
+    "stock-market",
+    "stock-trading",
+    "trading-platform",
+    "stock-simulator",
+    "paper-trading",
+    "react",
+    "nodejs",
+    "express",
+    "mongodb",
+    "yahoo-finance",
+    "candlestick-charts",
+    "docker",
+    "aws-ec2",
+    "nginx"
+  ],
+  "author": "Teesha Gokulgandhi",
+  "license": "MIT",
+  "description": "Production-grade Full-Stack MERN real-time stock market simulator and trading platform featuring live Yahoo Finance quotes, interactive candlestick charts, dual INR/USD portfolios, automated TP/SL orders, Docker containerization, and AWS EC2 deployment.",
+  "homepage": "https://stocksimpro.in",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Teesha-Gokulgandhi/stocksim-pro.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Teesha-Gokulgandhi/stocksim-pro/issues"
+  },
   "dependencies": {
     "axios": "^1.18.1",
     "bcrypt": "^6.0.0",

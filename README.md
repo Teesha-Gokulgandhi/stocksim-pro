@@ -1,12 +1,19 @@
-# 📈 StockSim Pro — Full-Stack Real-Time Stock Market Simulator
+# 📈 StockSim Pro — Full-Stack MERN Real-Time Stock Market Simulator & Trading Platform
 
-[![CI/CD Pipeline](https://github.com/placeholder/stocksim-pro/actions/workflows/ci.yml/badge.svg)](https://github.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Node.js Version](https://img.shields.io/badge/Node.js-20.x-green.svg)](https://nodejs.org)
-[![React Version](https://img.shields.io/badge/React-19-blue.svg)](https://react.dev)
-[![Docker Support](https://img.shields.io/badge/Docker-Enabled-2496ED.svg)](https://www.docker.com)
+[![Live Production Demo](https://img.shields.io/badge/Live%20Demo-stocksimpro.in-success?style=for-the-badge&logo=google-chrome&logoColor=white)](https://stocksimpro.in)
+[![CI/CD Pipeline](https://img.shields.io/github/actions/workflow/status/Teesha-Gokulgandhi/stocksim-pro/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/Teesha-Gokulgandhi/stocksim-pro/actions)
+[![MERN Stack](https://img.shields.io/badge/Stack-MERN%20(React%2019%20%7C%20Node%2020%20%7C%20Express%205%20%7C%20MongoDB)-61DAFB?style=for-the-badge&logo=react)](https://github.com/Teesha-Gokulgandhi/stocksim-pro)
+[![Docker](https://img.shields.io/badge/Docker-Multi--Stage-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com)
+[![AWS EC2](https://img.shields.io/badge/AWS-EC2%20Deployed-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/ec2/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-A production-grade, full-stack financial simulator for trading Indian (NSE/BSE) and US (NASDAQ/NYSE) equities with virtual currency. Features real-time price synchronization via **Yahoo Finance**, technical candlestick charting, portfolio analytics, automated order execution (Take-Profit / Stop-Loss), replay trading sessions, and an administrative control panel.
+> **StockSim Pro** is an enterprise-grade **Full-Stack MERN** real-time stock trading simulator and financial portfolio platform. Built with **MongoDB, Express 5, React 19, and Node.js 20**, it enables users to trade real Indian equities (NSE / BSE) and US equities (NASDAQ / NYSE) with virtual currency using live data streams from **Yahoo Finance**, automated risk management triggers (Take-Profit / Stop-Loss), historical candlestick charting, market replay sessions, and an administrative telemetry suite. Containerized with **Docker** and deployed on **AWS EC2** behind an **Nginx** reverse proxy with SSL.
+
+---
+
+## 🌐 Live Application
+- **Production Web App**: [https://stocksimpro.in](https://stocksimpro.in)
+- **DevOps Master Handbook**: [StockSim_Pro_DevOps_Handbook.pdf](StockSim_Pro_DevOps_Handbook.pdf) (Complete A-to-Z Guide for DNS, Nginx, Docker & EC2)
 
 ---
 
@@ -66,7 +73,7 @@ The quickest way to run the complete stack (Frontend + Backend + MongoDB) on any
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/stocksim-pro.git
+git clone https://github.com/Teesha-Gokulgandhi/stocksim-pro.git
 cd stocksim-pro
 ```
 
@@ -202,7 +209,7 @@ newgrp docker
 
 #### Step 3: Clone Repo & Run
 ```bash
-git clone https://github.com/your-username/stocksim-pro.git
+git clone https://github.com/Teesha-Gokulgandhi/stocksim-pro.git
 cd stocksim-pro
 cp .env.example .env
 nano .env # Set your MONGO_URI and JWT_SECRET
@@ -321,9 +328,33 @@ Every `push` or `pull_request` to `main`:
 2. **Add Remote & Push**:
    ```bash
    git branch -M main
-   git remote add origin https://github.com/<YOUR_USERNAME>/stocksim-pro.git
+   git remote add origin https://github.com/Teesha-Gokulgandhi/stocksim-pro.git
    git push -u origin main
    ```
+
+---
+
+## 🏆 Architectural Comparison: StockSim Pro vs Generic MERN Clones
+
+| Feature Area | Typical College MERN Clones | **StockSim Pro (Production Grade)** |
+| :--- | :--- | :--- |
+| **Market Data** | Fake hardcoded Math.random() prices | **Real-time Yahoo Finance sync** with in-memory caching & rate-limit deduplication |
+| **Market Scope** | Single fake index | **Dual-Market**: Indian NSE/BSE (₹ INR) & US NASDAQ/NYSE ($ USD) |
+| **Order Automation**| Simple buy/sell buttons only | **Automated TP/SL (Take-Profit & Stop-Loss)** with background trigger checking |
+| **Deployment** | Localhost only or single free Dyno | **Multi-stage Docker Compose, AWS EC2, Nginx Reverse Proxy & SSL** |
+| **Security** | Plain text / basic JWT | **Bcrypt 10 rounds, Zod input validation, Express Rate Limiting, HTTPOnly ready** |
+| **DevOps & CI/CD** | None | **Automated GitHub Actions workflow + Production DevOps Handbook PDF** |
+| **Simulation Depth**| Current snapshot only | **Historical Market Replay Backtesting + Admin Volatility Injection Engine** |
+
+---
+
+## 🏷️ GitHub Topics & SEO Indexing Terms
+
+```text
+mern-stack | stock-market | stock-trading | trading-platform | stock-simulator | paper-trading
+react19 | nodejs20 | express5 | mongodb-atlas | yahoo-finance | candlestick-charts
+docker-compose | aws-ec2 | nginx-reverse-proxy | github-actions | ci-cd-pipeline
+```
 
 ---
 

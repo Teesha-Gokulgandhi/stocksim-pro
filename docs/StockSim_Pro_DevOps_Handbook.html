@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>StockSim Pro — Production Hosting, DevOps & Architecture Handbook</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap');
+
+    @page {
+      size: A4;
+      margin: 18mm 14mm 18mm 14mm;
+      @bottom-right {
+        content: counter(page);
+        font-family: 'Inter', sans-serif;
+        font-size: 9pt;
+        color: #64748b;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #0f172a;
+      background: #ffffff;
+      line-height: 1.55;
+      font-size: 10pt;
+    }
+
+    /* Cover Page */
+    .cover-page {
+      page-break-after: always;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 40px 20px;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0b0f19 0%, #1e293b 100%);
+      color: #ffffff;
+    }
+
+    .cover-badge {
+      display: inline-block;
+      background: rgba(37, 99, 235, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.5);
+      color: #60a5fa;
+      font-size: 10pt;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin-bottom: 24px;
+    }
+
+    .cover-title {
+      font-size: 32pt;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+      color: #f8fafc;
+    }
+
+    .cover-title span {
+      background: linear-gradient(135deg, #60a5fa, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .cover-subtitle {
+      font-size: 13pt;
+      color: #94a3b8;
+      max-width: 580px;
+      line-height: 1.5;
+      margin-bottom: 30px;
+    }
+
+    .cover-meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 24px;
+    }
+
+    .meta-box h4 {
+      font-size: 8.5pt;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+
+    .meta-box p {
+      font-size: 10.5pt;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+
+    /* Content Layout */
+    .chapter {
+      page-break-before: always;
+      padding-top: 10px;
+    }
+
+    .chapter-header {
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .chapter-num {
+      font-size: 11pt;
+      font-weight: 800;
+      color: #2563eb;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    h1 {
+      font-size: 20pt;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+    }
+
+    h2 {
+      font-size: 13pt;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 20px;
+      margin-bottom: 8px;
+      border-left: 4px solid #2563eb;
+      padding-left: 10px;
+    }
+
+    h3 {
+      font-size: 11pt;
+      font-weight: 600;
+      color: #334155;
+      margin-top: 14px;
+      margin-bottom: 6px;
+    }
+
+    p {
+      margin-bottom: 10px;
+      color: #334155;
+      text-align: justify;
+    }
+
+    ul, ol {
+      margin-left: 20px;
+      margin-bottom: 12px;
+      color: #334155;
+    }
+
+    li {
+      margin-bottom: 4px;
+    }
+
+    /* Callouts / Alerts */
+    .alert {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #3b82f6;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin: 14px 0;
+      font-size: 9.5pt;
+    }
+
+    .alert.important {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      border-left-color: #2563eb;
+      color: #1e40af;
+    }
+
+    .alert.warning {
+      background: #fffbeb;
+      border-color: #fde68a;
+      border-left-color: #f59e0b;
+      color: #92400e;
+    }
+
+    .alert.tip {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+      border-left-color: #16a34a;
+      color: #166534;
+    }
+
+    .alert strong {
+      font-weight: 700;
+    }
+
+    /* Code Blocks */
+    pre {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8.5pt;
+      line-height: 1.45;
+      overflow-x: auto;
+      margin: 10px 0 14px 0;
+      border: 1px solid #1e293b;
+      page-break-inside: avoid;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8.5pt;
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 2px 5px;
+      border-radius: 4px;
+      border: 1px solid #e2e8f0;
+    }
+
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      border: none;
+      font-size: inherit;
+    }
+
+    .code-title {
+      background: #1e293b;
+      color: #94a3b8;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.5pt;
+      padding: 4px 10px;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      border-bottom: 1px solid #334155;
+      margin-bottom: -10px;
+      display: inline-block;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 9pt;
+      page-break-inside: avoid;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+      text-align: left;
+      padding: 8px 10px;
+      border: 1px solid #cbd5e1;
+      font-size: 8.5pt;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    td {
+      padding: 7px 10px;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+    }
+
+    tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    /* Flow Diagrams */
+    .diagram-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 14px;
+      margin: 14px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8pt;
+      line-height: 1.4;
+      color: #0f172a;
+      page-break-inside: avoid;
+    }
+
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      background: #0f172a;
+      color: #ffffff;
+      border-radius: 50%;
+      font-size: 8pt;
+      font-weight: 700;
+      margin-right: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= COVER PAGE ================= -->
+  <div class="cover-page">
+    <div>
+      <span class="cover-badge">Engineering &amp; DevOps Reference</span>
+      <h1 class="cover-title">StockSim Pro<br><span>A-to-Z Production Hosting Guide</span></h1>
+      <p class="cover-subtitle">
+        A complete, step-by-step master handbook detailing architecture, Git workflows, GitHub Actions CI/CD automation, GoDaddy DNS mapping, AWS EC2 configuration, Docker orchestration, Nginx reverse proxying, and SSL encryption for <strong>stocksimpro.in</strong>.
+      </p>
+    </div>
+
+    <div class="cover-meta">
+      <div class="meta-box">
+        <h4>Target Domain</h4>
+        <p>stocksimpro.in</p>
+      </div>
+      <div class="meta-box">
+        <h4>Infrastructure Stack</h4>
+        <p>AWS EC2 + Docker + Nginx</p>
+      </div>
+      <div class="meta-box">
+        <h4>Delivery Pipeline</h4>
+        <p>GitHub Actions CI/CD</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= CHAPTER 1: ARCHITECTURE ================= -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <span class="chapter-num">Chapter 01</span>
+      <span>The Mental Model</span>
+    </div>
+    <h1>System Architecture &amp; The Request Lifecycle</h1>
+
+    <p>
+      Deploying a full-stack financial simulator like <strong>StockSim Pro</strong> requires synchronizing multiple independent systems: your local code repository, cloud automation runners, DNS routing engines, server operating systems, container virtualization, and cryptographic SSL layers.
+    </p>
+
+    <h2>The End-to-End Traffic Flow</h2>
+    <p>
+      When a user in Mumbai or New York opens their mobile phone or laptop and types <code>https://stocksimpro.in</code> into their browser, the following millisecond handshake takes place:
+    </p>
+
+    <div class="diagram-box">
+      [User Web Browser] (Requests https://stocksimpro.in)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼<br>
+      [GoDaddy DNS Nameservers] ──(Resolves domain to A Record)──&gt; EC2 Public IP<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼<br>
+      [AWS EC2 Host Machine] (Ubuntu Linux on AWS Cloud)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── Port 443 (HTTPS) / Port 80 (HTTP)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼<br>
+      [Nginx Web Server] (SSL Termination via Let's Encrypt Certificate)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── If path is /api/* ──────────&gt; [Docker: stocksim-server] (Port 5000: Node.js API)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── If path is /* (Static/UI) ──&gt; [Docker: stocksim-client] (Port 8080: React/Vite)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Docker: stocksim-mongo] (Port 27017: MongoDB)
+    </div>
+
+    <h2>Component Responsibilities Breakdown</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Layer</th>
+          <th>Technology</th>
+          <th>What It Does</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>DNS Authority</strong></td>
+          <td>GoDaddy</td>
+          <td>Translates human-readable <code>stocksimpro.in</code> into the machine's numeric IPv4 address.</td>
+        </tr>
+        <tr>
+          <td><strong>Host Machine</strong></td>
+          <td>AWS EC2 (Ubuntu)</td>
+          <td>A 24/7 cloud virtual computer with persistent compute power, RAM, disk, and high-speed bandwidth.</td>
+        </tr>
+        <tr>
+          <td><strong>Gatekeeper</strong></td>
+          <td>Nginx + Certbot</td>
+          <td>Listens on public ports 80 and 443, decrypts HTTPS certificates, and reverse-proxies requests to internal Docker ports.</td>
+        </tr>
+        <tr>
+          <td><strong>Frontend</strong></td>
+          <td>React + Vite (Docker)</td>
+          <td>Serves the trading dashboard, interactive charts, position cards, and administrative controls.</td>
+        </tr>
+        <tr>
+          <td><strong>Backend API</strong></td>
+          <td>Node.js Express (Docker)</td>
+          <td>Handles authentication, validates orders, queries Yahoo Finance, executes trades, and enforces rate limits.</td>
+        </tr>
+        <tr>
+          <td><strong>Background Engine</strong></td>
+          <td>Protection Worker (Node.js)</td>
+          <td>Continuously monitors stock prices every 30 seconds to trigger Take Profit &amp; Stop Loss orders automatically.</td>
+        </tr>
+        <tr>
+          <td><strong>Database</strong></td>
+          <td>MongoDB 7.0 (Docker)</td>
+          <td>Stores user balances, holdings, transaction ledgers, leagues, and order book records across server restarts.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================= CHAPTER 2: GIT & GITHUB ================= -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <span class="chapter-num">Chapter 02</span>
+      <span>Source Control</span>
+    </div>
+    <h1>Git &amp; GitHub: The Code Delivery Engine</h1>
+
+    <p>
+      Git is a distributed version control system tracking every line of code across time. GitHub is a cloud host that acts as the single source of truth between your laptop and your production server.
+    </p>
+
+    <h2>The 3 States of Code</h2>
+    <ol>
+      <li><strong>Working Directory:</strong> The files currently sitting on your laptop hard drive where you make code edits.</li>
+      <li><strong>Staging Area (Index):</strong> A staging staging buffer where you gather ready changes using <code>git add .</code>.</li>
+      <li><strong>Local Repository (.git):</strong> Permanent, cryptographically hashed snapshots (commits) recorded with a descriptive message.</li>
+      <li><strong>Remote Repository (origin/main):</strong> The centralized copy stored on GitHub's cloud servers.</li>
+    </ol>
+
+    <h2>Why Secrets Must NEVER Be Pushed (.gitignore)</h2>
+    <div class="alert warning">
+      <strong>Critical Security Rule:</strong> Your database credentials, JWT secrets, and Google API keys live inside <code>.env</code> files. Public or private repositories on GitHub should NEVER contain these credentials.
+    </div>
+    <p>
+      Your project utilizes a root <code>.gitignore</code> file that tells Git to actively ignore sensitive assets:
+    </p>
+    <pre><code># Ignored from Git Tracking
+.env
+.env.*
+server/.env
+client/.env
+node_modules/
+client/dist/</code></pre>
+
+    <h2>The Exact Git Deployment Command Sequence</h2>
+    <pre><code class="bash"># Step 1: Check what files have changed
+git status
+
+# Step 2: Stage all verified changes and newly added files
+git add .
+
+# Step 3: Commit the snapshot with a meaningful title
+git commit -m "feat: complete UI card redesigns, order book improvements, and production readiness"
+
+# Step 4: Push the commits up to the remote GitHub main branch
+git push origin main</code></pre>
+  </div>
+
+  <!-- ================= CHAPTER 3: CI/CD PIPELINE ================= -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <span class="chapter-num">Chapter 03</span>
+      <span>Automated DevOps</span>
+    </div>
+    <h1>GitHub Actions &amp; The CI/CD Pipeline</h1>
+
+    <p>
+      <strong>CI/CD</strong> stands for <strong>Continuous Integration &amp; Continuous Deployment</strong>. It automates testing, container image validation, and remote deployment without requiring you to manually SSH into servers every time you write code.
+    </p>
+
+    <h2>How Your Project's Pipeline Works (.github/workflows/ci.yml)</h2>
+    <p>
+      Whenever you run <code>git push origin main</code>, GitHub automatically spins up a clean, isolated virtual machine (Ubuntu runner) and executes three sequential jobs:
+    </p>
+
+    <div class="diagram-box">
+      [git push origin main]<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼<br>
+      [JOB 1: Test &amp; Validate Codebase]<br>
+      &nbsp;&nbsp;├── Checks out code from GitHub<br>
+      &nbsp;&nbsp;├── Installs backend &amp; frontend dependencies (npm ci)<br>
+      &nbsp;&nbsp;└── Runs Vite production build (npm run build) to catch syntax or CSS errors<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│ (Only if Job 1 passes)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼<br>
+      [JOB 2: Build &amp; Verify Docker Images]<br>
+      &nbsp;&nbsp;├── Builds the Docker backend image (stocksim-server)<br>
+      &nbsp;&nbsp;└── Builds the Docker frontend image (stocksim-client)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│ (Only if Job 2 passes AND branch == main)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼<br>
+      [JOB 3: Deploy to Production Server via SSH]<br>
+      &nbsp;&nbsp;├── Securely connects to your EC2 instance using your SSH Key secret<br>
+      &nbsp;&nbsp;├── Executes: cd ~/stocksim-pro &amp;&amp; git pull origin main<br>
+      &nbsp;&nbsp;├── Executes: docker compose up --build -d<br>
+      &nbsp;&nbsp;└── Executes: docker image prune -f (Cleans up old container layers)
+    </div>
+
+    <h2>Configuring GitHub Repository Secrets</h2>
+    <p>
+      To allow GitHub Actions to log into your AWS EC2 server securely, add these three secrets under <strong>GitHub Repository &gt; Settings &gt; Secrets and variables &gt; Actions</strong>:
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Secret Name</th>
+          <th>What to Paste</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>VM_HOST</code></td>
+          <td><code>13.234.xx.xx</code></td>
+          <td>The Public IPv4 address of your AWS EC2 server.</td>
+        </tr>
+        <tr>
+          <td><code>VM_USER</code></td>
+          <td><code>ubuntu</code></td>
+          <td>The default administrative username for Ubuntu EC2 instances.</td>
+        </tr>
+        <tr>
+          <td><code>VM_SSH_KEY</code></td>
+          <td>Full text of your <code>.pem</code> file</td>
+          <td>The cryptographic private key starting with <code>-----BEGIN RSA PRIVATE KEY-----</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================= CHAPTER 4: GODADDY & DNS ================= -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <span class="chapter-num">Chapter 04</span>
+      <span>Domain Routing</span>
+    </div>
+    <h1>GoDaddy DNS Configuration for stocksimpro.in</h1>
+
+    <p>
+      The Domain Name System (DNS) is the internet's directory. When someone types <code>stocksimpro.in</code>, DNS servers around the globe look up the corresponding public IP address of your EC2 machine.
+    </p>
+
+    <h2>Required DNS Records</h2>
+    <p>
+      Inside your GoDaddy account, navigate to <strong>Domain Portfolio &gt; stocksimpro.in &gt; Manage DNS</strong>. Configure the following two records:
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Name</th>
+          <th>Value / Target</th>
+          <th>TTL</th>
+          <th>Explanation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>A</strong></td>
+          <td><code>@</code></td>
+          <td><code>YOUR_EC2_PUBLIC_IP</code></td>
+          <td>1/2 Hour (or Custom: 600s)</td>
+          <td>Maps the root apex domain (<code>stocksimpro.in</code>) to your server's IP address.</td>
+        </tr>
+        <tr>
+          <td><strong>CNAME</strong></td>
+          <td><code>www</code></td>
+          <td><code>stocksimpro.in</code></td>
+          <td>1/2 Hour</td>
+          <td>Aliases <code>www.stocksimpro.in</code> so traffic to the www subdomain routes identically.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alert tip">
+      <strong>DNS Propagation Note:</strong> DNS changes typically take between 5 to 30 minutes to propagate across worldwide recursive resolvers. You can verify propagation by running <code>nslookup stocksimpro.in</code> in your terminal.
+    </div>
+  </div>
+
+  <!-- ================= CHAPTER 5: AWS EC2 SETUP ================= -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <span class="chapter-num">Chapter 05</span>
+      <span>Cloud Infrastructure</span>
+    </div>
+    <h1>AWS EC2 Provisioning &amp; Server Hardening</h1>
+
+    <p>
+      Amazon EC2 provides persistent cloud compute instances. For a containerized application running Node.js, Vite React, and MongoDB, a <strong>t3.small</strong> (2 vCPUs, 2 GB RAM) or <strong>t3.medium</strong> (2 vCPUs, 4 GB RAM) instance is recommended.
+    </p>
+
+    <h2>Security Group (Firewall) Rules</h2>
+    <p>
+      In the AWS EC2 Management Console, you must attach a Security Group allowing the following <strong>Inbound Rules</strong>:
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Port / Protocol</th>
+          <th>Port Range</th>
+          <th>Source</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SSH</strong></td>
+          <td>22</td>
+          <td><code>0.0.0.0/0</code> (or Your Home IP)</td>
+          <td>Allows administrative terminal access and GitHub Actions CI/CD deployments.</td>
+        </tr>
+        <tr>
+          <td><strong>HTTP</strong></td>
+          <td>80</td>
+          <td><code>0.0.0.0/0</code></td>
+          <td>Allows web traffic and automated ACME verification for SSL certificates.</td>
+        </tr>
+        <tr>
+          <td><strong>HTTPS</strong></td>
+          <td>443</td>
+          <td><code>0.0.0.0/0</code></td>
+          <td>Allows secure, encrypted web traffic for all live users.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Allocating an Elastic IP</h2>
+    <div class="alert important">
+      <strong>Why Elastic IP is mandatory:</strong> By default, if an AWS EC2 instance is stopped and restarted, AWS assigns it a brand new public IP address. Allocating an <strong>Elastic IP</strong> gives your server a permanently fixed IP that never changes.
+    </div>
+
+    <h2>Initial Server Configuration Commands</h2>
+    <p>Log in from your computer via SSH and install the required tools:</p>
+    <pre><code class="bash"># Connect to EC2
+ssh -i "stocksim-key.pem" ubuntu@YOUR_EC2_PUBLIC_IP
+
+# Update system repositories
+sudo apt update && sudo apt upgrade -y
+
+# Install Docker engine, Docker Compose v2, Git, and Nginx
+sudo apt install -y docker.io docker-compose-v2 git nginx certbot python3-certbot-nginx
+
+# Allow the ubuntu user to run Docker without sudo
+sudo usermod -aG docker ubuntu
+newgrp docker</code></pre>
+  </div>
+
+  <!-- ================= CHAPTER 6: DOCKER ORCHESTRATION ================= -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <span class="chapter-num">Chapter 06</span>
+      <span>Containerization</span>
+    </div>
+    <h1>Docker &amp; Docker Compose Architecture</h1>
+
+    <p>
+      Docker packages code and all its dependencies into portable, isolated containers. This eliminates environment drift ("it worked on my machine, but failed on the server").
+    </p>
+
+    <h2>The Multi-Container Topology</h2>
+    <p>Your project uses <strong>docker-compose.yml</strong> to launch three networked microservices:</p>
+
+    <div class="diagram-box">
+      ┌────────────────── stocksim-network (Bridge) ──────────────────┐<br>
+      │                                                              │<br>
+      │  [stocksim-client] ──────── proxy /api ────────&gt; [stocksim-server]<br>
+      │  (Port 8080 &lt;- 80)                              (Port 5000)   │<br>
+      │                                                      │       │<br>
+      │                                                  mongo:27017 │<br>
+      │                                                      ▼       │<br>
+      │                                              [stocksim-mongo]│<br>
+      │                                              (Volume: mongo-data)<br>
+      └──────────────────────────────────────────────────────────────┘
+    </div>
+
+    <h2>Essential Docker Operations</h2>
+    <pre><code class="bash"># Build and start all 3 containers in background mode
+docker compose up -d --build
+
+# View currently running containers and health status
+docker ps
+
+# Stream live real-time server logs
+docker logs -f stocksim-server
+
+# View MongoDB container logs
+docker logs -f stocksim-mongo
+
+# Stop all services safely without losing database data
+docker compose down</code></pre>
+  </div>
+
+  <!-- ================= CHAPTER 7: NGINX & SSL ================= -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <span class="chapter-num">Chapter 07</span>
+      <span>Web Server &amp; SSL</span>
+    </div>
+    <h1>Nginx Reverse Proxy &amp; Free Let's Encrypt SSL</h1>
+
+    <p>
+      Nginx acts as the front door of your server. It terminates HTTPS encryption on port 443 and distributes requests internally to your Docker containers.
+    </p>
+
+    <h2>Nginx Configuration File (/etc/nginx/sites-available/stocksimpro.in)</h2>
+    <pre><code class="nginx">server {
+    server_name stocksimpro.in www.stocksimpro.in;
+
+    # 1. Frontend: Route root web traffic to React Docker Container
+    location / {
+        proxy_pass http://localhost:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # 2. Backend API: Route /api requests to Express Docker Container
+    location /api/ {
+        proxy_pass http://localhost:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}</code></pre>
+
+    <h2>Activating the Site &amp; Generating Free SSL Certificates</h2>
+    <pre><code class="bash"># Enable site configuration
+sudo ln -s /etc/nginx/sites-available/stocksimpro.in /etc/nginx/sites-enabled/
+sudo rm -f /etc/nginx/sites-enabled/default
+
+# Test Nginx syntax
+sudo nginx -t
+
+# Reload Nginx
+sudo systemctl reload nginx
+
+# Generate SSL certificate using Certbot
+sudo certbot --nginx -d stocksimpro.in -d www.stocksimpro.in</code></pre>
+
+    <div class="alert tip">
+      <strong>Automated Renewal:</strong> Certbot installs an automatic systemd timer (<code>certbot.timer</code>) that auto-renews your SSL certificate every 60 days without requiring manual intervention.
+    </div>
+  </div>
+
+  <!-- ================= CHAPTER 8: PRODUCTION RUNBOOK ================= -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <span class="chapter-num">Chapter 08</span>
+      <span>Operations Manual</span>
+    </div>
+    <h1>The Production Operations Runbook</h1>
+
+    <p>
+      A quick-reference cheat sheet for day-to-day operations, updates, and disaster recovery.
+    </p>
+
+    <h2>Daily Updates Workflow (Push to Live)</h2>
+    <pre><code class="bash"># On your local laptop:
+git add .
+git commit -m "feat: new feature description"
+git push origin main
+
+# That's it! GitHub Actions handles testing, building, and deploying automatically.</code></pre>
+
+    <h2>Manual Server Deployment (If CI/CD is bypassed)</h2>
+    <pre><code class="bash"># 1. SSH into the server
+ssh -i "stocksim-key.pem" ubuntu@YOUR_EC2_PUBLIC_IP
+
+# 2. Navigate to project directory
+cd ~/stocksim-pro
+
+# 3. Pull latest code from GitHub
+git pull origin main
+
+# 4. Rebuild and restart containers
+docker compose up -d --build</code></pre>
+
+    <h2>Emergency Troubleshooting Cheat Sheet</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Symptom</th>
+          <th>Diagnostic Command</th>
+          <th>Fix</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Website returns 502 Bad Gateway</td>
+          <td><code>docker ps</code></td>
+          <td>A Docker container crashed. Run <code>docker compose up -d</code> to bring it back.</td>
+        </tr>
+        <tr>
+          <td>CORS error in browser console</td>
+          <td><code>nano server/.env</code></td>
+          <td>Verify <code>CLIENT_ORIGIN</code> includes <code>https://stocksimpro.in</code>.</td>
+        </tr>
+        <tr>
+          <td>SSL Certificate expired / invalid</td>
+          <td><code>sudo certbot certificates</code></td>
+          <td>Run <code>sudo certbot renew --force-renewal</code> followed by <code>sudo systemctl reload nginx</code>.</td>
+        </tr>
+        <tr>
+          <td>Disk space full on EC2</td>
+          <td><code>df -h</code></td>
+          <td>Prune unused Docker layers using <code>docker system prune -a --volumes</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+</html>
