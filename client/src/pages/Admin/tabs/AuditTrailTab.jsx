@@ -15,7 +15,6 @@ function AuditTrailTab({
             <FiClock style={{ verticalAlign: "-2px", marginRight: 8 }} />
             Admin Audit Trail
           </h2>
-          <p className="admin-subtext">Immutable log of all administrative actions, stock changes, and user overrides.</p>
         </div>
       </div>
 

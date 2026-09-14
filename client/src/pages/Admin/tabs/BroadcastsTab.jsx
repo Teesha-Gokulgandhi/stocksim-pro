@@ -22,7 +22,6 @@ function BroadcastsTab({
         <FiBell style={{ verticalAlign: "-2px", marginRight: 8 }} />
         Broadcast Notification to Investors
       </h2>
-      <p className="admin-subtext">Send an alert or announcement to all user notification inboxes.</p>
 
       {notifSuccess && <div className="admin-success">{notifSuccess}</div>}
 

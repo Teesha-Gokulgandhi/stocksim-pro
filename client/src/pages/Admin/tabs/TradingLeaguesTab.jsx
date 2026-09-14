@@ -19,9 +19,6 @@ function TradingLeaguesTab({
       <div className="admin-card-top">
         <div>
           <h2>Market Competition League</h2>
-          <p className="admin-subtext">
-            Live investor performance, portfolio net worth, and tournament standings.
-          </p>
         </div>
 
         <div className="admin-league-toggle">

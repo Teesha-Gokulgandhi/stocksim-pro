@@ -240,7 +240,6 @@ function ManageStocksTab({
             <span className="step-num">01</span>
             <div>
               <h3>Select Target Market & Exchange</h3>
-              <p>Choose the target jurisdiction and underlying exchange for this asset.</p>
             </div>
           </div>
 
@@ -333,22 +332,12 @@ function ManageStocksTab({
             <span className="step-num">02</span>
             <div>
               <h3>Lookup Ticker & Auto-Fetch Live Data</h3>
-              <p>Enter the company symbol. Live prices, day high/low, and company name are verified instantly.</p>
             </div>
           </div>
 
           <div className="ticker-lookup-workbench">
             <div className="ticker-search-field">
-              <label className="field-micro-label">
-                Stock Symbol or Company Name:
-                <span className="field-suffix-note">
-                  {stockForm.exchange === "NSE"
-                    ? "Enter ticker (TATAPOWER) or name (Tata Power) • .NS auto-appended"
-                    : stockForm.exchange === "BSE"
-                    ? "Enter ticker or name • .BO auto-appended"
-                    : "Enter ticker (SNOW, AAPL) or company name (Snowflake, Apple)"}
-                </span>
-              </label>
+              <label className="field-micro-label">Stock Symbol or Company Name</label>
               <div className="ticker-input-row">
                 <div className="ticker-input-box">
                   <FiSearch className="ticker-search-icon" />
@@ -515,7 +504,6 @@ function ManageStocksTab({
             <span className="step-num">03</span>
             <div>
               <h3>Asset Profile & Metadata</h3>
-              <p>Confirm the company name, sector classification, and optional branding asset.</p>
             </div>
           </div>
 
@@ -596,35 +584,13 @@ function ManageStocksTab({
               </button>
             )}
           </div>
-
-          <div className="actions-hint">
-            <span className="instant-trading-indicator">
-              <span className="pulse-dot blue" />
-              Instant Availability: Tradable immediately upon listing
-            </span>
-          </div>
         </div>
       </form>
-
-      {/* Integrated Ticker Conventions & Live Data Notice Strip */}
-      <div className="listing-rules-footer-strip">
-        <span className="rules-strip-badge">💡 Suffix Guide</span>
-        <div className="rules-strip-items">
-          <span><strong>NSE:</strong> Append <code>.NS</code> (e.g. <code>RELIANCE.NS</code>)</span>
-          <span className="dot-sep">•</span>
-          <span><strong>BSE:</strong> Append <code>.BO</code> (e.g. <code>500325.BO</code>)</span>
-          <span className="dot-sep">•</span>
-          <span><strong>US:</strong> Standard ticker (e.g. <code>AAPL</code>, <code>NVDA</code>)</span>
-          <span className="dot-sep">•</span>
-          <span><strong>100% Real-time:</strong> Quotes, intraday charts, and volume stream live from Yahoo Finance.</span>
-        </div>
-      </div>
 
       {/* Tradable Universe Directory */}
       <div className="stocks-directory-header">
         <div>
           <h3>Tradable Universe Directory ({stocks.length})</h3>
-          <p className="admin-subtext">Filter and search all active stocks currently listed across all markets.</p>
         </div>
 
         <div className="stocks-search-box">

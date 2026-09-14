@@ -577,9 +577,6 @@ function Admin() {
       <div className="admin-header-bar">
         <div className="admin-header-titles">
           <h1>Operations & Market Control</h1>
-          <p>
-            Multi-exchange governance for <strong>NSE, BSE, NYSE & NASDAQ</strong> simulated trading.
-          </p>
         </div>
       </div>
 
