@@ -687,6 +687,8 @@ const generateLocalAnalysis = async ({ userQuery, marketContext, userId }) => {
 
       return `### ⚔️ Head-to-Head: **${nameA}** vs **${nameB}**\n\n| Metric | **${symA}** | **${symB}** |\n|--------|------------|------------|\n| **Price** | ${curA}${formatCurrency(priceA, isIndianA)} | ${curB}${formatCurrency(priceB, isIndianB)} |\n| **Day Change** | ${changePctA}% | ${changePctB}% |\n| **Momentum Score** | ${scoreA != null ? `**${scoreA}/100** ${labelA.color}` : "—"} | ${scoreB != null ? `**${scoreB}/100** ${labelB.color}` : "—"} |\n| **P/E (TTM)** | ${peA} | ${peB} |\n| **Market Cap** | ${mCapA} | ${mCapB} |\n| **50-DMA** | ${dma50A} | ${dma50B} |\n| **52-Week Range** | ${w52RangeA} | ${w52RangeB} |\n| **Sector** | ${infoA.sector || "—"} | ${infoB.sector || "—"} |\n${verdict}`;
     }
+  }
+
   // ── Intent: stock-specific query (prioritize stock mentions) ──────────────
   const matchedSymbol = await resolveStockFromQuery(userQuery, activeStock);
 
