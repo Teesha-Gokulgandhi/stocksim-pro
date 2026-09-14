@@ -216,11 +216,73 @@ ${userQuery}
     return { text: outputText, source: modelSource };
   }
 
+  // 5. Provider Tier 2: Grok / Groq Engine Failover (Ultra-Fast LPU Inference)
+  try {
+    const grokResult = await askGrok({
+      systemPrompt: SYSTEM_PROMPT,
+      contextPrompt,
+      userQuery,
+    });
+    if (grokResult && grokResult.text) {
+      return grokResult;
+    }
+  } catch (grokErr) {
+    console.error("Grok failover error:", grokErr.message);
+  }
+
   // Pure error reporting — NO hardcoded canned answers
   return {
-    text: "### ⚠️ Gemini AI Service Notice\nUnable to generate a response from the Gemini AI model right now due to network load or API limits. Please verify your connection or try again in a few moments.",
-    source: "gemini-error",
+    text: "### ⚠️ AI Service Busy\nBoth Gemini and Grok AI engines are temporarily experiencing peak traffic. Please try your request again in a few moments.",
+    source: "ai-error",
   };
+};
+
+/**
+ * Provider Tier 2: Grok / Groq High-Speed LPU Engine
+ * Automatic cross-provider failover if Google Gemini experiences temporary exhaustion
+ */
+const askGrok = async ({ systemPrompt, contextPrompt, userQuery }) => {
+  const grokApiKey = process.env.GROQ_API_KEY || process.env.GROK_API_KEY;
+  if (!grokApiKey || grokApiKey.startsWith("CHANGE_ME") || grokApiKey.trim() === "") {
+    return null;
+  }
+
+  const endpoint = "https://api.groq.com/openai/v1/chat/completions";
+  const grokModels = ["openai/gpt-oss-120b", "qwen/qwen3.8-27b", "groq/compound"];
+
+  const messages = [
+    { role: "system", content: systemPrompt },
+    { role: "user", content: `${contextPrompt}\n\nUser Question:\n${userQuery}` },
+  ];
+
+  for (const model of grokModels) {
+    try {
+      const response = await axios.post(
+        endpoint,
+        {
+          model,
+          messages,
+          temperature: 0.35,
+          max_tokens: 1500,
+        },
+        {
+          timeout: 9000,
+          headers: {
+            Authorization: `Bearer ${grokApiKey}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const text = response.data?.choices?.[0]?.message?.content;
+      if (text && text.trim().length > 0) {
+        return { text, source: "grok-engine" };
+      }
+    } catch (err) {
+      console.warn(`Grok/Groq model ${model} unavailable (${err.response?.status || err.message}), trying next...`);
+    }
+  }
+
+  return null;
 };
 
 module.exports = { askMarketCopilot, SYSTEM_PROMPT };
