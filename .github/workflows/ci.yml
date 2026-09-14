@@ -71,7 +71,7 @@ jobs:
     name: Deploy to Production Server
     needs: docker-build
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.VM_HOST != ''
 
     steps:
       - name: Deploy via SSH

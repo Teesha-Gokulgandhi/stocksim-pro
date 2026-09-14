@@ -1,5 +1,6 @@
 const axios = require("axios");
 const mongoose = require("mongoose");
+const User = require("../models/User");
 const Stock = require("../models/Stock");
 const Holding = require("../models/Holding");
 const { getQuote } = require("./yahooService");
@@ -1286,6 +1287,90 @@ const askMarketCopilot = async ({ userQuery, marketContext, userId }) => {
     holdingsCount: Number(marketContext?.holdingsCount) || 0,
   };
 
+  const isIndian = safeContext.market !== "US";
+  const curSym = isIndian ? "₹" : "$";
+
+  // Pre-fetch real user portfolio directly from MongoDB if authenticated
+  let userHoldings = [];
+  let userHoldingsSummary = "";
+  let portfolioStats = {
+    totalInvested: 0,
+    totalCurrent: 0,
+    totalPnl: 0,
+    pnlPct: "0.00",
+  };
+
+  if (userId) {
+    try {
+      const [u, rawHoldings] = await Promise.all([
+        User.findById(userId).lean(),
+        Holding.find({ user: userId, quantity: { $gt: 0 } }).lean(),
+      ]);
+
+      if (u) {
+        safeContext.balance = isIndian ? (u.balance ?? 100000) : (u.balanceUSD ?? 10000);
+      }
+
+      if (rawHoldings && rawHoldings.length > 0) {
+        // Filter holdings for the currently active market
+        const activeMarketHoldings = rawHoldings.filter((h) =>
+          isIndian
+            ? h.currency === "INR" || h.symbol.endsWith(".NS") || h.symbol.endsWith(".BO")
+            : h.currency === "USD" || (!h.symbol.endsWith(".NS") && !h.symbol.endsWith(".BO"))
+        );
+
+        safeContext.holdingsCount = activeMarketHoldings.length;
+
+        // Fetch live quotes for accurate valuation & P&L
+        const evaluated = await Promise.all(
+          activeMarketHoldings.map(async (h) => {
+            let quote = null;
+            try { quote = await getQuote(h.symbol); } catch {}
+            const currentPrice = quote?.price || h.avgPrice;
+            const invested = h.avgPrice * h.quantity;
+            const curVal = currentPrice * h.quantity;
+            const pnl = curVal - invested;
+            const pnlPct = invested > 0 ? ((pnl / invested) * 100) : 0;
+            return {
+              symbol: h.symbol,
+              quantity: h.quantity,
+              avgPrice: h.avgPrice,
+              currentPrice,
+              invested,
+              curVal,
+              pnl,
+              pnlPct,
+            };
+          })
+        );
+
+        userHoldings = evaluated;
+        const totalInvested = evaluated.reduce((s, h) => s + h.invested, 0);
+        const totalCurrent = evaluated.reduce((s, h) => s + h.curVal, 0);
+        const totalPnl = totalCurrent - totalInvested;
+        const pnlPct = totalInvested > 0 ? ((totalPnl / totalInvested) * 100).toFixed(2) : "0.00";
+
+        portfolioStats = {
+          totalInvested,
+          totalCurrent,
+          totalPnl,
+          pnlPct,
+        };
+
+        if (evaluated.length > 0) {
+          userHoldingsSummary = evaluated
+            .map(
+              (h) =>
+                `- ${h.symbol}: ${h.quantity} shares @ avg ${curSym}${formatCurrency(h.avgPrice, isIndian)} (Live Price: ${curSym}${formatCurrency(h.currentPrice, isIndian)}) | Invested: ${curSym}${formatCurrency(h.invested, isIndian)} | Current: ${curSym}${formatCurrency(h.curVal, isIndian)} | P&L: ${h.pnl >= 0 ? "+" : ""}${curSym}${formatCurrency(Math.abs(h.pnl), isIndian)} (${h.pnl >= 0 ? "+" : ""}${h.pnlPct.toFixed(2)}%)`
+            )
+            .join("\n");
+        }
+      }
+    } catch (dbErr) {
+      console.error("Copilot Portfolio Fetch Error:", dbErr.message);
+    }
+  }
+
   // If no Gemini API key configured, use our comprehensive intelligent fallback engine
   if (!apiKey || apiKey.startsWith("CHANGE_ME") || apiKey.trim() === "") {
     const text = await generateLocalAnalysis({ userQuery, marketContext: safeContext, userId });
@@ -1294,21 +1379,50 @@ const askMarketCopilot = async ({ userQuery, marketContext, userId }) => {
 
   // Call Google Gemini 3.6 Flash
   try {
-    const curSym = safeContext.currency === "USD" ? "$" : "₹";
+    const portfolioBlock = userId
+      ? `
+<user_portfolio>
+- Trader Status: Authenticated User
+- Active Market: ${isIndian ? "Indian Market (NSE/BSE)" : "US Market (NYSE/Nasdaq)"}
+- Available Cash / Margin: ${curSym}${formatCurrency(safeContext.balance, isIndian)}
+- Active Equities Held: ${safeContext.holdingsCount} stocks
+- Total Capital Invested: ${curSym}${formatCurrency(portfolioStats.totalInvested, isIndian)}
+- Current Portfolio Market Value: ${curSym}${formatCurrency(portfolioStats.totalCurrent, isIndian)}
+- Net Unrealized P&L: ${portfolioStats.totalPnl >= 0 ? "+" : ""}${curSym}${formatCurrency(Math.abs(portfolioStats.totalPnl), isIndian)} (${portfolioStats.totalPnl >= 0 ? "+" : ""}${portfolioStats.pnlPct}%)
+- Holdings Breakdown:
+${userHoldingsSummary || "No active equity positions in this market."}
+</user_portfolio>`
+      : `<user_portfolio>
+- Trader Status: Guest (Not Logged In)
+</user_portfolio>`;
+
     const contextPrompt = `<market_context>
 - Active Market: ${safeContext.market === "US" ? "US Market (NYSE/Nasdaq - USD)" : "Indian Market (NSE/BSE - INR)"}
-- User Available Margin: ${curSym}${safeContext.balance.toLocaleString(safeContext.market === "US" ? "en-US" : "en-IN")}
+- User Available Margin: ${curSym}${formatCurrency(safeContext.balance, isIndian)}
 - Current Portfolio Holdings Count: ${safeContext.holdingsCount}
 ${
   safeContext.activeStock
-    ? `- Currently Selected Stock: ${safeContext.activeStock.symbol} | Price: ${safeContext.activeStock.price} | Change: ${safeContext.activeStock.changePercent}%`
+    ? `- Currently Selected Stock: ${safeContext.activeStock.symbol} | Price: ${safeContext.activeStock.price || "—"}`
     : "- Currently Selected Stock: None (Browsing Markets)"
 }
+${portfolioBlock}
 </market_context>
 
 <user_query>
 ${userQuery}
-</user_query>`;
+</user_query>
+
+INSTRUCTIONS FOR THIS RESPONSE:
+1. If the user query is asking for a portfolio health check, portfolio analysis, positions review, or P&L:
+   - Use the ACTUAL real holdings from <user_portfolio> above!
+   - State their total invested (${curSym}${formatCurrency(portfolioStats.totalInvested, isIndian)}), current market value (${curSym}${formatCurrency(portfolioStats.totalCurrent, isIndian)}), and unrealized P&L (${portfolioStats.totalPnl >= 0 ? "+" : ""}${curSym}${formatCurrency(Math.abs(portfolioStats.totalPnl), isIndian)} [${portfolioStats.totalPnl >= 0 ? "+" : ""}${portfolioStats.pnlPct}%]).
+   - Review their individual stock positions, top gainers, laggards, and sector diversification.
+   - Provide concrete, actionable insights (e.g. profit booking on winners, trailing stop-losses, capital sizing).
+   - NEVER claim the user has 0 holdings or 100% cash when <user_portfolio> shows active positions!
+2. If the user query is about comparing stocks (e.g. "X vs Y"):
+   - Compare valuation, momentum, and technical stance.
+3. If the user query is about a specific stock:
+   - Give technical levels (support, resistance, 50-DMA), business moat, and if they hold it (check <user_portfolio>), mention their exact position and unrealized P&L.`;
 
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
 

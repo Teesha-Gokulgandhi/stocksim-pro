@@ -63,11 +63,12 @@ router.post("/chat", protect, copilotLimiter, async (req, res) => {
       });
     }
 
-    // Call Gemini Copilot service
+    // Call Gemini Copilot service with authenticated userId
+    const userId = req.user?.id || req.user?._id;
     const result = await askMarketCopilot({
       userQuery: cleanMessage,
       marketContext,
-      userId: req.user._id,
+      userId,
     });
 
     return res.json({

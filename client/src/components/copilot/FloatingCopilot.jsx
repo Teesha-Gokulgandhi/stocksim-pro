@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import {
   FiZap,
@@ -218,7 +218,7 @@ export default function FloatingCopilot() {
   const [copiedIdx, setCopiedIdx] = useState(null);
   const [inputVal, setInputVal] = useState("");
   const [loading, setLoading] = useState(false);
-  const [userProfile, setUserProfile] = useState(null);
+  const [userPortfolio, setUserPortfolio] = useState(null);
 
   const { selectedMarket, currency, currencySymbol } = useMarket();
   const location = useLocation();
@@ -241,18 +241,36 @@ Type any stock name or symbol (e.g., **SUNPHARMA**, **RELIANCE**, **TCS**, **AAP
     },
   ]);
 
-  // Fetch live user balance on mount or open
+  // Fetch live user portfolio on mount or open
+  const fetchPortfolio = useCallback(() => {
+    API.get("/user/portfolio")
+      .then((res) => {
+        if (res.data) {
+          setUserPortfolio(res.data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
-    if (isOpen && !userProfile) {
-      API.get("/user/profile")
-        .then((res) => {
-          if (res.data?.user) {
-            setUserProfile(res.data.user);
-          }
-        })
-        .catch(() => {});
+    if (isOpen) {
+      fetchPortfolio();
     }
-  }, [isOpen, userProfile]);
+  }, [isOpen, fetchPortfolio]);
+
+  // Listen to open-copilot custom event
+  useEffect(() => {
+    const handleOpenCopilot = (e) => {
+      setIsOpen(true);
+      setIsMinimized(false);
+      fetchPortfolio();
+      if (e.detail?.query) {
+        handleSendMessage(e.detail.query);
+      }
+    };
+    window.addEventListener("open-copilot", handleOpenCopilot);
+    return () => window.removeEventListener("open-copilot", handleOpenCopilot);
+  }, [fetchPortfolio]);
 
   // Scroll to bottom of message thread
   useEffect(() => {
@@ -282,8 +300,14 @@ Type any stock name or symbol (e.g., **SUNPHARMA**, **RELIANCE**, **TCS**, **AAP
     try {
       const activeBalance =
         selectedMarket === "US"
-          ? (userProfile?.balanceUSD ?? 10000)
-          : (userProfile?.balance ?? 100000);
+          ? (userPortfolio?.balanceUSD ?? 10000)
+          : (userPortfolio?.balance ?? 100000);
+
+      const activeHoldings = (userPortfolio?.holdings || []).filter((h) =>
+        selectedMarket === "US"
+          ? h.currency === "USD" || (!h.symbol.endsWith(".NS") && !h.symbol.endsWith(".BO"))
+          : h.currency === "INR" || h.symbol.endsWith(".NS") || h.symbol.endsWith(".BO")
+      );
 
       const payload = {
         message: userText,
@@ -292,7 +316,7 @@ Type any stock name or symbol (e.g., **SUNPHARMA**, **RELIANCE**, **TCS**, **AAP
           currency,
           balance: activeBalance,
           activeStock: activeStockSymbol ? { symbol: activeStockSymbol } : null,
-          holdingsCount: userProfile?.holdings?.length || 0,
+          holdingsCount: activeHoldings.length,
         },
       };
 
