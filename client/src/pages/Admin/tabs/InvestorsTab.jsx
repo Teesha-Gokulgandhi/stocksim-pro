@@ -67,7 +67,7 @@ function InvestorsTab({
               <th>Role</th>
               <th>Status</th>
               <th>Joined</th>
-              <th>Actions</th>
+              <th className="admin-actions-th">Actions</th>
             </tr>
           </thead>
           <tbody>

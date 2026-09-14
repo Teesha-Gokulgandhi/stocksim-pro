@@ -65,7 +65,9 @@ function GoogleSignInButton({ onError }) {
         if (buttonRef.current) {
           buttonRef.current.innerHTML = ""; // clear before re-render on theme change
           // Google API accepts width between 200-400; clamp to that range
-          const btnWidth = Math.min(400, Math.max(200, Math.floor(containerWidth)));
+          // Provide comfortable width so personalized button with full email never clips
+          const currentWidth = buttonRef.current?.offsetWidth || containerWidth || 390;
+          const btnWidth = Math.min(400, Math.max(250, Math.floor(currentWidth)));
           window.google.accounts.id.renderButton(buttonRef.current, {
             theme: theme === "dark" ? "filled_black" : "outline",
             size: "large",

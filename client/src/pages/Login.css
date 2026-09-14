@@ -224,10 +224,10 @@
 
 .login-card {
   width: 100%;
-  max-width: 440px;
+  max-width: 460px;
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  padding: 40px 36px;
+  padding: 38px 28px;
   border-radius: var(--radius-lg, 16px);
   box-shadow: var(--shadow-elevated, 0 20px 50px rgba(0,0,0,0.4));
   animation: fadeInUp 0.3s ease both;
@@ -383,16 +383,20 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: visible !important;
 }
 
 .google-signin-btn > div {
   display: flex !important;
   justify-content: center !important;
   width: 100% !important;
+  max-width: 100% !important;
+  overflow: visible !important;
 }
 
 .google-signin-btn iframe {
   margin: 0 auto !important;
+  overflow: visible !important;
 }
 
 .password-field {
