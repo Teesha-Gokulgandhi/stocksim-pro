@@ -35,10 +35,30 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
     rel="stylesheet" />
-  <!-- Google Identity Services: renders the Sign-In button and issues a
-       signed ID token client-side. We never talk to Google's OAuth
-       endpoints ourselves — this script + our backend's verification of
-       the resulting idToken is the entire flow. -->
+  <!-- Schema.org Structured Data (Google Rich Snippet & Brand Identity) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "StockSim Pro",
+    "alternateName": ["StockSimPro", "StockSim Pro India", "stocksimpro"],
+    "url": "https://stocksimpro.in",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "All",
+    "description": "Full-stack MERN real-time stock market simulator for trading Indian (NSE/BSE) and US (NASDAQ/NYSE) equities with virtual currency.",
+    "author": {
+      "@type": "Person",
+      "name": "Teesha Gokulgandhi",
+      "url": "https://github.com/Teesha-Gokulgandhi"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "INR"
+    }
+  }
+  </script>
+  <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
