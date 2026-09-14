@@ -1,26 +1,95 @@
 /* ================================================================
-   STOCKSIM PRO — RESPONSIVE GLOBAL LAYOUT & DESIGN UTILITIES
+   STOCKSIM PRO — MOBILE-FIRST RESPONSIVE DESIGN SYSTEM
+   Targets:
+     • Mobile phones:       320px – 480px
+     • Large phones:        481px – 767px
+     • Tablets:             768px – 1024px
+     • Desktop:             1025px+
    ================================================================ */
 
-/* ── Page Container ── */
-.page-container {
+/* ── Universal Sizing & Viewport Protection ── */
+html, body {
   width: 100%;
-  max-width: 1560px;
-  margin: 0 auto;
+  max-width: 100vw;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
-/* ── Uniform Page Header Across All Pages ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* ── 1. Global Responsive Container System ── */
+.page-container {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 480px) {
+  .page-container {
+    padding: 20px;
+  }
+}
+
+@media (min-width: 768px) {
+  .page-container {
+    padding: 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page-container {
+    padding: 32px;
+  }
+}
+
+/* ── Safe Space for Floating Action Button (FAB) ── */
+.main-content {
+  padding-bottom: 96px !important;
+  min-width: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* ── 2. Fluid Typography Classes ── */
+.text-xs { font-size: var(--text-xs) !important; }
+.text-sm { font-size: var(--text-sm) !important; }
+.text-base { font-size: var(--text-base) !important; }
+.text-lg { font-size: var(--text-lg) !important; }
+.text-xl { font-size: var(--text-xl) !important; }
+.text-2xl { font-size: var(--text-2xl) !important; }
+
+/* ── 3. Page Headers ── */
 .page-header,
 .txn-page-header,
 .portfolio-header,
 .watchlist-header,
-.admin-header {
+.admin-header,
+.market-hub-header-top {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 24px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .page-header,
+  .txn-page-header,
+  .portfolio-header,
+  .watchlist-header,
+  .admin-header,
+  .market-hub-header-top {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
 }
 
 .page-header h1,
@@ -33,12 +102,13 @@
 .settings-header h1,
 .profile-header h1,
 .replay-header h1 {
-  font-size: var(--fs-page-title, 24px) !important;
-  font-weight: 700 !important;
+  font-size: var(--text-2xl, clamp(1.4rem, 1.2rem + 1.2vw, 2.2rem)) !important;
+  font-weight: 800 !important;
   letter-spacing: -0.03em !important;
   color: var(--text-primary) !important;
   margin: 0 !important;
   line-height: 1.25 !important;
+  word-break: break-word;
 }
 
 .page-header p,
@@ -50,314 +120,554 @@
 .settings-subtext,
 .admin-subtext {
   color: var(--text-secondary) !important;
-  font-size: var(--fs-body, 13px) !important;
+  font-size: var(--text-sm, 13px) !important;
   margin: 4px 0 0 0 !important;
-  line-height: 1.4 !important;
+  line-height: 1.5 !important;
 }
 
-/* ── Unified Section & Card Headings ── */
-.card h2,
-.institutional-card h2,
-.admin-card h2,
-.admin-card-top h2,
-.groww-card-title,
-.portfolio-card h2,
-.portfolio-card-header h2,
-.txn-card-header h2,
-.watchlist-card-header h2,
-.section-header h2 {
-  font-size: 17px !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.02em !important;
-  line-height: 1.3 !important;
-}
-
-.card h3,
-.institutional-card h3,
-.admin-card h3,
-.groww-sub-title,
-.portfolio-card h3,
-.txn-card-header h3,
-.admin-modal-sec-header h3 {
-  font-size: 14.5px !important;
-  font-weight: 600 !important;
-  letter-spacing: -0.015em !important;
-  line-height: 1.3 !important;
-}
-
-/* ── Unified Table Typography Scale ── */
-.groww-holdings-table th,
-.groww-orders-table th,
-.transactions-table th,
-.admin-table th,
-.admin-modal-table th,
-.holdings-table th,
-.watchlist-table th,
-.leaderboard-table th {
-  font-size: 11.5px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.04em !important;
-  text-transform: uppercase !important;
-  line-height: 1.3 !important;
-}
-
-.groww-holdings-table td,
-.groww-orders-table td,
-.transactions-table td,
-.admin-table td,
-.admin-modal-table td,
-.holdings-table td,
-.watchlist-table td,
-.leaderboard-table td {
-  font-size: 13px !important;
-  line-height: 1.4 !important;
-}
-
-/* ── Surface Cards ── */
+/* ── 4. Unified Surface Cards ── */
 .card,
-.institutional-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md, 12px);
-  padding: 20px;
+.institutional-card,
+.surface-card,
+.groww-hero-card,
+.market-desk-card,
+.groww-table-card,
+.portfolio-table-card,
+.txn-table-card {
+  width: 100%;
+  background: var(--bg-surface, #101624);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  border-radius: 18px;
+  padding: 18px;
   box-shadow: var(--shadow-card);
-  transition:
-    border-color var(--transition-base),
-    box-shadow var(--transition-base),
-    transform var(--transition-base);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base);
+  box-sizing: border-box;
+}
+
+@media (min-width: 480px) {
+  .card,
+  .institutional-card,
+  .surface-card,
+  .market-desk-card {
+    padding: 20px;
+    border-radius: 20px;
+  }
+}
+
+@media (min-width: 768px) {
+  .card,
+  .institutional-card,
+  .surface-card,
+  .market-desk-card {
+    padding: 24px;
+    border-radius: 22px;
+  }
 }
 
 .card:hover,
-.institutional-card:hover {
+.institutional-card:hover,
+.surface-card:hover {
   border-color: rgba(255, 255, 255, 0.14);
-  box-shadow: var(--shadow-card), 0 0 0 1px rgba(79,109,245,0.06);
+  box-shadow: var(--shadow-card), 0 0 0 1px rgba(124, 58, 237, 0.08);
 }
 
-[data-theme="light"] .card:hover,
-[data-theme="light"] .institutional-card:hover {
-  border-color: rgba(79, 109, 245, 0.18);
+/* ── 5. Responsive Grid Systems ── */
+/* Dashboard Main Grid (Mobile -> Tablet -> Desktop) */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  width: 100%;
 }
 
-/* ── Stat Badge Pill ── */
-.stat-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 10px;
-  border-radius: var(--radius-pill, 999px);
-  font-size: var(--fs-meta, 11px);
-  font-weight: 700;
-  letter-spacing: -0.01em;
+@media (min-width: 480px) {
+  .dashboard-grid {
+    gap: 20px;
+  }
 }
 
-.stat-pill.profit {
-  background: var(--color-profit-bg);
-  color: var(--color-profit);
-}
-.stat-pill.loss {
-  background: var(--color-loss-bg);
-  color: var(--color-loss);
+@media (min-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
 }
 
-/* ── Responsive Grid System ── */
+@media (min-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: 1.2fr 0.8fr;
+  }
+}
+
+/* Stats Cards Grid */
+.stats-grid,
+.groww-stats-bar {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  width: 100%;
+}
+
+@media (min-width: 420px) {
+  .stats-grid,
+  .groww-stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .groww-stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .groww-stats-bar {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+}
+
+/* Standard Grids */
 .grid-2 {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
 }
 
 .grid-3 {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  width: 100%;
+}
+
+@media (min-width: 560px) {
+  .grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 992px) {
+  .grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
 }
 
 .grid-4 {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  width: 100%;
 }
 
-/* ── Standard Buttons ── */
-.btn-primary {
+@media (min-width: 480px) {
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 992px) {
+  .grid-4 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+}
+
+/* ── 6. Market Tabs / Segment Controls ── */
+.market-tabs,
+.groww-segment-control {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  width: 100%;
+}
+
+@media (min-width: 420px) {
+  .market-tabs,
+  .groww-segment-control {
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 10px;
+  }
+}
+
+@media (min-width: 768px) {
+  .market-tabs,
+  .groww-segment-control {
+    display: inline-flex;
+    width: auto;
+    gap: 4px;
+  }
+}
+
+/* ── 7. Touch-Friendly Buttons & Inputs ── */
+button,
+.btn-primary,
+.btn-secondary,
+.port-tab,
+.groww-segment-btn,
+.groww-trade-btn,
+.groww-refresh-btn,
+.trade-cta-btn,
+.comp-toggle-btn {
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm, 10px);
+  font-size: var(--text-sm, 13px);
+  font-weight: 600;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: var(--accent-gradient, var(--accent-primary));
-  color: #ffffff;
-  border: none;
-  border-radius: var(--radius-sm, 8px);
-  padding: 9px 18px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  box-shadow: 0 2px 8px rgba(79, 109, 245, 0.25);
-}
-
-.btn-primary:hover:not(:disabled) {
-  filter: brightness(1.08);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(79, 109, 245, 0.38);
-}
-
-.btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
-
-.btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: var(--bg-surface-alt);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm, 8px);
-  padding: 8px 16px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition: all var(--transition-fast);
 }
 
-.btn-secondary:hover:not(:disabled) {
-  background: var(--bg-surface-elevated);
-  border-color: var(--border-hover);
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
-.btn-secondary:disabled { opacity: 0.55; cursor: not-allowed; }
-
-/* ── Section Divider ── */
-.section-divider {
-  border: none;
-  border-top: 1px solid var(--border-color);
-  margin: 20px 0;
-}
-
-/* ── Empty State ── */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 48px 24px;
-  color: var(--text-muted);
-  text-align: center;
-}
-
-.empty-state svg {
-  font-size: 36px;
-  opacity: 0.45;
-}
-
-.empty-state p {
+/* Ensure inputs are easily tappable */
+input, select {
+  min-height: 44px;
   font-size: 14px;
-  max-width: 280px;
-  line-height: 1.5;
 }
 
-/* ── Loading / Skeleton ── */
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--bg-surface-alt) 25%,
-    var(--bg-surface-elevated) 50%,
-    var(--bg-surface-alt) 75%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-shimmer 1.4s ease infinite;
-  border-radius: var(--radius-sm, 8px);
-}
+/* ── 8. Mobile Table Redesign: Responsive Cards on Phones ── */
+@media (max-width: 767px) {
+  /* Hide the fixed table headers on mobile */
+  .orders-table thead,
+  .groww-orders-table thead,
+  .transactions-table thead,
+  .portfolio-table thead {
+    display: none !important;
+  }
 
-@keyframes skeleton-shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
+  /* Transaction Table fallback */
+  .transactions-table,
+  .transactions-table tbody,
+  .transactions-table tr {
+    display: block !important;
+    width: 100% !important;
+  }
 
-/* ================================================================
-   BREAKPOINTS
-   ================================================================ */
+  .transactions-table tbody tr {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 16px !important;
+    margin-bottom: 12px !important;
+    border-radius: 16px !important;
+    background: var(--bg-surface-alt, #151c2e) !important;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08)) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+    gap: 8px !important;
+    box-sizing: border-box !important;
+  }
 
-@media (max-width: 1400px) {
-  .grid-4 { grid-template-columns: repeat(3, 1fr); }
-}
+  .transactions-table tbody td {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 4px 0 !important;
+    border: none !important;
+    width: 100% !important;
+    text-align: right !important;
+  }
 
-@media (max-width: 1200px) {
-  .grid-4 { grid-template-columns: repeat(2, 1fr); }
-  .top-section,
-  .middle-section {
-    grid-template-columns: 1fr !important;
+  /* Portfolio Table Container on Mobile: Clean Full-Width Cards */
+  .portfolio-table {
+    display: block !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .portfolio-table tbody {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .portfolio-table-card,
+  .portfolio-table-scroll,
+  .market-table-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: visible !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  /* Mobile Order History & Order Book Cards: Clean 2-Row Fintech Card */
+  .groww-recent-orders-section {
+    padding-bottom: 96px !important;
+  }
+
+  .groww-recent-orders-section .groww-table-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  .groww-orders-table thead,
+  .orders-table thead {
+    display: none !important;
+  }
+
+  .groww-orders-table,
+  .groww-orders-table tbody,
+  .orders-table,
+  .orders-table tbody {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .groww-orders-table tr.order-row,
+  .orders-table tr.order-row {
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    grid-template-rows: auto auto !important;
+    align-items: center !important;
+    gap: 8px 12px !important;
+    padding: 13px 15px !important;
+    margin-bottom: 0 !important;
+    border-radius: 14px !important;
+    background: var(--bg-surface, #101624) !important;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08)) !important;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    transition: transform 0.15s ease, border-color 0.15s ease !important;
+  }
+
+  .groww-orders-table tr.order-row:active,
+  .groww-orders-table tr.order-row:hover,
+  .orders-table tr.order-row:active,
+  .orders-table tr.order-row:hover {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  /* Left Status Indicator Stripe */
+  .groww-orders-table tr.order-row.buy,
+  .orders-table tr.order-row.buy {
+    border-left: 4px solid var(--color-profit, #22c55e) !important;
+  }
+
+  .groww-orders-table tr.order-row.sell,
+  .orders-table tr.order-row.sell {
+    border-left: 4px solid var(--color-loss, #ef4444) !important;
+  }
+
+  .groww-orders-table tr.order-row.replay,
+  .orders-table tr.order-row.replay {
+    border-left: 4px solid #8b5cf6 !important;
+  }
+
+  /* Row 1 Left: Symbol & Market Tag */
+  .groww-orders-table td.symbol-col,
+  .orders-table td.symbol-col {
+    grid-column: 1 / 2 !important;
+    grid-row: 1 / 2 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 0 !important;
+    border: none !important;
+    width: auto !important;
+    text-align: left !important;
+  }
+
+  .groww-orders-table .order-symbol-wrap,
+  .orders-table .order-symbol-wrap {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  .groww-orders-table .order-symbol,
+  .orders-table .order-symbol {
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    color: var(--text-primary) !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  .groww-orders-table .symbol-col .market-pill-small,
+  .orders-table .symbol-col .market-pill-small {
+    display: inline-flex !important;
+  }
+
+  /* Row 1 Right: Total Price (Bold & Large) */
+  .groww-orders-table td.total-col,
+  .orders-table td.total-col {
+    grid-column: 2 / 3 !important;
+    grid-row: 1 / 2 !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    padding: 0 !important;
+    border: none !important;
+    width: auto !important;
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    font-family: var(--font-mono) !important;
+    color: var(--text-primary) !important;
+    letter-spacing: -0.02em !important;
+    text-align: right !important;
+  }
+
+  /* Row 2 Left: Side Badge + Quantity • Execution Price */
+  .groww-orders-table td.side-col,
+  .orders-table td.side-col {
+    grid-column: 1 / 2 !important;
+    grid-row: 2 / 3 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 0 !important;
+    border: none !important;
+    width: auto !important;
+    text-align: left !important;
+  }
+
+  .groww-orders-table .order-side-meta,
+  .orders-table .order-side-meta {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .groww-orders-table .order-sub-calc,
+  .orders-table .order-sub-calc {
+    font-size: 12px !important;
+    color: var(--text-secondary) !important;
+    font-family: var(--font-mono) !important;
+    font-weight: 500 !important;
+    display: inline-block !important;
+  }
+
+  /* Row 2 Right: Timestamp */
+  .groww-orders-table td.time-col,
+  .orders-table td.time-col {
+    grid-column: 2 / 3 !important;
+    grid-row: 2 / 3 !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    padding: 0 !important;
+    border: none !important;
+    width: auto !important;
+    font-size: 11px !important;
+    color: var(--text-muted) !important;
+    font-variant-numeric: tabular-nums !important;
+    text-align: right !important;
+    white-space: nowrap !important;
+  }
+
+  /* Row 3 Left: Shares / Quantity */
+  .orders-table td.shares-col {
+    grid-column: 1 / 2 !important;
+    grid-row: 3 / 4 !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 8px 0 0 0 !important;
+    border-top: 1px dashed var(--border-color, rgba(255, 255, 255, 0.08)) !important;
+    width: auto !important;
+    text-align: left !important;
+  }
+
+  /* Row 3 Right: Execution Price */
+  .orders-table td.price-col {
+    grid-column: 2 / 3 !important;
+    grid-row: 3 / 4 !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    padding: 8px 0 0 0 !important;
+    border-top: 1px dashed var(--border-color, rgba(255, 255, 255, 0.08)) !important;
+    width: auto !important;
+    text-align: right !important;
+  }
+
+  /* Row 4: Status Pill Centered */
+  .orders-table td.status-col {
+    grid-column: 1 / 3 !important;
+    grid-row: 4 / 5 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding-top: 6px !important;
+    width: 100% !important;
+    border: none !important;
+  }
+
+  /* Hide Desktop-only redundant cells */
+  .groww-orders-table .desktop-only,
+  .orders-table .desktop-only {
+    display: none !important;
+  }
+
+  /* Scroll containment — allow horizontal swipe/scroll on standard data tables */
+  .groww-table-card,
+  .txn-table-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    box-sizing: border-box !important;
+    padding-bottom: 8px !important;
+  }
+
+  .groww-holdings-table {
+    min-width: 760px !important;
   }
 }
 
-@media (max-width: 992px) {
-  .grid-3 { grid-template-columns: repeat(2, 1fr); }
-  .grid-2 { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 768px) {
-  .main-content {
-    padding-bottom: 84px !important;
-    padding-left: 16px !important;
-    padding-right: 16px !important;
-    padding-top: 16px !important;
-  }
-
-  .card,
-  .institutional-card {
-    padding: 16px;
-    border-radius: var(--radius-md, 12px);
-  }
-
-  button, input, select {
-    min-height: 40px;
-  }
-
-  .navbar {
-    padding: 10px 16px !important;
-  }
-
+/* ── 9. Smooth Horizontal Scrollbars for Tables on Tablets ── */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .groww-table-card,
+  .portfolio-table-card,
   .txn-table-card,
-  .holdings-list,
-  .admin-table-wrap,
-  .trades-table-scroll,
-  .history-table-card {
+  .portfolio-table-scroll {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-  }
-
-  .portfolio-summary-grid {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 12px !important;
-  }
-
-  .details-grid { grid-template-columns: 1fr !important; }
-  .grid-3       { grid-template-columns: 1fr !important; }
-  .grid-4       { grid-template-columns: 1fr 1fr !important; }
-}
-
-@media (max-width: 560px) {
-  .grid-4 { grid-template-columns: 1fr !important; }
-}
-
-@media (max-width: 480px) {
-  .portfolio-summary-grid { grid-template-columns: 1fr !important; }
-
-  .page-header h1,
-  .txn-page-header h1,
-  .portfolio-header h1,
-  .watchlist-header h1,
-  .admin-header h1 {
-    font-size: 20px !important;
-  }
-
-  .page-header,
-  .txn-page-header,
-  .portfolio-header,
-  .watchlist-header,
-  .admin-header {
-    flex-direction: column;
-    align-items: flex-start;
   }
 }

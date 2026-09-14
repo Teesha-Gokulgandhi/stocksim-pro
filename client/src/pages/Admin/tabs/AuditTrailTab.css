@@ -1,0 +1,203 @@
+/* Audit Tag */
+.audit-action-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--bg-surface-alt);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+/* Audit Table Specific Styles */
+.admin-audit-table {
+  min-width: 960px;
+}
+
+.admin-audit-table th,
+.admin-audit-table td {
+  white-space: nowrap;
+}
+
+.admin-audit-table td.audit-when-col {
+  font-family: var(--font-mono, monospace);
+  font-size: 11.5px;
+  color: var(--text-primary);
+}
+
+.admin-audit-table td.audit-actor-col {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.admin-audit-table td.audit-action-col {
+  white-space: nowrap;
+}
+
+.admin-audit-table td.audit-target-col {
+  font-size: 12.5px;
+}
+
+.admin-audit-table td.audit-details-col {
+  white-space: normal;
+  word-break: break-word;
+  max-width: 440px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* Audit Trail Responsive Desktop vs Mobile Toggle */
+.admin-audit-table-desktop {
+  display: block;
+  width: 100%;
+}
+
+.admin-audit-cards-mobile {
+  display: none;
+}
+
+.admin-audit-card {
+  background: var(--bg-surface-alt);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
+  width: 100%;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.admin-audit-card:hover {
+  border-color: var(--accent-primary-border, var(--border-hover));
+  transform: translateY(-1px);
+}
+
+.admin-audit-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.audit-action-tag.danger {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.audit-action-tag.success {
+  background: rgba(34, 197, 94, 0.12);
+  color: #22c55e;
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.audit-action-tag.warning {
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.audit-action-tag.default {
+  background: var(--accent-primary-subtle);
+  color: var(--accent-primary);
+  border-color: var(--accent-primary-border);
+}
+
+.admin-audit-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.admin-audit-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 2px;
+}
+
+.admin-audit-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 12.5px;
+  flex-wrap: wrap;
+}
+
+.audit-meta-lbl {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  min-width: 50px;
+}
+
+.admin-audit-target {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.admin-audit-actor {
+  font-size: 12px;
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.admin-audit-details-strip {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-top: 2px;
+}
+
+.admin-audit-details-strip p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  word-break: break-word;
+}
+
+.sent-notifs-section {
+  margin-top: 24px;
+}
+
+.sent-notifs-section h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+
+@media (max-width: 768px) {
+
+  /* ================================================================
+     Audit Trail on Mobile
+     ================================================================ */
+  .admin-audit-table-desktop {
+    display: none !important;
+  }
+
+  .admin-audit-cards-mobile {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+
+}

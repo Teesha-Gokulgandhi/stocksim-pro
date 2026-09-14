@@ -137,15 +137,16 @@ function Navbar({ setSidebarOpen, sidebarCollapsed = false, toggleCollapse }) {
         </button>
 
         {/* 3 Core Header Desks: Indian Market, US Market, Global Analytics */}
-        <div className="header-primary-desks">
+        <div className="header-primary-desks" role="tablist" aria-label="Market and analytics selection">
           {/* 1. Indian Market */}
           <button
             type="button"
             className={`header-desk-pill inr ${isMarketPage && selectedMarket === "IN" ? "active" : ""}`}
             onClick={handleSwitchToIndian}
             title="Indian Stock Market (NSE/BSE)"
+            aria-selected={isMarketPage && selectedMarket === "IN"}
           >
-            <span className="desk-flag">🇮🇳</span>
+            <span className="desk-code-badge inr">IN</span>
             <span className="desk-title">Indian Market</span>
             {isMarketPage && selectedMarket === "IN" && <span className="active-dot inr" />}
           </button>
@@ -156,8 +157,9 @@ function Navbar({ setSidebarOpen, sidebarCollapsed = false, toggleCollapse }) {
             className={`header-desk-pill usd ${isMarketPage && selectedMarket === "US" ? "active" : ""}`}
             onClick={handleSwitchToUS}
             title="US Stock Market (NYSE/Nasdaq)"
+            aria-selected={isMarketPage && selectedMarket === "US"}
           >
-            <span className="desk-flag">🇺🇸</span>
+            <span className="desk-code-badge usd">US</span>
             <span className="desk-title">US Market</span>
             {isMarketPage && selectedMarket === "US" && <span className="active-dot usd" />}
           </button>
@@ -168,9 +170,10 @@ function Navbar({ setSidebarOpen, sidebarCollapsed = false, toggleCollapse }) {
             className={`header-desk-pill analytics ${isAnalyticsPage ? "active" : ""}`}
             onClick={handleSwitchToAnalytics}
             title="Portfolio Analytics"
+            aria-selected={isAnalyticsPage}
           >
             <FiBarChart2 className="analytics-icon" />
-            <span className="desk-title">Portfolio Analytics</span>
+            <span className="desk-title">Analytics</span>
             {isAnalyticsPage && <span className="active-dot analytics" />}
           </button>
         </div>

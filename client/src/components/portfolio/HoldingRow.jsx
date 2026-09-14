@@ -16,7 +16,7 @@ function HoldingRow({ holding }) {
     });
 
   return (
-    <tr className="portfolio-row" onClick={() => navigate(`/market/${holding.symbol}`)}>
+    <tr className={`portfolio-row ${isProfit ? "profit" : "loss"}`} onClick={() => navigate(`/market/${holding.symbol}`)}>
       {/* Column 1: Asset Details */}
       <td className="stock-cell">
         <div className="holding-stock-item">
@@ -27,9 +27,6 @@ function HoldingRow({ holding }) {
             <strong className="holding-name">{holding.companyName}</strong>
             <div className="holding-meta">
               <span className="holding-symbol">{holding.symbol}</span>
-              <span className={`market-tag ${isUSD ? "usd" : "inr"}`}>
-                {isUSD ? "🇺🇸 US" : "🇮🇳 NSE"}
-              </span>
               {holding.takeProfit && (
                 <span className="holding-bracket-tag tp" title="Take Profit Target">
                   TP: {currencySymbol}{formatPrice(holding.takeProfit)}
@@ -46,19 +43,19 @@ function HoldingRow({ holding }) {
       </td>
 
       {/* Column 2: Shares */}
-      <td className="num-cell bold">{holding.quantity}</td>
+      <td className="num-cell bold shares-col" data-label="Shares">{holding.quantity}</td>
 
       {/* Column 3: Avg Buy Price */}
-      <td className="num-cell">{currencySymbol}{formatPrice(holding.avgPrice)}</td>
+      <td className="num-cell avg-col" data-label="Avg Buy">{currencySymbol}{formatPrice(holding.avgPrice)}</td>
 
       {/* Column 4: Current Price */}
-      <td className="num-cell">{currencySymbol}{formatPrice(holding.currentPrice)}</td>
+      <td className="num-cell ltp-col" data-label="Live Price">{currencySymbol}{formatPrice(holding.currentPrice)}</td>
 
       {/* Column 5: Total Value */}
-      <td className="num-cell bold">{currencySymbol}{formatPrice(holding.currentValue)}</td>
+      <td className="num-cell bold value-col" data-label="Total Value">{currencySymbol}{formatPrice(holding.currentValue)}</td>
 
       {/* Column 6: Unrealized P/L */}
-      <td className="num-cell">
+      <td className="num-cell pnl-col" data-label="Unrealized P&L">
         <div className={`pnl-wrap ${isProfit ? "profit" : "loss"}`}>
           <span className="pnl-val">
             {isProfit ? "+" : "-"}{currencySymbol}{formatPrice(Math.abs(holding.pl || 0))}

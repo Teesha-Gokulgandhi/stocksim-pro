@@ -57,14 +57,14 @@
   font-family: var(--font-sans);
   border: none;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(79, 109, 245, 0.35);
+  box-shadow: var(--shadow-glow, 0 4px 14px rgba(124, 58, 237, 0.35));
   transition: all var(--transition-fast);
 }
 
 .portfolio-trade-cta:hover {
   transform: translateY(-2px);
   filter: brightness(1.08);
-  box-shadow: 0 8px 24px rgba(79, 109, 245, 0.48);
+  box-shadow: var(--shadow-glow, 0 8px 24px rgba(124, 58, 237, 0.48));
 }
 
 .market-desks-grid {
@@ -88,11 +88,10 @@
   box-shadow: var(--shadow-elevated);
 }
 
-/* INR desk — warm orange accent top border */
-.market-desk-card.inr { border-top: 2px solid #f97316; }
-
-/* USD desk — green profit accent top border */
-.market-desk-card.usd { border-top: 2px solid var(--color-profit); }
+.market-desk-card.inr,
+.market-desk-card.usd {
+  border-top: 2px solid var(--accent-primary);
+}
 
 .desk-header {
   display: flex;
@@ -284,19 +283,79 @@
 }
 
 @media (max-width: 992px) {
-  .holdings-list-header {
-    grid-template-columns: 2fr 1fr 1.2fr 1.2fr 1.5fr 1fr;
-  }
-  .holdings-list-header span:nth-child(3) {
-    display: none;
+  .market-desks-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 768px) {
+  .portfolio-page {
+    gap: 18px;
+  }
+
+  .portfolio-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .portfolio-header h1 {
+    font-size: 22px;
+  }
+
+  .portfolio-trade-cta {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+
   .market-desks-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
-  .holdings-list-header {
-    display: none;
+
+  .market-desk-card {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .portfolio-page {
+    padding-bottom: 110px !important;
+  }
+
+  .portfolio-filter-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 100%;
+    gap: 4px;
+    padding: 4px;
+  }
+
+  .port-tab {
+    padding: 10px 8px;
+    font-size: 12px;
+    min-height: 44px;
+    text-align: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .desk-metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .portfolio-filter-tabs {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .desk-metric {
+    padding: 12px;
+  }
+
+  .desk-metric-val {
+    font-size: 15px;
   }
 }

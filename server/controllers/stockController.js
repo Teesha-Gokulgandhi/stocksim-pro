@@ -118,12 +118,12 @@ exports.getStockBySymbol = asyncHandler(async (req, res) => {
       exchange: stock.exchange,
       country:
         stock.country ||
-        (["NSE", "BSE"].includes(stock.exchange) || stock.symbol.endsWith(".NS") || stock.symbol.endsWith(".BO")
+        (["NSE", "BSE", "NSE/BSE"].includes(stock.exchange) || stock.symbol.endsWith(".NS") || stock.symbol.endsWith(".BO")
           ? "IN"
           : "US"),
       currency:
         stock.currency ||
-        (["NSE", "BSE"].includes(stock.exchange) || stock.symbol.endsWith(".NS") || stock.symbol.endsWith(".BO")
+        (["NSE", "BSE", "NSE/BSE"].includes(stock.exchange) || stock.symbol.endsWith(".NS") || stock.symbol.endsWith(".BO")
           ? "INR"
           : "USD"),
       logo: stock.logo,

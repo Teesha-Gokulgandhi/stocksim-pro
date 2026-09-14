@@ -1,6 +1,20 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiRefreshCw, FiAlertTriangle, FiLock, FiCheck, FiShield } from "react-icons/fi";
+import {
+  FiRefreshCw,
+  FiAlertTriangle,
+  FiLock,
+  FiCheck,
+  FiShield,
+  FiMoon,
+  FiSun,
+  FiBell,
+  FiLogOut,
+  FiExternalLink,
+  FiKey,
+  FiEye,
+  FiEyeOff
+} from "react-icons/fi";
 import { useTheme } from "../../context/ThemeContext";
 import { useUser } from "../../context/UserContext";
 import { useToast } from "../../context/ToastContext";
@@ -72,141 +86,203 @@ function Settings() {
     <div className="settings-page">
       <div className="settings-header">
         <h1>Settings</h1>
-        <p>Manage your simulation preferences and account security.</p>
       </div>
 
-      <div className="settings-card">
-        <div className="settings-row">
-          <div>
-            <h4>Interface Theme</h4>
-            <p>Switch between dark and light appearance.</p>
-          </div>
-          <button
-            type="button"
-            className="theme-switch"
-            onClick={toggleTheme}
-            aria-label="Toggle Theme"
-          >
-            <span className={`theme-thumb ${theme === "light" ? "light" : ""}`} />
-          </button>
-        </div>
-
-        <div className="settings-row password-row">
-          <div>
-            <h4>Account Password</h4>
-            <p>Update your login credentials.</p>
-          </div>
-          <button
-            type="button"
-            className="change-pw-btn"
-            onClick={() => setShowPasswordForm((p) => !p)}
-          >
-            {showPasswordForm ? "Cancel" : "Change"}
-          </button>
-        </div>
-
-        {showPasswordForm && (
-          <form className="password-form" onSubmit={handlePasswordChange}>
-            <div className="password-input-group">
-              <input
-                type={showCurrentPassword ? "text" : "password"}
-                placeholder="Current password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                required
-              />
+      {/* --- Section 1: Appearance & Notifications --- */}
+      <div className="settings-section">
+        <div className="settings-section-title">INTERFACE & NOTIFICATIONS</div>
+        <div className="settings-card">
+          {/* Theme Row */}
+          <div className="settings-row">
+            <div className="settings-row-left">
+              <div className="settings-icon-badge">
+                {theme === "light" ? <FiSun /> : <FiMoon />}
+              </div>
+              <div className="settings-row-info">
+                <h4>Interface Theme</h4>
+              </div>
+            </div>
+            <div className="settings-row-right">
               <button
                 type="button"
-                className="pw-toggle-btn"
-                onClick={() => setShowCurrentPassword((prev) => !prev)}
+                className={`settings-toggle-switch ${theme === "light" ? "active-light" : "active-dark"}`}
+                onClick={toggleTheme}
+                aria-label="Toggle Theme"
+                role="switch"
+                aria-checked={theme === "light"}
               >
-                {showCurrentPassword ? "Hide" : "Show"}
+                <span className="settings-toggle-thumb">
+                  {theme === "light" ? <FiSun className="switch-icon sun" /> : <FiMoon className="switch-icon moon" />}
+                </span>
               </button>
             </div>
+          </div>
 
-            <div className="password-input-group">
-              <input
-                type={showNewPassword ? "text" : "password"}
-                placeholder="New password (min 8 chars, 1 letter, 1 number)"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-              />
+          {/* Price Alerts Row */}
+          <div className="settings-row">
+            <div className="settings-row-left">
+              <div className="settings-icon-badge">
+                <FiBell />
+              </div>
+              <div className="settings-row-info">
+                <h4>Price Alerts & Notifications</h4>
+              </div>
+            </div>
+            <div className="settings-row-right">
               <button
                 type="button"
-                className="pw-toggle-btn"
-                onClick={() => setShowNewPassword((prev) => !prev)}
+                className={`settings-toggle-switch ${priceAlerts ? "active-on" : "active-off"}`}
+                onClick={() => {
+                  const next = !priceAlerts;
+                  setPriceAlerts(next);
+                  localStorage.setItem("stocksim_alerts_enabled", String(next));
+                  toast.success(next ? "Notifications enabled" : "Notifications muted");
+                }}
+                aria-label="Toggle Price Alerts"
+                role="switch"
+                aria-checked={priceAlerts}
               >
-                {showNewPassword ? "Hide" : "Show"}
+                <span className="settings-toggle-thumb" />
               </button>
             </div>
-
-            {pwError && <p className="pw-error">{pwError}</p>}
-
-            <button type="submit" className="pw-submit-btn" disabled={pwSubmitting}>
-              <FiLock /> {pwSubmitting ? "Updating..." : "Update Password"}
-            </button>
-          </form>
-        )}
-
-        {/* -------- Admin Section (Only for designated admins) -------- */}
-        {isAdmin && (
-          <div className="settings-row admin-console-row">
-            <div>
-              <h4>
-                <FiShield /> Administrator Role
-              </h4>
-              <p>👑 You have full access to the Admin Simulation Control Center.</p>
-            </div>
-            <button
-              type="button"
-              className="admin-go-btn"
-              onClick={() => navigate("/admin")}
-            >
-              Open Admin Console
-            </button>
           </div>
-        )}
-
-        {/* -------- Reset Virtual Portfolio Section -------- */}
-        <div className="settings-row reset-row">
-          <div>
-            <h4>Reset Practice Portfolio</h4>
-            <p>Reset balance back to ₹1,00,000 virtual cash and clear all active positions.</p>
-          </div>
-          <button
-            type="button"
-            className="reset-portfolio-trigger"
-            onClick={() => setShowResetModal(true)}
-          >
-            <FiRefreshCw /> Reset
-          </button>
-        </div>
-
-        <div className="settings-row">
-          <div>
-            <h4>Price Alerts & Notifications</h4>
-            <p>Receive push alerts and real-time trade execution notifications.</p>
-          </div>
-          <label className="theme-toggle">
-            <input
-              type="checkbox"
-              checked={priceAlerts}
-              onChange={() => {
-                const next = !priceAlerts;
-                setPriceAlerts(next);
-                localStorage.setItem("stocksim_alerts_enabled", String(next));
-                toast.success(next ? "Notifications enabled" : "Notifications muted");
-              }}
-            />
-            <span className="toggle-slider"></span>
-          </label>
         </div>
       </div>
 
-      <button type="button" className="logout-card-btn" onClick={handleLogout}>
-        Log Out
-      </button>
+      {/* --- Section 2: Security & Permissions --- */}
+      <div className="settings-section">
+        <div className="settings-section-title">SECURITY & ACCESS</div>
+        <div className="settings-card">
+          {/* Password Row */}
+          <div className="settings-row">
+            <div className="settings-row-left">
+              <div className="settings-icon-badge">
+                <FiLock />
+              </div>
+              <div className="settings-row-info">
+                <h4>Account Password</h4>
+              </div>
+            </div>
+            <div className="settings-row-right">
+              <button
+                type="button"
+                className={`settings-btn-secondary ${showPasswordForm ? "active" : ""}`}
+                onClick={() => setShowPasswordForm((p) => !p)}
+              >
+                <FiKey className="btn-icon" /> {showPasswordForm ? "Cancel" : "Change"}
+              </button>
+            </div>
+          </div>
+
+          {/* Password Form Expansion */}
+          {showPasswordForm && (
+            <form className="password-form" onSubmit={handlePasswordChange}>
+              <div className="password-input-group">
+                <input
+                  type={showCurrentPassword ? "text" : "password"}
+                  placeholder="Current password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  className="pw-toggle-btn"
+                  onClick={() => setShowCurrentPassword((prev) => !prev)}
+                >
+                  {showCurrentPassword ? <FiEyeOff /> : <FiEye />}
+                </button>
+              </div>
+
+              <div className="password-input-group">
+                <input
+                  type={showNewPassword ? "text" : "password"}
+                  placeholder="New password (min 8 chars, 1 letter, 1 number)"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  className="pw-toggle-btn"
+                  onClick={() => setShowNewPassword((prev) => !prev)}
+                >
+                  {showNewPassword ? <FiEyeOff /> : <FiEye />}
+                </button>
+              </div>
+
+              {pwError && <p className="pw-error">{pwError}</p>}
+
+              <button type="submit" className="pw-submit-btn" disabled={pwSubmitting}>
+                <FiLock /> {pwSubmitting ? "Updating..." : "Update Password"}
+              </button>
+            </form>
+          )}
+
+          {/* Admin Role Row (Only for designated admins) */}
+          {isAdmin && (
+            <div className="settings-row admin-row">
+              <div className="settings-row-left">
+                <div className="settings-icon-badge">
+                  <FiShield />
+                </div>
+                <div className="settings-row-info">
+                  <div className="settings-row-title-wrap">
+                    <h4>Administrator Role</h4>
+                    <span className="settings-admin-pill">ADMIN</span>
+                  </div>
+                </div>
+              </div>
+              <div className="settings-row-right">
+                <button
+                  type="button"
+                  className="settings-admin-action-btn"
+                  onClick={() => navigate("/admin")}
+                >
+                  <span>Console</span>
+                  <FiExternalLink />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* --- Section 3: Portfolio Actions --- */}
+      <div className="settings-section">
+        <div className="settings-section-title">SIMULATION DATA</div>
+        <div className="settings-card">
+          <div className="settings-row reset-row">
+            <div className="settings-row-left">
+              <div className="settings-icon-badge">
+                <FiRefreshCw />
+              </div>
+              <div className="settings-row-info">
+                <div className="settings-row-title-wrap">
+                  <h4>Reset Practice Portfolio</h4>
+                  <span className="settings-caution-pill">DESTRUCTIVE</span>
+                </div>
+              </div>
+            </div>
+            <div className="settings-row-right">
+              <button
+                type="button"
+                className="settings-reset-action-btn"
+                onClick={() => setShowResetModal(true)}
+              >
+                <FiRefreshCw className="btn-icon" /> Reset
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* --- Section 4: Session --- */}
+      <div className="settings-logout-wrap">
+        <button type="button" className="settings-logout-btn" onClick={handleLogout}>
+          <FiLogOut /> Log Out
+        </button>
+      </div>
 
       {/* Confirmation Modal for Reset */}
       {showResetModal && (

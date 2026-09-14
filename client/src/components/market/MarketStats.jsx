@@ -1,5 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useMarket } from "../../context/MarketContext";
+import API from "../../services/api";
 import "./MarketStats.css";
 
 function getRealNseStatus() {
@@ -36,8 +37,30 @@ function getRealUsStatus() {
 function MarketStats({ stocks = [] }) {
   const { isIN } = useMarket();
   const totalStocks = stocks.length;
+  const [adminStatus, setAdminStatus] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    API.get("/admin/market-status")
+      .then(({ data }) => {
+        if (!cancelled) setAdminStatus(data);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const isRealNseLive = getRealNseStatus();
   const isRealUsLive = getRealUsStatus();
+
+  const isNseLive = adminStatus
+    ? (adminStatus.marketOpen !== false && adminStatus.marketOpenIN !== false && adminStatus.effectiveMarketOpenIN !== false && isRealNseLive)
+    : isRealNseLive;
+
+  const isUsLive = adminStatus
+    ? (adminStatus.marketOpen !== false && adminStatus.marketOpenUS !== false && adminStatus.effectiveMarketOpenUS !== false && isRealUsLive)
+    : isRealUsLive;
 
   const avgGain = useMemo(() => {
     if (stocks.length === 0) return "0.00";
@@ -73,8 +96,8 @@ function MarketStats({ stocks = [] }) {
           <div className="session-card-header">
             <span className="session-flag">🇮🇳</span>
             <span className="session-name">NSE / BSE Session</span>
-            <span className={`session-status-badge ${isRealNseLive ? "open" : "closed"}`}>
-              {isRealNseLive ? "Trading Live" : "Market Closed"}
+            <span className={`session-status-badge ${isNseLive ? "open" : "closed"}`}>
+              {isNseLive ? "Trading Live" : "Market Closed"}
             </span>
           </div>
           <span className="session-timing">Regular Hours: 9:15 AM - 3:30 PM IST</span>
@@ -84,8 +107,8 @@ function MarketStats({ stocks = [] }) {
           <div className="session-card-header">
             <span className="session-flag">🇺🇸</span>
             <span className="session-name">NYSE / Nasdaq Session</span>
-            <span className={`session-status-badge ${isRealUsLive ? "open" : "closed"}`}>
-              {isRealUsLive ? "Trading Live" : "Market Closed"}
+            <span className={`session-status-badge ${isUsLive ? "open" : "closed"}`}>
+              {isUsLive ? "Trading Live" : "Market Closed"}
             </span>
           </div>
           <span className="session-timing">Regular Hours: 7:00 PM - 1:30 AM IST (9:30 AM - 4:00 PM EST)</span>

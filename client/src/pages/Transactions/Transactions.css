@@ -337,3 +337,117 @@
 .txn-total-cell.loss {
     color: var(--color-loss);
 }
+
+/* ── Transactions Responsive Layout ── */
+@media (max-width: 768px) {
+  .transactions-page {
+    gap: 18px;
+  }
+
+  .txn-page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .txn-export-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  .txn-filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .txn-search-wrap {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .txn-type-toggle {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+  }
+
+  .txn-type-btn {
+    padding: 10px 8px;
+    min-height: 44px;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .txn-market-toggle {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+  }
+
+  .txn-market-btn {
+    padding: 10px 8px;
+    min-height: 44px;
+    text-align: center;
+    justify-content: center;
+  }
+
+  /* Table to Card Transformation on Mobile */
+  .txn-table-card table thead {
+    display: none !important;
+  }
+
+  .txn-table-card table,
+  .txn-table-card tbody,
+  .txn-table-card tr,
+  .txn-table-card td {
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .txn-table-card {
+    background: transparent;
+    border: none;
+    padding: 0;
+  }
+
+  .txn-table-card tbody tr {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 16px !important;
+    margin-bottom: 12px !important;
+    border-radius: 16px !important;
+    background: var(--bg-surface-alt, #151c2e) !important;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08)) !important;
+    box-shadow: var(--shadow-sm) !important;
+    gap: 6px !important;
+  }
+
+  .txn-table-card td {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 4px 0 !important;
+    border: none !important;
+    font-size: 13px !important;
+  }
+
+  .txn-table-card td:nth-child(1)::before { content: "Date & Time:"; color: var(--text-muted); font-weight: 600; font-size: 12px; }
+  .txn-table-card td:nth-child(2)::before { content: "Asset:"; color: var(--text-muted); font-weight: 600; font-size: 12px; }
+  .txn-table-card td:nth-child(3)::before { content: "Market:"; color: var(--text-muted); font-weight: 600; font-size: 12px; }
+  .txn-table-card td:nth-child(4)::before { content: "Side:"; color: var(--text-muted); font-weight: 600; font-size: 12px; }
+  .txn-table-card td:nth-child(5)::before { content: "Shares:"; color: var(--text-muted); font-weight: 600; font-size: 12px; }
+  .txn-table-card td:nth-child(6)::before { content: "Price:"; color: var(--text-muted); font-weight: 600; font-size: 12px; }
+  .txn-table-card td:nth-child(7)::before { content: "Total Amount:"; color: var(--text-muted); font-weight: 600; font-size: 12px; }
+}
+
+@media (max-width: 480px) {
+  .txn-type-toggle,
+  .txn-market-toggle {
+    grid-template-columns: 1fr;
+  }
+}

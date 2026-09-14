@@ -16,17 +16,22 @@ export default function ExportDropdown({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [activePlacement, setActivePlacement] = useState("bottom");
+  const [horizontalAlign, setHorizontalAlign] = useState("right");
   const dropdownRef = useRef(null);
 
   useEffect(() => {
     if (isOpen && dropdownRef.current) {
+      const rect = dropdownRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
       if (placement === "auto") {
-        const rect = dropdownRef.current.getBoundingClientRect();
-        const spaceBelow = window.innerHeight - rect.bottom;
-        // If less than 240px below the button, open upwards as dropup
         setActivePlacement(spaceBelow < 240 ? "top" : "bottom");
       } else {
         setActivePlacement(placement);
+      }
+      if (rect.left + 270 > window.innerWidth) {
+        setHorizontalAlign("right");
+      } else {
+        setHorizontalAlign("left");
       }
     }
   }, [isOpen, placement]);
@@ -75,7 +80,7 @@ export default function ExportDropdown({
       </button>
 
       {isOpen && (
-        <div className={`export-menu placement-${activePlacement}`}>
+        <div className={`export-menu placement-${activePlacement} align-${horizontalAlign}`}>
           <div className="export-menu-header">Select Export Format</div>
 
           <button
@@ -83,13 +88,11 @@ export default function ExportDropdown({
             className="export-option-btn"
             onClick={() => handleExport("pdf")}
           >
-            <span className="opt-icon pdf">
+            <span className="opt-icon">
               <FiFileText />
             </span>
-            <div className="opt-text">
-              <strong>PDF Statement (.pdf)</strong>
-              <small>Print-ready official financial ledger</small>
-            </div>
+            <span className="opt-label">PDF Statement</span>
+            <span className="opt-badge">.PDF</span>
           </button>
 
           <button
@@ -97,13 +100,11 @@ export default function ExportDropdown({
             className="export-option-btn"
             onClick={() => handleExport("word")}
           >
-            <span className="opt-icon word">
+            <span className="opt-icon">
               <FiFile />
             </span>
-            <div className="opt-text">
-              <strong>Word Document (.doc)</strong>
-              <small>Formatted for MS Word & Docs</small>
-            </div>
+            <span className="opt-label">Word Document</span>
+            <span className="opt-badge">.DOC</span>
           </button>
 
           <button
@@ -111,13 +112,11 @@ export default function ExportDropdown({
             className="export-option-btn"
             onClick={() => handleExport("csv")}
           >
-            <span className="opt-icon csv">
+            <span className="opt-icon">
               <FiGrid />
             </span>
-            <div className="opt-text">
-              <strong>Excel Spreadsheet (.csv)</strong>
-              <small>Raw tabular data for analysis</small>
-            </div>
+            <span className="opt-label">Excel Spreadsheet</span>
+            <span className="opt-badge">.CSV</span>
           </button>
         </div>
       )}

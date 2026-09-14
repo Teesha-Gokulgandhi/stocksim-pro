@@ -5,21 +5,21 @@
 
 .floating-copilot-container {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 9999;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  right: 20px;
+  z-index: 50;
   font-family: var(--font-sans);
 }
 
-/* ── Launcher Button ── */
+/* ── Launcher Button (60px on tablet & desktop, 56px on mobile) ── */
 .copilot-launcher-circle {
   position: relative;
-  width: 54px;
-  height: 54px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   padding: 0;
-  background: var(--accent-gradient, linear-gradient(135deg, #4f6df5 0%, #8b5cf6 100%));
-  border: 1.5px solid rgba(79, 109, 245, 0.6);
+  background: var(--accent-gradient, linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%));
+  border: 1.5px solid rgba(124, 58, 237, 0.6);
   color: #ffffff;
   cursor: pointer;
   display: flex;
@@ -29,6 +29,7 @@
   backdrop-filter: blur(12px);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   outline: none;
+  touch-action: manipulation;
 }
 
 .copilot-launcher-circle:hover {
@@ -693,41 +694,69 @@
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
-  /* Lift copilot launcher above the 58px bottom nav */
   .floating-copilot-container {
-    bottom: 70px;
-    right: 16px;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    right: 20px;
+    z-index: 50;
   }
 
   .copilot-launcher-circle {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
   }
 
   .copilot-window {
-    width: calc(100vw - 24px);
+    width: calc(100vw - 32px);
     max-width: 400px;
-    max-height: calc(100dvh - 140px);
+    max-height: calc(100dvh - 120px);
   }
 }
 
 @media (max-width: 480px) {
   .floating-copilot-container {
-    bottom: 68px;
-    right: 12px;
-    left: 12px;
-  }
-
-  .copilot-window {
-    width: 100%;
-    max-height: calc(100dvh - 130px);
-    min-height: 360px;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    right: 16px;
+    left: auto;
   }
 
   .copilot-launcher-circle {
+    width: 56px;
+    height: 56px;
+  }
+
+  .copilot-window {
     position: fixed;
-    right: 14px;
-    bottom: 68px;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    right: 16px;
+    left: 16px;
+    width: auto;
+    max-height: calc(100dvh - 110px);
+    min-height: 360px;
   }
 }
+
+/* ── Light Theme Overrides (Cohesive Cobalt Blue) ── */
+[data-theme="light"] .copilot-launcher-circle {
+  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%) !important;
+  border: 1.5px solid rgba(37, 99, 235, 0.6) !important;
+  box-shadow: 0 8px 24px -4px rgba(37, 99, 235, 0.45), 0 0 20px rgba(37, 99, 235, 0.25) !important;
+}
+
+[data-theme="light"] .copilot-launcher-circle:hover {
+  box-shadow: 0 16px 36px -4px rgba(37, 99, 235, 0.5), 0 0 32px rgba(37, 99, 235, 0.35) !important;
+  border-color: #1d4ed8 !important;
+}
+
+[data-theme="light"] .copilot-header {
+  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%) !important;
+}
+
+[data-theme="light"] .copilot-send-btn {
+  background: #2563eb !important;
+}
+
+[data-theme="light"] .copilot-send-btn:hover {
+  background: #1d4ed8 !important;
+}
+
 

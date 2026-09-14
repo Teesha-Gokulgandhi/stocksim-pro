@@ -181,8 +181,42 @@
 }
 
 @media (max-width: 768px) {
+  .groww-analytics-card {
+    padding: 16px 12px;
+    margin: 14px 0;
+    border-radius: 16px;
+  }
+  .groww-header-title h4 {
+    font-size: 0.95rem;
+  }
+  .clean-copilot-trigger-btn {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.75rem;
+  }
+  .range-slider-row {
+    gap: 0.65rem;
+  }
+  .range-meta {
+    min-width: 65px;
+  }
+  .range-meta .meta-lbl {
+    font-size: 0.68rem;
+  }
+  .range-meta strong {
+    font-size: 0.82rem;
+  }
   .groww-fundamentals-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  .fund-tile {
+    padding: 0.55rem 0.75rem;
+  }
+  .fund-lbl {
+    font-size: 0.68rem;
+  }
+  .fund-tile strong {
+    font-size: 0.85rem;
   }
 }
 

@@ -107,8 +107,12 @@
 }
 
 .tf-btn.active {
-  background: var(--accent-blue);
+  background: var(--accent-gradient, var(--accent-primary));
   color: #ffffff;
+  box-shadow: var(--shadow-glow, 0 2px 8px rgba(124, 58, 237, 0.35));
+}
+
+[data-theme="light"] .tf-btn.active {
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
 }
 
@@ -191,9 +195,21 @@
 }
 
 @media (max-width: 640px) {
+  .stock-chart-card {
+    padding: 16px 12px;
+    border-radius: 16px;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
   .stock-chart-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 10px;
+  }
+  .stock-chart-stats {
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
   }
   .timeframe-selector {
     width: 100%;
@@ -202,6 +218,7 @@
   .tf-btn {
     flex: 1;
     text-align: center;
-    padding: 8px 4px;
+    padding: 6px 3px;
+    font-size: 11px;
   }
 }

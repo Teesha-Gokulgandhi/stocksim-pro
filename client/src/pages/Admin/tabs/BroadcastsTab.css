@@ -1,0 +1,143 @@
+/* ---------- Send notification ---------- */
+.admin-success {
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  color: var(--color-profit);
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.notif-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.notif-form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.notif-form input,
+.notif-form select,
+.notif-form textarea {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface-alt);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.notif-form input {
+  flex: 1;
+}
+
+.notif-form select {
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.notif-form textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+.notif-form input:focus,
+.notif-form select:focus,
+.notif-form textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.notif-send-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: 10px;
+  border: none;
+  background: var(--accent-gradient, var(--accent-primary));
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: opacity 0.15s ease;
+}
+
+.notif-send-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.notif-send-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.sent-notif-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.sent-notif-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg-surface-alt);
+  border-radius: 10px;
+}
+
+.sent-notif-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.sent-notif-body strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+
+.sent-notif-body p {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin: 0 0 4px;
+  word-break: break-word;
+}
+
+.sent-notif-delete {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.sent-notif-delete:hover {
+  color: var(--color-loss);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+@media (max-width: 560px) {
+  .notif-form-row {
+    flex-direction: column;
+  }
+}

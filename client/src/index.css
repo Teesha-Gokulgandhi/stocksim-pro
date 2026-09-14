@@ -6,44 +6,54 @@
    ================================================================ */
 
 :root {
-  /* ── Surface & Background (Deep Obsidian Slate) ── */
-  --bg-page:              #0a0e17;
-  --bg-surface:           #10151f;
-  --bg-surface-alt:       #151b28;
-  --bg-surface-elevated:  #1b2333;
-  --bg-surface-hover:     #202a3d;
+  /* ── Dark Theme Modern Palette ── */
+  --bg:                   #070b14;
+  --surface:              #101624;
+  --surface-soft:         #151c2e;
+  --border:               rgba(255, 255, 255, 0.08);
+  --accent:               #7c3aed;
+  --accent-soft:          rgba(124, 58, 237, 0.16);
+  --success:              #22c55e;
+  --danger:               #ef4444;
+
+  /* ── Surface & Background (Mapped to standard tokens) ── */
+  --bg-page:              var(--bg);
+  --bg-surface:           var(--surface);
+  --bg-surface-alt:       var(--surface-soft);
+  --bg-surface-elevated:  #1b243b;
+  --bg-surface-hover:     #222e47;
 
   /* ── Typography ── */
-  --text-primary:   #f7f9fc;
-  --text-secondary: #9aa7bd;
-  --text-muted:     #667389;
+  --text-primary:   #f8fafc;
+  --text-secondary: #9ca3af;
+  --text-muted:     #64748b;
 
   /* ── Borders ── */
-  --border-color: rgba(255, 255, 255, 0.09);
-  --border-hover: rgba(99, 133, 255, 0.45);
+  --border-color: var(--border);
+  --border-hover: rgba(124, 58, 237, 0.45);
 
-  /* ── Primary Brand Accent (Cobalt → Violet duotone) ── */
-  --accent-primary:        #4f6df5;
-  --accent-primary-hover:  #3d59e0;
-  --accent-primary-subtle: rgba(79, 109, 245, 0.14);
-  --accent-primary-border: rgba(79, 109, 245, 0.38);
-  --accent-secondary:      #8b5cf6;
+  /* ── Primary Brand Accent (Violet → Cobalt duotone) ── */
+  --accent-primary:        var(--accent);
+  --accent-primary-hover:  #6d28d9;
+  --accent-primary-subtle: var(--accent-soft);
+  --accent-primary-border: rgba(124, 58, 237, 0.38);
+  --accent-secondary:      #4f46e5;
 
-  --accent-blue:     #4f6df5;
+  --accent-blue:     #3b82f6;
   --accent-indigo:   #6366f1;
-  --accent-cyan:     #22d3ee;
-  --accent-purple:   #8b5cf6;
+  --accent-cyan:     #06b6d4;
+  --accent-purple:   #7c3aed;
 
-  --accent-gradient:      linear-gradient(135deg, #4f6df5 0%, #8b5cf6 100%);
-  --accent-gradient-soft: linear-gradient(135deg, rgba(79,109,245,0.16) 0%, rgba(139,92,246,0.10) 100%);
+  --accent-gradient:      linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+  --accent-gradient-soft: linear-gradient(135deg, rgba(124,58,237,0.16) 0%, rgba(79,70,229,0.10) 100%);
 
   /* ── Financial Semantic Tokens ── */
-  --color-profit:    #17c980;
-  --color-profit-bg: rgba(23, 201, 128, 0.12);
-  --color-loss:      #ff4d6a;
-  --color-loss-bg:   rgba(255, 77, 106, 0.12);
-  --color-warning:   #f6a723;
-  --color-warning-bg: rgba(246, 167, 35, 0.12);
+  --color-profit:    var(--success);
+  --color-profit-bg: rgba(34, 197, 94, 0.12);
+  --color-loss:      var(--danger);
+  --color-loss-bg:   rgba(239, 68, 68, 0.12);
+  --color-warning:   #f59e0b;
+  --color-warning-bg: rgba(245, 158, 11, 0.12);
   --color-info:      #38bdf8;
   --color-info-bg:   rgba(56, 189, 248, 0.12);
 
@@ -51,12 +61,12 @@
   --shadow-sm:       0 1px 2px rgba(0, 0, 0, 0.30);
   --shadow-card:     0 6px 24px -4px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.03) inset;
   --shadow-elevated: 0 16px 40px -8px rgba(0, 0, 0, 0.60);
-  --shadow-glow:     0 0 32px rgba(79, 109, 245, 0.22);
+  --shadow-glow:     0 0 32px rgba(124, 58, 237, 0.25);
 
   /* ── Radius Scale ── */
   --radius-sm:   8px;
-  --radius-md:   12px;
-  --radius-lg:   16px;
+  --radius-md:   14px;
+  --radius-lg:   20px;
   --radius-pill: 999px;
 
   /* ── Motion Tokens ── */
@@ -64,17 +74,25 @@
   --transition-base: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
   /* ── Focus Ring ── */
-  --focus-ring: 0 0 0 3px rgba(79, 109, 245, 0.35);
+  --focus-ring: 0 0 0 3px rgba(124, 58, 237, 0.35);
 
-  /* ── Typography ── */
+  /* ── Typography & Fluid Scales ── */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Monaco, Consolas, monospace;
 
-  --fs-page-title: 24px;
-  --fs-card-title: 15px;
-  --fs-kpi:        24px;
-  --fs-body:       13px;
-  --fs-subtext:    12px;
+  /* Fluid typography scale using clamp() */
+  --text-xs:   clamp(0.75rem, 0.7rem + 0.2vw, 0.8rem);
+  --text-sm:   clamp(0.875rem, 0.82rem + 0.25vw, 0.95rem);
+  --text-base: clamp(1rem, 0.95rem + 0.3vw, 1.05rem);
+  --text-lg:   clamp(1.125rem, 1rem + 0.6vw, 1.35rem);
+  --text-xl:   clamp(1.35rem, 1.1rem + 1vw, 1.8rem);
+  --text-2xl:  clamp(1.75rem, 1.35rem + 1.6vw, 2.4rem);
+
+  --fs-page-title: var(--text-2xl);
+  --fs-card-title: var(--text-lg);
+  --fs-kpi:        clamp(1.5rem, 1.25rem + 1.2vw, 2.1rem);
+  --fs-body:       var(--text-sm);
+  --fs-subtext:    var(--text-xs);
   --fs-meta:       11px;
 }
 
@@ -91,21 +109,23 @@
   --text-muted:     #8791a8;
 
   --border-color: #e3e7f0;
-  --border-hover: #a9b8ff;
+  --border-hover: #93c5fd;
 
-  --accent-primary:        #4557e0;
-  --accent-primary-hover:  #3644c4;
-  --accent-primary-subtle: rgba(69, 87, 224, 0.08);
-  --accent-primary-border: rgba(69, 87, 224, 0.28);
-  --accent-secondary:      #7c3aed;
+  --accent:                #2563eb;
+  --accent-soft:           rgba(37, 99, 235, 0.12);
+  --accent-primary:        #2563eb;
+  --accent-primary-hover:  #1d4ed8;
+  --accent-primary-subtle: rgba(37, 99, 235, 0.08);
+  --accent-primary-border: rgba(37, 99, 235, 0.28);
+  --accent-secondary:      #3b82f6;
 
-  --accent-blue:     #4557e0;
-  --accent-indigo:   #4f46e5;
-  --accent-cyan:     #0ea5c7;
-  --accent-purple:   #7c3aed;
+  --accent-blue:     #2563eb;
+  --accent-indigo:   #3b82f6;
+  --accent-cyan:     #0284c7;
+  --accent-purple:   #2563eb;
 
-  --accent-gradient:      linear-gradient(135deg, #4557e0 0%, #7c3aed 100%);
-  --accent-gradient-soft: linear-gradient(135deg, rgba(69,87,224,0.08) 0%, rgba(124,58,237,0.06) 100%);
+  --accent-gradient:      linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+  --accent-gradient-soft: linear-gradient(135deg, rgba(37,99,235,0.12) 0%, rgba(59,130,246,0.06) 100%);
 
   --color-profit:     #0a9a63;
   --color-profit-bg:  rgba(10, 154, 99, 0.08);
@@ -119,9 +139,9 @@
   --shadow-sm:       0 1px 2px rgba(15, 23, 42, 0.04);
   --shadow-card:     0 1px 3px rgba(15,23,42,0.04), 0 10px 28px -6px rgba(15,23,42,0.07);
   --shadow-elevated: 0 20px 48px -12px rgba(15, 23, 42, 0.14);
-  --shadow-glow:     0 0 24px rgba(69, 87, 224, 0.10);
+  --shadow-glow:     0 0 24px rgba(37, 99, 235, 0.22);
 
-  --focus-ring: 0 0 0 3px rgba(69, 87, 224, 0.28);
+  --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.28);
 }
 
 /* ================================================================

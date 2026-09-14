@@ -822,14 +822,14 @@ exports.createStock = asyncHandler(async (req, res) => {
     }
   }
 
-  if (exchange === "NSE" && !symbol.endsWith(".NS")) {
+  if ((exchange === "NSE" || exchange === "NSE/BSE") && !symbol.endsWith(".NS") && !symbol.endsWith(".BO")) {
     symbol = `${symbol}.NS`;
   } else if (exchange === "BSE" && !symbol.endsWith(".BO")) {
     symbol = `${symbol}.BO`;
   }
 
   if (!country) {
-    country = exchange === "NSE" || exchange === "BSE" ? "IN" : "US";
+    country = exchange === "NSE" || exchange === "BSE" || exchange === "NSE/BSE" ? "IN" : "US";
   }
   if (!currency) {
     currency = country === "IN" ? "INR" : "USD";

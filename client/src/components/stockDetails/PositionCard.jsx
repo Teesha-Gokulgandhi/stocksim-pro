@@ -141,104 +141,102 @@ const HoldingsCard = ({
   return (
     <div className="holding-card">
       <div className="holding-header">
-        <h2>Your Position {isUSD ? "(USD)" : "(INR)"}</h2>
+        <div className="holding-title-wrap">
+          <h2>Your Position {isUSD ? "(USD)" : "(INR)"}</h2>
+          <span className="holding-subtitle">Active simulated holding</span>
+        </div>
 
         <span className="live-badge">
-          ● LIVE
+          ● Live Position
         </span>
       </div>
 
+      {/* Hero P&L Banner */}
+      <div className={`position-hero-banner ${isProfit ? "profit" : "loss"}`}>
+        <div className="position-hero-main">
+          <span className="position-hero-label">Total Profit / Loss</span>
+          <div className="position-hero-values">
+            <span className="position-hero-pnl">
+              {isProfit ? "+" : "-"}{currencySymbol}{formatPrice(Math.abs(profitLoss))}
+            </span>
+            <span className={`position-hero-pct ${isProfit ? "profit" : "loss"}`}>
+              ({isProfit ? "+" : ""}{returnPercentage}%)
+            </span>
+          </div>
+        </div>
+        <div className="position-hero-meta">
+          <div className="hero-meta-item">
+            <span className="hero-meta-label">Current Value</span>
+            <span className="hero-meta-val">{currencySymbol}{formatPrice(currentValue)}</span>
+          </div>
+          <div className="hero-meta-item">
+            <span className="hero-meta-label">Invested</span>
+            <span className="hero-meta-val">{currencySymbol}{formatPrice(investment)}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Key Holding Details Grid */}
       <div className="holding-grid">
         <div className="position-box">
-          <span>Shares</span>
+          <span>Shares Owned</span>
           <h3>{holding.quantity}</h3>
         </div>
 
         <div className="position-box">
-          <span>Average Buy</span>
+          <span>Average Buy Price</span>
           <h3>{currencySymbol}{formatPrice(holding.avgPrice)}</h3>
-        </div>
-
-        <div className="position-box">
-          <span>Invested</span>
-          <h3>{currencySymbol}{formatPrice(investment)}</h3>
-        </div>
-
-        <div className="position-box">
-          <span>Current Value</span>
-          <h3>{currencySymbol}{formatPrice(currentValue)}</h3>
-        </div>
-
-        <div className="position-box">
-          <span>Profit / Loss</span>
-
-          <h3 className={isProfit ? "profit" : "loss"}>
-            {isProfit ? "+" : "-"}{currencySymbol}
-            {formatPrice(Math.abs(profitLoss))}
-          </h3>
-        </div>
-
-        <div className="position-box">
-          <span>Return</span>
-
-          <h3 className={isProfit ? "profit" : "loss"}>
-            {isProfit ? "+" : ""}
-            {returnPercentage}%
-          </h3>
         </div>
 
         <div className="position-box">
           <span>Take Profit Target</span>
           <h3 className={protection?.takeProfit ? "profit" : ""}>
-            {protection?.takeProfit ? `${currencySymbol}${formatPrice(protection.takeProfit)}` : "—"}
+            {protection?.takeProfit ? `${currencySymbol}${formatPrice(protection.takeProfit)}` : "Not Set"}
           </h3>
         </div>
 
         <div className="position-box">
           <span>Stop Loss Target</span>
           <h3 className={protection?.stopLoss ? "loss" : ""}>
-            {protection?.stopLoss ? `${currencySymbol}${formatPrice(protection.stopLoss)}` : "—"}
-          </h3>
-        </div>
-
-        <div className="position-box">
-          <span>Protection Status</span>
-          <h3 className={protection ? "profit" : ""}>
-            {protectionLoading ? "…" : protection ? "Active" : "Not Set"}
+            {protection?.stopLoss ? `${currencySymbol}${formatPrice(protection.stopLoss)}` : "Not Set"}
           </h3>
         </div>
       </div>
 
-      {/* Manual TP/SL configuration — the only place in the app where this
-          is set. Buying more shares of this stock never touches it. */}
+      {/* Manual TP/SL configuration */}
       <div className="protection-panel">
         <div className="protection-panel-header">
-          <h4>Manage Take Profit / Stop Loss</h4>
+          <div className="protection-panel-title-row">
+            <h4>Manage Take Profit / Stop Loss</h4>
+            <span className={`protection-status-tag ${protection ? "active" : ""}`}>
+              {protectionLoading ? "Checking..." : protection ? "● Auto-Exit Active" : "Protection Inactive"}
+            </span>
+          </div>
           <span className="protection-panel-sub">
-            Executed automatically by our server, even if you close this tab.
+            Executed automatically by server order monitor when target price triggers.
           </span>
         </div>
 
         <div className="protection-inputs-row">
           <div className="protection-field">
-            <label htmlFor="take-profit-input">Take Profit ({currencySymbol})</label>
+            <label htmlFor="take-profit-input">Take Profit Target ({currencySymbol})</label>
             <input
               id="take-profit-input"
               type="number"
               step="0.05"
-              placeholder={`Above ${formatPrice(currentPrice)}`}
+              placeholder={`Above ${currencySymbol}${formatPrice(currentPrice)}`}
               value={takeProfitInput}
               onChange={(e) => setTakeProfitInput(e.target.value)}
             />
           </div>
 
           <div className="protection-field">
-            <label htmlFor="stop-loss-input">Stop Loss ({currencySymbol})</label>
+            <label htmlFor="stop-loss-input">Stop Loss Target ({currencySymbol})</label>
             <input
               id="stop-loss-input"
               type="number"
               step="0.05"
-              placeholder={`Below ${formatPrice(currentPrice)}`}
+              placeholder={`Below ${currencySymbol}${formatPrice(currentPrice)}`}
               value={stopLossInput}
               onChange={(e) => setStopLossInput(e.target.value)}
             />

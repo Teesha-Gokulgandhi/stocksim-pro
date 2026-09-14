@@ -304,7 +304,7 @@ function MarketHub() {
                 </span>
               </div>
               <span className="hub-sub">
-                {isIN ? "Trading Hours: 9:15 AM - 3:30 PM IST" : "Trading Hours: 7:00 PM - 1:30 AM IST"} • Virtual Cash Margin
+                Trading Hours: {isIN ? "9:15 AM – 3:30 PM IST" : "7:00 PM – 1:30 AM IST"} • Virtual Cash Margin
               </span>
             </div>
           </div>
@@ -532,41 +532,74 @@ function MarketHub() {
               <table className="orders-table">
                 <thead>
                   <tr>
-                    <th>Asset</th>
-                    <th>Type</th>
-                    <th>Shares</th>
-                    <th>Execution Price</th>
-                    <th>Total Value</th>
-                    <th>Timestamp</th>
+                    <th style={{ textAlign: "left" }}>Date & Time</th>
+                    <th style={{ textAlign: "left" }}>Asset / Instrument</th>
+                    <th style={{ textAlign: "center", width: "100px" }}>Side</th>
+                    <th style={{ textAlign: "right" }}>Shares</th>
+                    <th style={{ textAlign: "right" }}>Execution Price</th>
+                    <th style={{ textAlign: "right" }}>Total Amount</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {marketTransactions.map((tx, idx) => (
-                    <tr key={tx._id || idx}>
-                      <td>
-                        <strong>{tx.symbol || "—"}</strong>
-                      </td>
-                      <td>
-                        <span className={`order-badge ${(tx.type || "BUY").toLowerCase()}`}>
-                          {tx.type || "BUY"}
-                        </span>
-                      </td>
-                      <td>{tx.quantity ?? 1}</td>
-                      <td>{currencySymbol}{formatMargin(tx.price || 0)}</td>
-                      <td>{currencySymbol}{formatMargin((tx.price || 0) * (tx.quantity || 1))}</td>
-                      <td>
-                        {tx.createdAt ? (
-                          new Date(tx.createdAt).toLocaleDateString("en-IN", {
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                          })
-                        ) : (
-                          "—"
-                        )}
-                      </td>
-                    </tr>
-                  ))}
+                  {marketTransactions.map((tx, idx) => {
+                    const isTxUSD = tx.currency === "USD" || (!tx.symbol?.endsWith(".NS") && !tx.symbol?.endsWith(".BO"));
+                    const sym = isTxUSD ? "$" : "₹";
+                    const isBuy = tx.type?.toLowerCase() === "buy";
+                    const isSell = tx.type?.toLowerCase() === "sell";
+                    const isReplay = tx.type?.toLowerCase() === "replay";
+                    const dateStr = tx.createdAt ? new Date(tx.createdAt).toLocaleDateString("en-IN", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }) : "—";
+                    const qty = tx.quantity || 1;
+                    const price = tx.price || 0;
+                    const totalVal = qty * price;
+
+                    return (
+                      <tr
+                        key={tx._id || idx}
+                        className={`order-row ${isBuy ? "buy" : isSell ? "sell" : isReplay ? "replay" : ""}`}
+                      >
+                        <td className="time-col">
+                          <span className="order-time-date">{dateStr}</span>
+                        </td>
+                        <td className="symbol-col">
+                          <div className="order-asset-wrap">
+                            <strong className="order-symbol">{tx.symbol || "—"}</strong>
+                            <span className={`order-exchange-badge ${isTxUSD ? "usd" : "inr"}`}>
+                              {isTxUSD ? "NYSE / NASDAQ" : "NSE"}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="side-col" style={{ textAlign: "center" }}>
+                          <span className={`order-badge ${isBuy ? "buy" : isSell ? "sell" : "replay"}`}>
+                            {tx.type || "BUY"}
+                          </span>
+                        </td>
+                        <td className="num-col shares-col">
+                          <div className="order-metric-inner">
+                            <span className="order-metric-label">Qty:</span>
+                            <span className="order-num-cell">{qty}</span>
+                          </div>
+                        </td>
+                        <td className="num-col price-col">
+                          <div className="order-metric-inner">
+                            <span className="order-metric-label">Avg Price:</span>
+                            <span className="order-num-cell">{sym}{formatMargin(price)}</span>
+                          </div>
+                        </td>
+                        <td className="num-col total-col">
+                          <div className="order-metric-inner total">
+                            <span className="order-metric-label total">Total:</span>
+                            <span className="order-num-cell bold">{sym}{formatMargin(totalVal)}</span>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

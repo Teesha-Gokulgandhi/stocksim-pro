@@ -71,6 +71,23 @@ function CandlestickChart({
     };
   }, [revealedCandles, showEMA]);
 
+  // Format date string nicely for canvas scale (compact on mobile)
+  const formatScaleDate = useCallback((dateStr, compact) => {
+    if (!dateStr) return "";
+    try {
+      const d = new Date(dateStr);
+      if (!isNaN(d.getTime())) {
+        return d.toLocaleDateString("en-US", compact
+          ? { month: "short", day: "numeric" }
+          : { month: "short", day: "numeric", year: "2-digit" });
+      }
+    } catch (e) {}
+    if (compact) {
+      return String(dateStr).replace(/,?\s*\d{4}/, "").trim();
+    }
+    return String(dateStr);
+  }, []);
+
   // Draw chart on canvas
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -79,7 +96,8 @@ function CandlestickChart({
     const ctx = canvas.getContext("2d");
     const dpr = window.devicePixelRatio || 1;
     const width = canvas.parentElement.clientWidth;
-    const height = 460;
+    const isMobile = width < 600;
+    const height = isMobile ? 350 : 460;
 
     canvas.width = width * dpr;
     canvas.height = height * dpr;
@@ -103,15 +121,15 @@ function CandlestickChart({
     ctx.fillRect(0, 0, width, height);
 
     // Layout dimensions
-    const paddingRight = 78;
-    const paddingBottom = 32;
-    const paddingTop = 18;
-    const paddingLeft = 14;
+    const paddingRight = isMobile ? 66 : 78;
+    const paddingBottom = 28;
+    const paddingTop = isMobile ? 12 : 18;
+    const paddingLeft = isMobile ? 8 : 14;
 
     const chartWidth = width - paddingRight - paddingLeft;
-    const priceChartHeight = height - paddingBottom - paddingTop - 68;
-    const volumeChartY = paddingTop + priceChartHeight + 14;
-    const volumeChartHeight = 52;
+    const volumeChartHeight = isMobile ? 38 : 52;
+    const priceChartHeight = height - paddingBottom - paddingTop - volumeChartHeight - 12;
+    const volumeChartY = paddingTop + priceChartHeight + 10;
 
     // Viewport window: show at least 40 candles or all revealed candles
     const maxVisibleInWindow = Math.min(revealedCandles.length, 90);
@@ -180,8 +198,8 @@ function CandlestickChart({
     };
 
     // Draw horizontal grid lines & price labels
-    const gridSteps = 5;
-    ctx.font = "11px 'JetBrains Mono', monospace";
+    const gridSteps = isMobile ? 4 : 5;
+    ctx.font = isMobile ? "10px 'JetBrains Mono', monospace" : "11px 'JetBrains Mono', monospace";
     ctx.textAlign = "left";
 
     for (let i = 0; i <= gridSteps; i++) {
@@ -208,7 +226,7 @@ function CandlestickChart({
       ctx.fillStyle = isLight ? "#475569" : "#64748b";
       ctx.fillText(
         `${currencySymbol}${price.toFixed(2)}`,
-        width - paddingRight + 8,
+        width - paddingRight + (isMobile ? 5 : 8),
         y + 4
       );
     }
@@ -220,218 +238,214 @@ function CandlestickChart({
     ctx.lineTo(width - paddingRight, volumeChartY + volumeChartHeight);
     ctx.stroke();
 
-    ctx.fillStyle = isLight ? "rgba(0, 0, 0, 0.28)" : "rgba(255, 255, 255, 0.15)";
-    ctx.font = "bold 9px 'JetBrains Mono', monospace";
+    ctx.fillStyle = isLight ? "rgba(0, 0, 0, 0.25)" : "rgba(255, 255, 255, 0.18)";
+    ctx.font = "8px 'JetBrains Mono', monospace";
+    ctx.textAlign = "left";
     ctx.fillText("VOLUME", paddingLeft + 4, volumeChartY + 12);
 
-    const candleWidth = Math.max(4, (chartWidth / windowCandles.length) * 0.72);
+    // Draw Volume Bars
+    const candleWidth = chartWidth / windowCandles.length;
+    const barWidth = Math.max(1.5, candleWidth * 0.65);
 
-    // Draw Volume Bars with rich gradient
     windowCandles.forEach((c, idx) => {
       const x = getX(idx);
-      const isBullish = c.close >= c.open;
-      const volY = getVolY(c.volume);
-      const volHeight = Math.max(1, volumeChartY + volumeChartHeight - volY);
+      const isUp = c.close >= c.open;
+      const volTop = getVolY(c.volume);
+      const volBottom = volumeChartY + volumeChartHeight;
+      const volHeight = Math.max(1, volBottom - volTop);
 
-      const vGrad = ctx.createLinearGradient(0, volY, 0, volumeChartY + volumeChartHeight);
-      if (isBullish) {
-        vGrad.addColorStop(0, "rgba(0, 192, 118, 0.38)");
-        vGrad.addColorStop(1, "rgba(0, 192, 118, 0.06)");
-      } else {
-        vGrad.addColorStop(0, "rgba(255, 59, 87, 0.38)");
-        vGrad.addColorStop(1, "rgba(255, 59, 87, 0.06)");
-      }
+      ctx.fillStyle = isUp
+        ? (isLight ? "rgba(0, 192, 118, 0.4)" : "rgba(0, 192, 118, 0.35)")
+        : (isLight ? "rgba(255, 59, 87, 0.4)" : "rgba(255, 59, 87, 0.35)");
 
-      ctx.fillStyle = vGrad;
-      ctx.fillRect(x - candleWidth / 2, volY, candleWidth, volHeight);
+      ctx.fillRect(x - barWidth / 2, volTop, barWidth, volHeight);
     });
 
-    // Draw Candlesticks (Wicks & Bodies) with pro styling
+    // Draw 9 & 21 EMA curves if enabled
+    if (showEMA && windowCandles.length > 0) {
+      const windowEMA9 = emaData.ema9.slice(startIndex);
+      const windowEMA21 = emaData.ema21.slice(startIndex);
+
+      // Draw 9 EMA (Cyan)
+      if (windowEMA9.length > 1) {
+        ctx.beginPath();
+        ctx.strokeStyle = "#38bdf8";
+        ctx.lineWidth = 1.8;
+        windowEMA9.forEach((val, idx) => {
+          if (val == null) return;
+          const x = getX(idx);
+          const y = getY(val);
+          if (idx === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+      }
+
+      // Draw 21 EMA (Amber)
+      if (windowEMA21.length > 1) {
+        ctx.beginPath();
+        ctx.strokeStyle = "#fbbf24";
+        ctx.lineWidth = 1.8;
+        windowEMA21.forEach((val, idx) => {
+          if (val == null) return;
+          const x = getX(idx);
+          const y = getY(val);
+          if (idx === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+      }
+    }
+
+    // Draw Candlesticks
     windowCandles.forEach((c, idx) => {
       const x = getX(idx);
-      const isBullish = c.close >= c.open;
-      const color = isBullish ? "#00c076" : "#ff3b57";
-      const borderColor = isBullish ? "#05a666" : "#e62e49";
-
+      const isUp = c.close >= c.open;
       const openY = getY(c.open);
       const closeY = getY(c.close);
       const highY = getY(c.high);
       const lowY = getY(c.low);
 
-      // Wick with rounded cap
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 1.4;
-      ctx.lineCap = "round";
+      const top = Math.min(openY, closeY);
+      const bottom = Math.max(openY, closeY);
+      const bodyHeight = Math.max(1.5, bottom - top);
+
+      const candleColor = isUp ? "#00c076" : "#ff3b57";
+
+      // Wick
+      ctx.strokeStyle = candleColor;
+      ctx.lineWidth = 1.2;
       ctx.beginPath();
       ctx.moveTo(x, highY);
       ctx.lineTo(x, lowY);
       ctx.stroke();
 
-      // Body with subtle border
-      const bodyTop = Math.min(openY, closeY);
-      const bodyHeight = Math.max(2, Math.abs(closeY - openY));
-
-      ctx.fillStyle = color;
-      ctx.fillRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
-
-      // Crisp outer 1px border
-      ctx.strokeStyle = borderColor;
-      ctx.lineWidth = 0.8;
-      ctx.strokeRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
+      // Body
+      ctx.fillStyle = candleColor;
+      ctx.fillRect(x - barWidth / 2, top, barWidth, bodyHeight);
     });
 
-    // Draw EMA lines with smooth glow
-    if (showEMA) {
-      const drawEMALine = (data, strokeStyle, glowColor) => {
-        ctx.save();
-        ctx.strokeStyle = strokeStyle;
-        ctx.lineWidth = 1.8;
-        ctx.lineJoin = "round";
-        ctx.lineCap = "round";
-        ctx.shadowColor = glowColor;
-        ctx.shadowBlur = 4;
-        ctx.beginPath();
-        let started = false;
-
-        windowCandles.forEach((_, idx) => {
-          const globalIdx = startIndex + idx;
-          const val = data[globalIdx];
-          if (val != null) {
-            const x = getX(idx);
-            const y = getY(val);
-            if (!started) {
-              ctx.moveTo(x, y);
-              started = true;
-            } else {
-              ctx.lineTo(x, y);
-            }
-          }
-        });
-        ctx.stroke();
-        ctx.restore();
-      };
-
-      drawEMALine(emaData.ema9, "#38bdf8", "rgba(56, 189, 248, 0.45)"); // 9 EMA Sapphire Blue
-      drawEMALine(emaData.ema21, "#fbbf24", "rgba(251, 191, 36, 0.45)"); // 21 EMA Golden Amber
-    }
-
-    // Live Close Price Tracker Line & Axis Badge
-    const latestCandle = windowCandles[windowCandles.length - 1];
-    if (latestCandle) {
-      const latestY = getY(latestCandle.close);
-      const isBull = latestCandle.close >= latestCandle.open;
-      const trackerColor = isBull ? "#00c076" : "#ff3b57";
-
-      // Dotted horizontal tracker line across chart
-      ctx.setLineDash([2, 3]);
-      ctx.strokeStyle = trackerColor;
-      ctx.lineWidth = 1;
+    // Draw active position entry line if currently holding
+    if (currentPosition && currentPosition.avgPrice) {
+      const entryY = getY(currentPosition.avgPrice);
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = "#f59e0b";
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.moveTo(paddingLeft, latestY);
-      ctx.lineTo(width - paddingRight, latestY);
+      ctx.moveTo(paddingLeft, entryY);
+      ctx.lineTo(width - paddingRight, entryY);
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // Glowing Badge on right price scale
-      ctx.save();
-      ctx.shadowColor = isBull ? "rgba(0, 192, 118, 0.5)" : "rgba(255, 59, 87, 0.5)";
-      ctx.shadowBlur = 6;
-      ctx.fillStyle = trackerColor;
-      ctx.fillRect(width - paddingRight, latestY - 10, paddingRight, 20);
-      ctx.restore();
-
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 11px 'JetBrains Mono', monospace";
+      // Position badge on right
+      ctx.fillStyle = "#f59e0b";
+      ctx.fillRect(width - paddingRight, entryY - 9, paddingRight, 18);
+      ctx.fillStyle = "#000000";
+      ctx.font = "bold 9px 'JetBrains Mono', monospace";
       ctx.textAlign = "left";
-      ctx.fillText(`${currencySymbol}${latestCandle.close.toFixed(2)}`, width - paddingRight + 6, latestY + 4);
+      ctx.fillText(`ENTRY`, width - paddingRight + 4, entryY + 3.5);
     }
 
-    // Draw Open Position Line if in trade
-    if (currentPosition && currentPosition.quantity > 0) {
-      const entryY = getY(currentPosition.avgPrice);
-      if (entryY >= paddingTop && entryY <= paddingTop + priceChartHeight) {
-        ctx.setLineDash([4, 4]);
-        ctx.strokeStyle = "#38bdf8";
-        ctx.lineWidth = 1.6;
-        ctx.beginPath();
-        ctx.moveTo(paddingLeft, entryY);
-        ctx.lineTo(width - paddingRight, entryY);
-        ctx.stroke();
-        ctx.setLineDash([]);
+    // Draw live price horizontal tracker tag for latest revealed candle
+    const lastCandle = windowCandles[windowCandles.length - 1];
+    if (lastCandle) {
+      const lastY = getY(lastCandle.close);
+      const isUp = lastCandle.close >= lastCandle.open;
+      const tagColor = isUp ? "#00c076" : "#ff3b57";
 
-        // Entry tag on scale
-        ctx.fillStyle = "#0284c7";
-        ctx.fillRect(width - paddingRight, entryY - 10, paddingRight, 20);
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 10px 'JetBrains Mono', monospace";
-        ctx.fillText("ENTRY", width - paddingRight + 8, entryY + 4);
-      }
+      // Dashed line across chart
+      ctx.setLineDash([2, 3]);
+      ctx.strokeStyle = tagColor;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(paddingLeft, lastY);
+      ctx.lineTo(width - paddingRight, lastY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Solid tracker pill on right axis
+      ctx.fillStyle = tagColor;
+      ctx.fillRect(width - paddingRight, lastY - 11, paddingRight, 22);
+      ctx.fillStyle = "#ffffff";
+      ctx.font = isMobile ? "bold 10px 'JetBrains Mono', monospace" : "bold 11px 'JetBrains Mono', monospace";
+      ctx.textAlign = "left";
+      ctx.fillText(`${currencySymbol}${lastCandle.close.toFixed(2)}`, width - paddingRight + 5, lastY + 4);
     }
 
-    // Draw Trade Execution Markers with glowing pill badges
+    // Draw Completed Trade Entry / Exit Markers
     trades.forEach((trade) => {
-      const buyIdxInWindow = trade.buyIndex - startIndex;
-      if (buyIdxInWindow >= 0 && buyIdxInWindow < windowCandles.length) {
-        const x = getX(buyIdxInWindow);
-        const y = getY(trade.entryPrice);
+      // Check if buy index is in viewport window
+      if (trade.buyIndex >= startIndex && trade.buyIndex < startIndex + windowCandles.length) {
+        const localIdx = trade.buyIndex - startIndex;
+        const x = getX(localIdx);
+        const candle = windowCandles[localIdx];
+        if (candle) {
+          const y = getY(candle.low);
+          ctx.save();
+          ctx.shadowColor = "rgba(0, 192, 118, 0.6)";
+          ctx.shadowBlur = 8;
+          ctx.fillStyle = "#00c076";
+          ctx.beginPath();
+          ctx.arc(x, y + 14, 8, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
 
-        ctx.save();
-        ctx.shadowColor = "rgba(0, 192, 118, 0.6)";
-        ctx.shadowBlur = 8;
-        ctx.fillStyle = "#00c076";
-        ctx.beginPath();
-        ctx.arc(x, y + 14, 9, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-
-        ctx.fillStyle = "#000000";
-        ctx.font = "bold 10px sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText("B", x, y + 17.5);
+          ctx.fillStyle = "#ffffff";
+          ctx.font = "bold 9px sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText("B", x, y + 17);
+        }
       }
 
-      if (trade.sellIndex != null) {
-        const sellIdxInWindow = trade.sellIndex - startIndex;
-        if (sellIdxInWindow >= 0 && sellIdxInWindow < windowCandles.length) {
-          const x = getX(sellIdxInWindow);
-          const y = getY(trade.exitPrice);
-
+      // Check if sell index is in viewport window
+      if (trade.sellIndex >= startIndex && trade.sellIndex < startIndex + windowCandles.length) {
+        const localIdx = trade.sellIndex - startIndex;
+        const x = getX(localIdx);
+        const candle = windowCandles[localIdx];
+        if (candle) {
+          const y = getY(candle.high);
           const isGain = trade.pnl >= 0;
           ctx.save();
           ctx.shadowColor = isGain ? "rgba(0, 192, 118, 0.6)" : "rgba(255, 59, 87, 0.6)";
           ctx.shadowBlur = 8;
           ctx.fillStyle = isGain ? "#00c076" : "#ff3b57";
           ctx.beginPath();
-          ctx.arc(x, y - 14, 9, 0, Math.PI * 2);
+          ctx.arc(x, y - 14, 8, 0, Math.PI * 2);
           ctx.fill();
           ctx.restore();
 
           ctx.fillStyle = "#ffffff";
-          ctx.font = "bold 10px sans-serif";
+          ctx.font = "bold 9px sans-serif";
           ctx.textAlign = "center";
           ctx.fillText("S", x, y - 10.5);
         }
       }
     });
 
-    // Draw date labels on bottom axis with ticks
-    ctx.font = "11px 'JetBrains Mono', monospace";
+    // Draw date labels on bottom axis with collision prevention threshold
+    ctx.font = isMobile ? "10px 'JetBrains Mono', monospace" : "11px 'JetBrains Mono', monospace";
     ctx.textAlign = "center";
 
-    const dateStep = Math.max(1, Math.floor(windowCandles.length / 6));
+    const minLabelDistance = isMobile ? 70 : 100;
+    let lastDrawnX = -999;
+
     windowCandles.forEach((c, idx) => {
-      if (idx % dateStep === 0 || idx === windowCandles.length - 1) {
-        const x = getX(idx);
+      const x = getX(idx);
+      // Ensure tick and text stay comfortably inside chart lane
+      if (x >= paddingLeft + 16 && x <= width - paddingRight - 20) {
+        if (x - lastDrawnX >= minLabelDistance) {
+          lastDrawnX = x;
 
-        // Tick mark
-        ctx.strokeStyle = isLight ? "rgba(0, 0, 0, 0.12)" : "rgba(255, 255, 255, 0.12)";
-        ctx.beginPath();
-        ctx.moveTo(x, height - paddingBottom);
-        ctx.lineTo(x, height - paddingBottom + 4);
-        ctx.stroke();
+          // Tick mark
+          ctx.strokeStyle = isLight ? "rgba(0, 0, 0, 0.12)" : "rgba(255, 255, 255, 0.12)";
+          ctx.beginPath();
+          ctx.moveTo(x, height - paddingBottom);
+          ctx.lineTo(x, height - paddingBottom + 4);
+          ctx.stroke();
 
-        ctx.fillStyle = isLight ? "#475569" : "#64748b";
-        ctx.fillText(c.displayDate || c.date, x, height - 10);
+          ctx.fillStyle = isLight ? "#475569" : "#64748b";
+          ctx.fillText(formatScaleDate(c.displayDate || c.date, isMobile), x, height - 9);
+        }
       }
     });
 
@@ -459,23 +473,23 @@ function CandlestickChart({
       ctx.setLineDash([]);
 
       // Floating price tag on right scale
-      ctx.fillStyle = "#2563eb";
+      ctx.fillStyle = isLight ? "#2563eb" : "#7c3aed";
       ctx.fillRect(width - paddingRight, hy - 10, paddingRight, 20);
       ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 11px 'JetBrains Mono', monospace";
+      ctx.font = isMobile ? "bold 10px 'JetBrains Mono', monospace" : "bold 11px 'JetBrains Mono', monospace";
       ctx.textAlign = "left";
-      ctx.fillText(`${currencySymbol}${hoverCandle.close.toFixed(2)}`, width - paddingRight + 6, hy + 4);
+      ctx.fillText(`${currencySymbol}${hoverCandle.close.toFixed(2)}`, width - paddingRight + 5, hy + 4);
 
       // Floating date tag on bottom scale
       ctx.fillStyle = isLight ? "#e2e8f0" : "#1e293b";
-      const dateText = hoverCandle.displayDate || hoverCandle.date;
-      const textWidth = ctx.measureText(dateText).width + 16;
-      ctx.fillRect(hx - textWidth / 2, height - paddingBottom + 2, textWidth, 20);
-      ctx.fillStyle = isLight ? "#0f172a" : "#38bdf8";
+      const dateText = formatScaleDate(hoverCandle.displayDate || hoverCandle.date, isMobile);
+      const textWidth = ctx.measureText(dateText).width + 14;
+      ctx.fillRect(hx - textWidth / 2, height - paddingBottom + 2, textWidth, 18);
+      ctx.fillStyle = isLight ? "#0f172a" : "#c4b5fd";
       ctx.textAlign = "center";
-      ctx.fillText(dateText, hx, height - 12);
+      ctx.fillText(dateText, hx, height - 11);
     }
-  }, [revealedCandles, showEMA, emaData, currentPosition, trades, hoverIndex, currencySymbol, theme]);
+  }, [revealedCandles, showEMA, emaData, currentPosition, trades, hoverIndex, currencySymbol, theme, formatScaleDate]);
 
   useEffect(() => {
     draw();
@@ -491,8 +505,32 @@ function CandlestickChart({
 
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
-    const paddingLeft = 14;
-    const paddingRight = 72;
+    const isMobile = rect.width < 600;
+    const paddingLeft = isMobile ? 8 : 14;
+    const paddingRight = isMobile ? 66 : 78;
+    const chartWidth = rect.width - paddingRight - paddingLeft;
+
+    const maxVisibleInWindow = Math.min(revealedCandles.length, 90);
+    const candleWidth = chartWidth / maxVisibleInWindow;
+    const idx = Math.floor((x - paddingLeft) / candleWidth);
+
+    if (idx >= 0 && idx < maxVisibleInWindow) {
+      setHoverIndex(idx);
+    } else {
+      setHoverIndex(null);
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (!e.touches || e.touches.length === 0) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const touch = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    const isMobile = rect.width < 600;
+    const paddingLeft = isMobile ? 8 : 14;
+    const paddingRight = isMobile ? 66 : 78;
     const chartWidth = rect.width - paddingRight - paddingLeft;
 
     const maxVisibleInWindow = Math.min(revealedCandles.length, 90);
@@ -559,26 +597,14 @@ function CandlestickChart({
 
         {/* Center / Right: Playback Controls, EMA Toggle & Progress */}
         <div className="toolbar-controls-group">
-          {/* EMA Indicator Pill */}
-          <button
-            type="button"
-            className={`toolbar-ema-btn ${showEMA ? "active" : ""}`}
-            onClick={() => setShowEMA((p) => !p)}
-            title="Toggle 9 & 21 EMA Technical Overlays"
-          >
-            <span className="ema-dot blue" /> 9 EMA
-            <span className="ema-dot amber" /> 21 EMA
-          </button>
-
-          <div className="toolbar-divider" />
-
-          {/* Candle Playback Controls */}
+          {/* Row 1 on mobile: Primary Playback Actions */}
           <div className="toolbar-playback-cluster">
             <button
               type="button"
               className="player-icon-btn reset"
               onClick={onReset}
               title="Restart session from initial bar"
+              aria-label="Restart session"
             >
               <FiRotateCcw />
             </button>
@@ -610,25 +636,41 @@ function CandlestickChart({
             </button>
           </div>
 
-          {/* Speed Selector */}
-          <div className="toolbar-speed-pills">
-            {SPEED_OPTIONS.map((opt, idx) => (
-              <button
-                type="button"
-                key={opt.label}
-                className={`speed-tab ${speedIndex === idx ? "active" : ""}`}
-                onClick={() => onSetSpeed?.(idx)}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
+          <div className="toolbar-divider" />
 
-          {/* Progress Mini Scrubber */}
-          <div className="toolbar-progress-chip" title={`Candle ${visibleCount} of ${totalCandles} (${progressPct}%)`}>
-            <span className="progress-num">{visibleCount}/{totalCandles}</span>
-            <div className="progress-mini-track">
-              <div className="progress-mini-fill" style={{ width: `${progressPct}%` }} />
+          {/* Row 2 on mobile: Secondary Controls (Speed, EMA, Progress) */}
+          <div className="toolbar-secondary-cluster">
+            {/* Speed Selector */}
+            <div className="toolbar-speed-pills">
+              {SPEED_OPTIONS.map((opt, idx) => (
+                <button
+                  type="button"
+                  key={opt.label}
+                  className={`speed-tab ${speedIndex === idx ? "active" : ""}`}
+                  onClick={() => onSetSpeed?.(idx)}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+
+            {/* EMA Indicator Pill */}
+            <button
+              type="button"
+              className={`toolbar-ema-btn ${showEMA ? "active" : ""}`}
+              onClick={() => setShowEMA((p) => !p)}
+              title="Toggle 9 & 21 EMA Technical Overlays"
+            >
+              <span className="ema-dot blue" /> 9 EMA
+              <span className="ema-dot amber" /> 21 EMA
+            </button>
+
+            {/* Progress Mini Scrubber */}
+            <div className="toolbar-progress-chip" title={`Candle ${visibleCount} of ${totalCandles} (${progressPct}%)`}>
+              <span className="progress-num">{visibleCount}/{totalCandles}</span>
+              <div className="progress-mini-track">
+                <div className="progress-mini-fill" style={{ width: `${progressPct}%` }} />
+              </div>
             </div>
           </div>
         </div>
@@ -640,6 +682,8 @@ function CandlestickChart({
           ref={canvasRef}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleMouseLeave}
         />
       </div>
     </div>
@@ -647,4 +691,3 @@ function CandlestickChart({
 }
 
 export default CandlestickChart;
-

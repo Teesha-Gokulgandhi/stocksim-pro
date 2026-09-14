@@ -65,8 +65,12 @@
 }
 
 .trade-nav-pill.active {
-  background: var(--accent-blue, #2563eb);
+  background: var(--accent-gradient, var(--accent-primary, #7c3aed));
   color: #ffffff;
+  box-shadow: var(--shadow-glow, 0 2px 8px rgba(124, 58, 237, 0.3));
+}
+
+[data-theme="light"] .trade-nav-pill.active {
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
 }
 
@@ -357,9 +361,9 @@
 }
 
 .modal-stepper-btn:hover:not(:disabled) {
-  background: var(--accent-blue, #2563eb);
+  background: var(--accent-primary);
   color: white;
-  border-color: var(--accent-blue, #2563eb);
+  border-color: var(--accent-primary);
 }
 
 .modal-stepper-btn:disabled {
@@ -383,16 +387,16 @@
 }
 
 .trade-qty-input-wrap input:focus {
-  border-color: var(--accent-blue);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  border-color: var(--accent-primary);
+  box-shadow: var(--focus-ring, 0 0 0 3px rgba(124, 58, 237, 0.2));
 }
 
 .max-btn {
   position: absolute;
   right: 50px;
-  background: rgba(37, 99, 235, 0.15);
+  background: var(--accent-primary-subtle, rgba(124, 58, 237, 0.15));
   border: none;
-  color: #3b82f6;
+  color: var(--accent-primary, #a855f7);
   font-weight: 700;
   font-size: 11px;
   padding: 5px 10px;
@@ -403,7 +407,7 @@
 }
 
 .max-btn:hover {
-  background: rgba(37, 99, 235, 0.25);
+  background: var(--accent-primary-border, rgba(124, 58, 237, 0.25));
 }
 
 .trade-preset-chips {
@@ -430,9 +434,14 @@
 }
 
 .preset-chip.active {
-  background: var(--accent-blue);
+  background: var(--accent-gradient, var(--accent-primary));
   color: #ffffff;
-  border-color: var(--accent-blue);
+  border-color: transparent;
+  box-shadow: var(--shadow-glow, 0 2px 8px rgba(124, 58, 237, 0.3));
+}
+
+[data-theme="light"] .preset-chip.active {
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
 }
 
 .trade-calc-summary {

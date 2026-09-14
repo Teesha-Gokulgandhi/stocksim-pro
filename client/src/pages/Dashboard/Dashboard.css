@@ -303,6 +303,11 @@
   font-feature-settings: "tnum";
 }
 
+[data-theme="dark"] .groww-margin-val,
+:root:not([data-theme="light"]) .groww-margin-val {
+  color: var(--accent-primary);
+}
+
 .groww-allocation-block {
   display: flex;
   flex-direction: column;
@@ -329,16 +334,14 @@
   height: 100%;
   border-radius: 99px;
   transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--accent-gradient, linear-gradient(90deg, #2563eb 0%, #3b82f6 100%));
+  box-shadow: var(--shadow-glow, 0 0 10px rgba(124, 58, 237, 0.35));
 }
 
-/* INR bar — accent blue */
-.groww-alloc-bar-fill.inr {
-  background: var(--accent-primary);
-}
-
-/* USD bar — profit green to differentiate */
+.groww-alloc-bar-fill.inr,
 .groww-alloc-bar-fill.usd {
-  background: var(--color-profit);
+  background: var(--accent-gradient, linear-gradient(90deg, #2563eb 0%, #3b82f6 100%));
+  box-shadow: var(--shadow-glow, 0 0 10px rgba(124, 58, 237, 0.35));
 }
 
 .groww-hero-actions {
@@ -361,27 +364,28 @@
   cursor: pointer;
   border: none;
   transition: all var(--transition-fast);
-  box-shadow: 0 4px 12px rgba(79, 109, 245, 0.28);
+  background: var(--accent-gradient, linear-gradient(135deg, #2563eb 0%, #3b82f6 100%));
+  box-shadow: var(--shadow-glow, 0 4px 14px rgba(124, 58, 237, 0.32));
   color: #ffffff;
 }
 
-.groww-trade-btn.inr {
-  background: var(--accent-gradient, var(--accent-primary));
-}
-
-.groww-trade-btn.inr:hover {
-  filter: brightness(1.1);
+.groww-trade-btn:hover {
+  background: var(--accent-primary-hover, #6d28d9);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(79, 109, 245, 0.42);
+  box-shadow: var(--shadow-glow, 0 8px 20px rgba(124, 58, 237, 0.45));
 }
 
+.groww-trade-btn.inr,
 .groww-trade-btn.usd {
-  background: var(--accent-primary);
+  background: var(--accent-gradient, linear-gradient(135deg, #2563eb 0%, #3b82f6 100%));
+  box-shadow: var(--shadow-glow, 0 4px 14px rgba(124, 58, 237, 0.32));
 }
 
+.groww-trade-btn.inr:hover,
 .groww-trade-btn.usd:hover {
-  background: var(--accent-primary-hover);
-  transform: translateY(-1px);
+  background: var(--accent-primary-hover, #6d28d9);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow, 0 8px 20px rgba(124, 58, 237, 0.45));
 }
 
 /* Dual Overview Mode */
@@ -583,11 +587,38 @@
   background: var(--bg-surface, #ffffff);
   border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 16px;
-  overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
   box-shadow: var(--shadow-card, 0 2px 8px rgba(0, 0, 0, 0.03));
 }
 
-.groww-holdings-table,
+.groww-table-card::-webkit-scrollbar {
+  height: 6px;
+}
+
+.groww-table-card::-webkit-scrollbar-track {
+  background: var(--bg-surface-alt, rgba(0, 0, 0, 0.05));
+  border-radius: 4px;
+}
+
+.groww-table-card::-webkit-scrollbar-thumb {
+  background: var(--border-color, rgba(148, 163, 184, 0.3));
+  border-radius: 4px;
+}
+
+.groww-table-card::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary, #7c3aed);
+}
+
+.groww-holdings-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
 .groww-orders-table {
   width: 100%;
   border-collapse: collapse;
@@ -828,39 +859,66 @@
   margin-top: 8px;
 }
 
+.groww-orders-table .order-sub-calc {
+  display: none;
+}
+
+.groww-orders-table .order-symbol-wrap .market-pill-small {
+  display: none;
+}
+
 .market-pill-small {
-  font-size: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
   font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.02em;
 }
 
-.market-pill-small.inr {
-  background: var(--bg-surface-alt);
-  color: var(--text-primary);
-}
-
+.market-pill-small.inr,
 .market-pill-small.usd {
-  background: var(--bg-surface-alt);
-  color: var(--text-primary);
+  background: rgba(168, 85, 247, 0.14);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.28);
+}
+
+[data-theme="light"] .market-pill-small.inr,
+[data-theme="light"] .market-pill-small.usd {
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.22);
 }
 
 .side-badge {
+  display: inline-flex;
+  align-items: center;
   font-size: 11px;
   font-weight: 800;
-  padding: 2px 8px;
-  border-radius: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .side-badge.buy {
-  background: rgba(16, 185, 129, 0.12);
-  color: var(--color-profit);
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--color-profit, #22c55e);
+  border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
 .side-badge.sell {
   background: rgba(239, 68, 68, 0.12);
-  color: var(--color-loss);
+  color: var(--color-loss, #ef4444);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.side-badge.replay {
+  background: rgba(139, 92, 246, 0.12);
+  color: #a78bfa;
+  border: 1px solid rgba(139, 92, 246, 0.3);
 }
 
 .time-col {
@@ -873,15 +931,246 @@
   color: var(--text-primary, #0f172a);
 }
 
-/* Responsive adjustments */
-@media (max-width: 900px) {
+/* ================================================================
+   DASHBOARD RESPONSIVE REDESIGN (Mobile 320px–480px, Large Mobile 481px–767px, Tablet 768px–1024px)
+   ================================================================ */
+
+@media (max-width: 1024px) {
+  .groww-top-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 16px !important;
+    padding: 18px 20px !important;
+  }
+
+  .groww-header-actions {
+    width: 100% !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+  }
+
   .groww-hero-card {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 24px;
+    padding: 24px;
   }
 
   .groww-card-vdivider {
     display: none;
+  }
+
+  .groww-stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .leaderboard-podium-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .groww-dashboard-page {
+    gap: 18px;
+    padding-bottom: 30px;
+  }
+
+  /* Header & Segmented Market Tabs */
+  .groww-top-header {
+    padding: 16px;
+    border-radius: 18px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .groww-header-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .groww-segment-control {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    padding: 4px;
+    border-radius: 12px;
+  }
+
+  .groww-segment-btn {
+    padding: 10px 6px;
+    font-size: 11.5px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .groww-refresh-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  /* Hero Executive Card */
+  .groww-hero-card {
+    padding: 18px 20px;
+    border-radius: 20px;
+    gap: 20px;
+  }
+
+  .groww-primary-val {
+    font-size: clamp(1.6rem, 1.3rem + 1.6vw, 2.2rem);
+  }
+
+  .groww-val-row {
+    gap: 10px;
+    align-items: center;
+  }
+
+  /* Transform squished sub-metrics into a 2-column mobile grid */
+  .groww-sub-metrics-row {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px 16px !important;
+    width: 100% !important;
+    padding: 14px 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  .groww-sub-metric:nth-child(5) {
+    grid-column: 1 / -1;
+  }
+
+  .groww-sub-divider {
+    display: none !important;
+  }
+
+  .groww-trade-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  /* Stats Cards Grid */
+  .groww-stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .groww-stat-pill {
+    padding: 12px 14px;
+    border-radius: 14px;
+  }
+
+  .stat-value {
+    font-size: 14px;
+  }
+
+  /* Holdings Section Header & Search */
+  .groww-section-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .holdings-search-box {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  /* Order History Table to Mobile Cards */
+  .groww-orders-table thead {
+    display: none !important;
+  }
+
+  .groww-orders-table,
+  .groww-orders-table tbody,
+  .groww-orders-table tr,
+  .groww-orders-table td {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .groww-orders-table tr {
+    padding: 16px;
+    margin-bottom: 12px;
+    border-radius: 16px;
+    background: var(--bg-surface-alt, #151c2e);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .groww-orders-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    border: none;
+  }
+
+  /* Competition & Leaderboard */
+  .competition-header-card {
+    padding: 18px 20px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .competition-market-toggle {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+
+  .comp-toggle-btn {
+    min-height: 44px;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .leaderboard-podium-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .podium-card {
+    padding: 18px 20px;
+    border-radius: 16px;
+  }
+}
+
+/* Compact Phones (<480px) */
+@media (max-width: 480px) {
+  .groww-segment-control {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .groww-stats-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .groww-sub-metrics-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .groww-sub-metric:nth-child(5) {
+    grid-column: auto;
+  }
+
+  .groww-hero-card {
+    padding: 16px;
+    border-radius: 18px;
   }
 }
 

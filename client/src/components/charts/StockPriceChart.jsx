@@ -70,6 +70,35 @@ function StockPriceChart({ symbol, currentPrice, isUSD: propIsUSD }) {
   const strokeColor = isPositive ? "#10B981" : "#EF4444";
   const gradientId = `chartGrad_${symbol.replace(/[^a-zA-Z0-9]/g, "")}_${isPositive ? "up" : "down"}`;
 
+  const formatTooltipDate = useCallback(
+    (item) => {
+      if (!item) return "";
+      const d = item.fullDate ? new Date(item.fullDate) : item.timestamp ? new Date(item.timestamp) : null;
+      if (!d || Number.isNaN(d.getTime())) return item.date || "";
+
+      const locale = isUSD ? "en-US" : "en-IN";
+
+      if (range === "1D") {
+        return d.toLocaleString(locale, {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        });
+      }
+
+      // 1W, 1M, 1Y, 3Y, 5Y: STRICTLY ONLY calendar date (e.g. 28 Aug 2026), ZERO time or am/pm
+      return d.toLocaleDateString(locale, {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+    },
+    [isUSD, range]
+  );
+
   return (
     <div className="stock-chart-card">
       <div className="stock-chart-header">
@@ -153,7 +182,7 @@ function StockPriceChart({ symbol, currentPrice, isUSD: propIsUSD }) {
                     const item = payload[0].payload;
                     return (
                       <div className="stock-chart-tooltip">
-                        <p className="tooltip-date">{item.fullDate ? new Date(item.fullDate).toLocaleString(isUSD ? "en-US" : "en-IN", { dateStyle: "medium", timeStyle: "short" }) : item.date}</p>
+                        <p className="tooltip-date">{formatTooltipDate(item)}</p>
                         <p className="tooltip-price">{currencySymbol}{item.price?.toLocaleString(isUSD ? "en-US" : "en-IN", { minimumFractionDigits: 2 })}</p>
                         {item.volume > 0 && <p className="tooltip-volume">Vol: {(item.volume / 1000).toFixed(1)}k</p>}
                       </div>

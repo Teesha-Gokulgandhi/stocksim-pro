@@ -598,24 +598,38 @@ function Dashboard() {
                         hour: "2-digit",
                         minute: "2-digit",
                       });
+                      const isBuy = tx.type?.toLowerCase() === "buy";
+                      const isSell = tx.type?.toLowerCase() === "sell";
+                      const isReplay = tx.type?.toLowerCase() === "replay";
+
                       return (
-                        <tr key={tx._id || idx}>
+                        <tr
+                          key={tx._id || idx}
+                          className={`order-row ${isBuy ? "buy" : isSell ? "sell" : isReplay ? "replay" : ""}`}
+                        >
                           <td className="time-col">{dateStr}</td>
-                          <td>
-                            <strong>{tx.symbol}</strong>
+                          <td className="symbol-col">
+                            <div className="order-symbol-wrap">
+                              <strong className="order-symbol">{tx.symbol}</strong>
+                            </div>
                           </td>
-                          <td>
+                          <td className="market-col desktop-only">
                             <span className={`market-pill-small ${isTxUSD ? "usd" : "inr"}`}>
-                              {isTxUSD ? "🇺🇸 US" : "🇮🇳 NSE"}
+                              {isTxUSD ? "US" : "NSE"}
                             </span>
                           </td>
-                          <td>
-                            <span className={`side-badge ${tx.type?.toLowerCase()}`}>
-                              {tx.type}
-                            </span>
+                          <td className="side-col">
+                            <div className="order-side-meta">
+                              <span className={`side-badge ${tx.type?.toLowerCase()}`}>
+                                {tx.type}
+                              </span>
+                              <span className="order-sub-calc">
+                                {tx.quantity} {tx.quantity === 1 ? "share" : "shares"} • {sym}{isTxUSD ? formatUSD(tx.price) : formatINR(tx.price)}
+                              </span>
+                            </div>
                           </td>
-                          <td className="num-col">{tx.quantity}</td>
-                          <td className="num-col">{sym}{isTxUSD ? formatUSD(tx.price) : formatINR(tx.price)}</td>
+                          <td className="num-col shares-col desktop-only">{tx.quantity}</td>
+                          <td className="num-col price-col desktop-only">{sym}{isTxUSD ? formatUSD(tx.price) : formatINR(tx.price)}</td>
                           <td className="num-col total-col">
                             {sym}{isTxUSD ? formatUSD(tx.quantity * tx.price) : formatINR(tx.quantity * tx.price)}
                           </td>

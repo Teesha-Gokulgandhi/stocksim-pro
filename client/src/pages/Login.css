@@ -496,6 +496,7 @@
   position: absolute;
   top: 18px;
   right: 18px;
+  z-index: 50;
   background: var(--bg-surface-alt);
   border: 1px solid var(--border-color);
   color: var(--text-secondary);
@@ -507,6 +508,14 @@
   justify-content: center;
   cursor: pointer;
   transition: all var(--transition-fast);
+}
+
+.support-modal-close svg {
+  width: 16px !important;
+  height: 16px !important;
+  stroke: currentColor !important;
+  stroke-width: 2.2 !important;
+  display: block !important;
 }
 
 .support-modal-close:hover {

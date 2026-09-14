@@ -64,16 +64,16 @@
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
   color: var(--text-secondary);
-  width: 28px;
-  height: 28px;
-  border-radius: 7px;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all var(--transition-fast);
   flex-shrink: 0;
-  font-size: 14px;
+  padding: 0;
 }
 
 .collapse-toggle-btn:hover {
@@ -83,8 +83,24 @@
 }
 
 .collapse-toggle-btn svg {
-  font-size: 15px;
-  stroke-width: 2.2;
+  width: 16px !important;
+  height: 16px !important;
+  display: block !important;
+  stroke: currentColor !important;
+  stroke-width: 2.2 !important;
+  fill: none !important;
+}
+
+[data-theme="light"] .collapse-toggle-btn {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
+[data-theme="light"] .collapse-toggle-btn:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
 }
 
 .sidebar-nav {
@@ -98,38 +114,32 @@
 }
 
 /* Context Section Badge */
+/* Context Section Badge */
 .sidebar-context-badge {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 6px;
-  padding: 5px 9px;
-  border-radius: 7px;
+  padding: 6px 12px;
+  border-radius: 8px;
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
+  font-weight: 750;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
-  margin: 2px 4px 8px 4px;
+  margin: 2px 0 8px 0;
+  width: 100%;
+  box-sizing: border-box;
   background: var(--bg-surface);
   color: var(--text-muted);
   border: 1px solid var(--border-color);
 }
 
-.sidebar-context-badge.analytics {
+.sidebar-context-badge.analytics,
+.sidebar-context-badge.inr,
+.sidebar-context-badge.usd {
   color: var(--accent-primary);
   background: var(--accent-primary-subtle);
   border-color: var(--accent-primary-border);
-}
-
-.sidebar-context-badge.inr {
-  color: #3b82f6;
-  background: rgba(59, 130, 246, 0.10);
-  border-color: rgba(59, 130, 246, 0.25);
-}
-
-.sidebar-context-badge.usd {
-  color: #3b82f6;
-  background: rgba(59, 130, 246, 0.10);
-  border-color: rgba(59, 130, 246, 0.25);
 }
 
 /* Account Section Label */
@@ -139,7 +149,7 @@
   color: var(--text-muted);
   letter-spacing: 0.8px;
   text-transform: uppercase;
-  padding: 10px 10px 3px 10px;
+  padding: 12px 14px 4px 14px;
   margin-top: 4px;
 }
 
@@ -147,7 +157,8 @@
 nav a, .nav-desk-link {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: flex-start;
+  gap: 12px;
   width: 100%;
   background: none;
   border: none;
@@ -156,14 +167,15 @@ nav a, .nav-desk-link {
   color: var(--text-secondary);
   text-decoration: none;
 
-  padding: 9px 10px;
-  border-radius: var(--radius-sm, 8px);
-  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm, 10px);
+  font-size: 13.5px;
   font-weight: 600;
   font-family: var(--font-sans);
   transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
   white-space: nowrap;
   position: relative;
+  box-sizing: border-box;
 }
 
 .sidebar.collapsed nav a,
@@ -173,7 +185,7 @@ nav a, .nav-desk-link {
 }
 
 nav a svg, .nav-desk-link svg {
-  font-size: 16px;
+  font-size: 17px;
   flex-shrink: 0;
   stroke-width: 2;
 }
@@ -184,10 +196,13 @@ nav a:hover, .nav-desk-link:hover {
 }
 
 nav a.active, .nav-desk-link.active {
-  background: var(--accent-primary);
+  background: var(--accent-gradient, linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%));
   color: #ffffff;
-  /* Use token-based glow — no hardcoded color */
-  box-shadow: var(--shadow-glow), inset 0 1px 0 rgba(255,255,255,0.12);
+  box-shadow: var(--shadow-glow, 0 4px 14px rgba(124, 58, 237, 0.35)), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+nav a.active svg, .nav-desk-link.active svg {
+  color: #ffffff;
 }
 
 /* Admin portal link — distinct amber accent */
@@ -234,16 +249,18 @@ nav a.active, .nav-desk-link.active {
   color: var(--text-secondary);
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: flex-start;
+  gap: 12px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 600;
   font-family: var(--font-sans);
-  padding: 9px 10px;
-  border-radius: var(--radius-sm, 8px);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm, 10px);
   transition: background var(--transition-fast), color var(--transition-fast);
   width: 100%;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .sidebar.collapsed .logout-btn {

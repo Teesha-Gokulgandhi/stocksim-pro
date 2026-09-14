@@ -183,6 +183,7 @@
 @media (max-width: 900px) {
   .details-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .stock-side-panel {
@@ -190,8 +191,17 @@
   }
 }
 
+@media (max-width: 768px) {
+  .stock-details-page {
+    gap: 14px;
+  }
+  .stock-details-top-bar {
+    margin-bottom: 0;
+  }
+}
+
 @media (max-width: 480px) {
-  .stock-details-page { gap: 14px; }
+  .stock-details-page { gap: 12px; }
   .stock-stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .stock-price-main { font-size: 28px; }
+  .stock-price-main { font-size: 26px; }
 }

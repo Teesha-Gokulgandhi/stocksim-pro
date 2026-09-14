@@ -24,8 +24,9 @@
   position: absolute;
   top: 16px;
   right: 16px;
+  z-index: 50;
   background: var(--bg-surface-alt);
-  border: none;
+  border: 1px solid var(--border-color);
   border-radius: 50%;
   width: 32px;
   height: 32px;
@@ -34,6 +35,20 @@
   justify-content: center;
   cursor: pointer;
   color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.funds-modal-close svg {
+  width: 16px !important;
+  height: 16px !important;
+  stroke: currentColor !important;
+  stroke-width: 2.2 !important;
+  display: block !important;
+}
+
+.funds-modal-close:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
 }
 
 .funds-modal-icon {
@@ -81,13 +96,13 @@
 }
 
 .quick-amount:hover {
-  border-color: var(--accent-blue);
+  border-color: var(--accent-primary);
 }
 
 .quick-amount.active {
-  border-color: var(--accent-blue);
-  background: rgba(37, 99, 235, 0.12);
-  color: var(--accent-blue);
+  border-color: var(--accent-primary);
+  background: var(--accent-primary-subtle, rgba(124, 58, 237, 0.12));
+  color: var(--accent-primary);
 }
 
 .funds-modal form label {
@@ -110,7 +125,8 @@
 
 .funds-modal form input:focus {
   outline: none;
-  border-color: var(--accent-blue);
+  border-color: var(--accent-primary);
+  box-shadow: var(--focus-ring, 0 0 0 3px rgba(124, 58, 237, 0.2));
 }
 
 .funds-error {
@@ -125,12 +141,17 @@
   padding: 13px;
   border-radius: 10px;
   border: none;
-  background: var(--accent-blue);
+  background: var(--accent-gradient, var(--accent-primary));
   color: #fff;
   font-weight: 700;
   font-size: 14px;
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  box-shadow: var(--shadow-glow, 0 2px 8px rgba(124, 58, 237, 0.3));
+  transition: all 0.15s ease;
+}
+
+[data-theme="light"] .funds-submit {
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
 }
 
 .funds-submit:disabled {

@@ -60,6 +60,14 @@ function App() {
                 </AdminRoute>
               }
             />
+            <Route
+              path="/admin/:tab"
+              element={
+                <AdminRoute>
+                  <Admin />
+                </AdminRoute>
+              }
+            />
           </Route>
 
           <Route path="*" element={<NotFound />} />
