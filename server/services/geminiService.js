@@ -185,10 +185,10 @@ ${userQuery}
   // 4. Direct Transfer to Google Gemini API with automatic model failover
   // Uses verified active Gemini Flash models; if one is temporarily rate-limited, immediately hops to the next.
   const activeModels = [
-    "gemini-3.5-flash",
-    "gemini-3.7-flash",
     "gemini-flash-latest",
     "gemini-3.6-flash",
+    "gemini-3.7-flash",
+    "gemini-3.5-flash",
   ];
 
   let outputText = null;
