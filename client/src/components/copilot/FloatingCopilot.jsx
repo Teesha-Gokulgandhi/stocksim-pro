@@ -25,64 +25,122 @@ function FormattedMessage({ text }) {
   // Split into lines
   const lines = text.split("\n");
 
-  return (
-    <div className="copilot-formatted-content">
-      {lines.map((line, idx) => {
-        const trimmed = line.trim();
+  // Group consecutive table lines (lines starting with |)
+  const elements = [];
+  let i = 0;
 
-        // Empty line
-        if (!trimmed) {
-          return <div key={idx} className="copilot-line-break" />;
-        }
+  while (i < lines.length) {
+    const trimmed = lines[i].trim();
 
-        // H3 Header
-        if (trimmed.startsWith("### ")) {
-          return (
-            <h4 key={idx} className="copilot-h3">
-              {renderInlineStyles(trimmed.slice(4))}
-            </h4>
-          );
-        }
+    // Detect start of a markdown table (line starts with |)
+    if (trimmed.startsWith("|") && trimmed.endsWith("|")) {
+      const tableLines = [];
+      while (i < lines.length && lines[i].trim().startsWith("|") && lines[i].trim().endsWith("|")) {
+        tableLines.push(lines[i].trim());
+        i++;
+      }
 
-        // H4 Header
-        if (trimmed.startsWith("#### ")) {
-          return (
-            <h5 key={idx} className="copilot-h4">
-              {renderInlineStyles(trimmed.slice(5))}
-            </h5>
-          );
-        }
+      // Need at least header + separator + 1 data row
+      if (tableLines.length >= 3) {
+        const parseCells = (row) =>
+          row.split("|").slice(1, -1).map((c) => c.trim());
 
-        // Bullet point (- or *)
-        if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
-          return (
-            <div key={idx} className="copilot-bullet-item">
-              <span className="bullet-dot">•</span>
-              <span>{renderInlineStyles(trimmed.slice(2))}</span>
-            </div>
-          );
-        }
+        const headerCells = parseCells(tableLines[0]);
+        // tableLines[1] is the separator (|---|---|)
+        const bodyRows = tableLines.slice(2).map(parseCells);
 
-        // Numbered list
-        const numMatch = trimmed.match(/^(\d+)\.\s+(.*)/);
-        if (numMatch) {
-          return (
-            <div key={idx} className="copilot-numbered-item">
-              <span className="bullet-num">{numMatch[1]}.</span>
-              <span>{renderInlineStyles(numMatch[2])}</span>
-            </div>
-          );
-        }
-
-        // Regular paragraph
-        return (
-          <p key={idx} className="copilot-para">
-            {renderInlineStyles(trimmed)}
-          </p>
+        elements.push(
+          <div key={`table-${i}`} className="copilot-table-wrap">
+            <table className="copilot-table">
+              <thead>
+                <tr>
+                  {headerCells.map((cell, ci) => (
+                    <th key={ci}>{renderInlineStyles(cell)}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {bodyRows.map((row, ri) => (
+                  <tr key={ri}>
+                    {row.map((cell, ci) => (
+                      <td key={ci}>{renderInlineStyles(cell)}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         );
-      })}
-    </div>
-  );
+        continue;
+      }
+      // If not a valid table, fall through and render lines normally
+      i -= tableLines.length;
+    }
+
+    // Empty line
+    if (!trimmed) {
+      elements.push(<div key={i} className="copilot-line-break" />);
+      i++;
+      continue;
+    }
+
+    // H3 Header
+    if (trimmed.startsWith("### ")) {
+      elements.push(
+        <h4 key={i} className="copilot-h3">
+          {renderInlineStyles(trimmed.slice(4))}
+        </h4>
+      );
+      i++;
+      continue;
+    }
+
+    // H4 Header
+    if (trimmed.startsWith("#### ")) {
+      elements.push(
+        <h5 key={i} className="copilot-h4">
+          {renderInlineStyles(trimmed.slice(5))}
+        </h5>
+      );
+      i++;
+      continue;
+    }
+
+    // Bullet point (- or *)
+    if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
+      elements.push(
+        <div key={i} className="copilot-bullet-item">
+          <span className="bullet-dot">•</span>
+          <span>{renderInlineStyles(trimmed.slice(2))}</span>
+        </div>
+      );
+      i++;
+      continue;
+    }
+
+    // Numbered list
+    const numMatch = trimmed.match(/^(\d+)\.\s+(.*)/);
+    if (numMatch) {
+      elements.push(
+        <div key={i} className="copilot-numbered-item">
+          <span className="bullet-num">{numMatch[1]}.</span>
+          <span>{renderInlineStyles(numMatch[2])}</span>
+        </div>
+      );
+      i++;
+      continue;
+    }
+
+    // Regular paragraph
+    elements.push(
+      <p key={i} className="copilot-para">
+        {renderInlineStyles(trimmed)}
+      </p>
+    );
+    i++;
+  }
+
+  return <div className="copilot-formatted-content">{elements}</div>;
 }
 
 // Inline formatter for bold, code, highlights
@@ -310,17 +368,26 @@ Ready for fresh market analysis. Type any stock name (e.g. SUNPHARMA, RELIANCE, 
     return () => window.removeEventListener("open-copilot", handleOpenCopilot);
   }, []);
 
-  // Single clean action option per user request
+  // Actionable suggestion chips — stock-specific when on a stock page, portfolio-aware otherwise
   const suggestionChips = activeStockSymbol
     ? [
         {
           label: `⚡ AI Analytics: ${activeStockSymbol}`,
           query: `Give complete AI analytics for ${activeStockSymbol}`,
         },
+        {
+          label: `⚔️ Compare ${activeStockSymbol}`,
+          query: `${activeStockSymbol} vs `,
+          isCompare: true,
+        },
       ]
     : [
         {
-          label: "📈 Live Market Pulse & Setups",
+          label: "🏥 Portfolio Health Check",
+          query: "Analyze my portfolio holdings and show P&L",
+        },
+        {
+          label: "📈 Live Market Pulse",
           query: "What is the dominant trend across the benchmark indices and where are key support levels?",
         },
       ];
@@ -471,7 +538,13 @@ Ready for fresh market analysis. Type any stock name (e.g. SUNPHARMA, RELIANCE, 
                     key={i}
                     type="button"
                     className="copilot-chip-btn"
-                    onClick={() => handleSendMessage(chip.query)}
+                    onClick={() => {
+                      if (chip.isCompare) {
+                        setInputVal(chip.query);
+                      } else {
+                        handleSendMessage(chip.query);
+                      }
+                    }}
                     disabled={loading}
                   >
                     {chip.label}

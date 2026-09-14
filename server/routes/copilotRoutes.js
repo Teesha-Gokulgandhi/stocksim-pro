@@ -67,6 +67,7 @@ router.post("/chat", protect, copilotLimiter, async (req, res) => {
     const result = await askMarketCopilot({
       userQuery: cleanMessage,
       marketContext,
+      userId: req.user._id,
     });
 
     return res.json({

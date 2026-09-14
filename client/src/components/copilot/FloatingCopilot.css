@@ -759,4 +759,54 @@
   background: #1d4ed8 !important;
 }
 
+/* ── Comparison Table Styles ──────────────────────────────────── */
+.copilot-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  margin: 6px 0;
+  border-radius: 8px;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+}
+
+.copilot-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+.copilot-table th {
+  padding: 7px 10px;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.7rem;
+  color: var(--text-secondary, #94a3b8);
+  background: var(--bg-surface-elevated, rgba(255, 255, 255, 0.04));
+  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  white-space: nowrap;
+}
+
+.copilot-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.04));
+  color: var(--text-primary, #e2e8f0);
+  white-space: nowrap;
+}
+
+.copilot-table tbody tr:hover {
+  background: var(--bg-surface-elevated, rgba(255, 255, 255, 0.03));
+}
+
+.copilot-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+[data-theme="light"] .copilot-table th {
+  background: rgba(0, 0, 0, 0.03);
+  color: #475569;
+}
+
+[data-theme="light"] .copilot-table td {
+  color: #1e293b;
+}
 

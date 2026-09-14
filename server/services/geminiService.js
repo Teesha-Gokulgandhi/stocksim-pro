@@ -1,6 +1,7 @@
 const axios = require("axios");
 const mongoose = require("mongoose");
 const Stock = require("../models/Stock");
+const Holding = require("../models/Holding");
 const { getQuote } = require("./yahooService");
 
 /**
@@ -448,14 +449,244 @@ const formatInt = (amount, isIndian) => {
 };
 
 /**
+ * Momentum Score Calculator (0-100)
+ * Uses: 50-DMA position, 200-DMA position, volume ratio, 52-week range, daily change
+ */
+const calculateMomentumScore = (liveQuote, currentPrice) => {
+  if (!liveQuote || !currentPrice) return null;
+
+  let score = 50; // Neutral baseline
+
+  // 1. Price vs 50-DMA (30% weight → ±30 points)
+  const dma50 = liveQuote.fiftyDayAverage;
+  if (dma50 && dma50 > 0) {
+    const dma50Pct = ((currentPrice - dma50) / dma50) * 100;
+    score += Math.max(-30, Math.min(30, dma50Pct * 3));
+  }
+
+  // 2. Price vs 200-DMA (20% weight → ±20 points)
+  const dma200 = liveQuote.twoHundredDayAverage;
+  if (dma200 && dma200 > 0) {
+    const dma200Pct = ((currentPrice - dma200) / dma200) * 100;
+    score += Math.max(-20, Math.min(20, dma200Pct * 2));
+  }
+
+  // 3. Volume ratio (20% weight → ±10 points)
+  const vol = liveQuote.volume || 0;
+  const avgVol = liveQuote.avgVolume || vol || 1;
+  if (avgVol > 0) {
+    const volRatio = vol / avgVol;
+    if (volRatio > 1.5) score += 10;
+    else if (volRatio > 1.0) score += 5;
+    else if (volRatio < 0.5) score -= 5;
+  }
+
+  // 4. Position in 52-week range (15% weight → ±8 points)
+  const w52Low = liveQuote.fiftyTwoWeekLow || currentPrice;
+  const w52High = liveQuote.fiftyTwoWeekHigh || currentPrice;
+  if (w52High > w52Low) {
+    const w52Pct = ((currentPrice - w52Low) / (w52High - w52Low)) * 100;
+    score += Math.max(-8, Math.min(8, (w52Pct - 50) * 0.16));
+  }
+
+  // 5. Daily change momentum (15% weight → ±7 points)
+  const changePct = liveQuote.changePercent != null ? liveQuote.changePercent : 0;
+  score += Math.max(-7, Math.min(7, changePct * 2));
+
+  return Math.round(Math.max(0, Math.min(100, score)));
+};
+
+/**
+ * Returns a text-based gauge label for a momentum score
+ */
+const getMomentumLabel = (score) => {
+  if (score >= 80) return { label: "Strong Bullish 🚀", color: "🟢" };
+  if (score >= 65) return { label: "Bullish", color: "🟢" };
+  if (score >= 50) return { label: "Neutral-Bullish", color: "🟡" };
+  if (score >= 35) return { label: "Neutral-Bearish", color: "🟡" };
+  if (score >= 20) return { label: "Bearish", color: "🔴" };
+  return { label: "Strong Bearish ⚠️", color: "🔴" };
+};
+
+/**
  * Intelligent Quantitative Market Engine
  * Generates institutional-grade equity breakdowns, technical levels, and risk calculations.
  */
-const generateLocalAnalysis = async ({ userQuery, marketContext }) => {
+const generateLocalAnalysis = async ({ userQuery, marketContext, userId }) => {
   const q = (userQuery || "").toLowerCase().trim();
   const { market = "IN", activeStock, balance = 100000 } = marketContext || {};
   const isIndian = market === "IN";
   const curSym = isIndian ? "₹" : "$";
+
+  // ── Intent: Portfolio Health Check ─────────────────────────────────────────
+  if (
+    q.includes("my portfolio") || q.includes("my holdings") ||
+    q.includes("portfolio health") || q.includes("analyze portfolio") ||
+    q.includes("portfolio check") || q.includes("portfolio analysis") ||
+    q.includes("my stocks") || q.includes("my positions") ||
+    q.includes("how am i doing") || q.includes("portfolio summary")
+  ) {
+    if (!userId) {
+      return `### 📊 Portfolio Analysis\nPlease log in to analyze your portfolio holdings. I need access to your account to show your actual positions and P\u0026L.`;
+    }
+
+    try {
+      const holdings = await Holding.find({ user: userId }).lean();
+      if (!holdings || holdings.length === 0) {
+        return `### 📊 Portfolio Analysis\nYou don't have any active holdings yet! Start by buying some stocks from the market — then come back and I'll give you a full breakdown of your positions, P\u0026L, and sector allocation.`;
+      }
+
+      // Fetch live prices for all held stocks in parallel
+      const holdingResults = await Promise.all(
+        holdings.map(async (h) => {
+          let liveQuote = null;
+          try { liveQuote = await getQuote(h.symbol); } catch {}
+          const currentPrice = liveQuote?.price || h.avgPrice;
+          const invested = h.avgPrice * h.quantity;
+          const currentVal = currentPrice * h.quantity;
+          const pnl = currentVal - invested;
+          const pnlPct = invested > 0 ? ((pnl / invested) * 100) : 0;
+          const hIsIndian = h.currency === "INR" || h.symbol.endsWith(".NS") || h.symbol.endsWith(".BO");
+          const hCurSym = hIsIndian ? "₹" : "$";
+
+          // Look up sector
+          const stockDoc = await Stock.findOne({ symbol: h.symbol }).lean().catch(() => null);
+          const sector = stockDoc?.sector || STOCK_KNOWLEDGE[h.symbol]?.sector || "Other";
+
+          return {
+            symbol: h.symbol,
+            quantity: h.quantity,
+            avgPrice: h.avgPrice,
+            currentPrice,
+            invested,
+            currentVal,
+            pnl,
+            pnlPct,
+            sector,
+            curSym: hCurSym,
+            isIndian: hIsIndian,
+          };
+        })
+      );
+
+      // Aggregate stats
+      const inrHoldings = holdingResults.filter(h => h.isIndian);
+      const usdHoldings = holdingResults.filter(h => !h.isIndian);
+
+      const totalInvestedINR = inrHoldings.reduce((s, h) => s + h.invested, 0);
+      const totalCurrentINR = inrHoldings.reduce((s, h) => s + h.currentVal, 0);
+      const totalPnlINR = totalCurrentINR - totalInvestedINR;
+
+      const totalInvestedUSD = usdHoldings.reduce((s, h) => s + h.invested, 0);
+      const totalCurrentUSD = usdHoldings.reduce((s, h) => s + h.currentVal, 0);
+      const totalPnlUSD = totalCurrentUSD - totalInvestedUSD;
+
+      // Sort by P&L %
+      const sorted = [...holdingResults].sort((a, b) => b.pnlPct - a.pnlPct);
+      const topPerformer = sorted[0];
+      const worstPerformer = sorted[sorted.length - 1];
+
+      // Sector concentration
+      const sectorMap = {};
+      const totalVal = holdingResults.reduce((s, h) => s + h.currentVal, 0);
+      holdingResults.forEach(h => {
+        sectorMap[h.sector] = (sectorMap[h.sector] || 0) + h.currentVal;
+      });
+      const sectorEntries = Object.entries(sectorMap).sort((a, b) => b[1] - a[1]);
+      const topSector = sectorEntries[0];
+      const topSectorPct = totalVal > 0 ? ((topSector[1] / totalVal) * 100).toFixed(1) : 0;
+
+      // Build holdings table
+      let holdingsDetail = sorted.map(h => {
+        const icon = h.pnl >= 0 ? "🟢" : "🔴";
+        return `- ${icon} **${h.symbol}** — ${h.quantity} shares @ ${h.curSym}${formatCurrency(h.avgPrice, h.isIndian)} → Now ${h.curSym}${formatCurrency(h.currentPrice, h.isIndian)} | P\u0026L: **${h.pnl >= 0 ? "+" : ""}${h.curSym}${formatCurrency(Math.abs(h.pnl), h.isIndian)} (${h.pnlPct >= 0 ? "+" : ""}${h.pnlPct.toFixed(2)}%)**`;
+      }).join("\n");
+
+      let summaryBlock = ``;
+      if (inrHoldings.length > 0) {
+        const inrPnlPct = totalInvestedINR > 0 ? ((totalPnlINR / totalInvestedINR) * 100).toFixed(2) : "0.00";
+        summaryBlock += `\n#### 🇮🇳 Indian Market (INR):\n- **Invested:** ₹${formatCurrency(totalInvestedINR, true)} | **Current Value:** ₹${formatCurrency(totalCurrentINR, true)}\n- **P\u0026L:** ${totalPnlINR >= 0 ? "+" : ""}₹${formatCurrency(Math.abs(totalPnlINR), true)} (${totalPnlINR >= 0 ? "+" : ""}${inrPnlPct}%)\n`;
+      }
+      if (usdHoldings.length > 0) {
+        const usdPnlPct = totalInvestedUSD > 0 ? ((totalPnlUSD / totalInvestedUSD) * 100).toFixed(2) : "0.00";
+        summaryBlock += `\n#### 🇺🇸 US Market (USD):\n- **Invested:** $${formatCurrency(totalInvestedUSD, false)} | **Current Value:** $${formatCurrency(totalCurrentUSD, false)}\n- **P\u0026L:** ${totalPnlUSD >= 0 ? "+" : ""}$${formatCurrency(Math.abs(totalPnlUSD), false)} (${totalPnlUSD >= 0 ? "+" : ""}${usdPnlPct}%)\n`;
+      }
+
+      const concentrationWarning = Number(topSectorPct) > 40
+        ? `\n#### ⚠️ Concentration Alert:\nYour portfolio has **${topSectorPct}%** in **${topSector[0]}** — consider diversifying across more sectors to reduce risk.`
+        : `\n#### ✅ Diversification:\nNo single sector exceeds 40% — reasonable diversification across ${sectorEntries.length} sectors.`;
+
+      return `### 📊 Portfolio Health Check — Live Analysis\n- **Total Holdings:** ${holdingResults.length} stocks across ${sectorEntries.length} sectors\n${summaryBlock}\n#### 📋 Position Breakdown:\n${holdingsDetail}\n\n#### 🏆 Performance:\n- **Top Performer:** ${topPerformer.symbol} (${topPerformer.pnlPct >= 0 ? "+" : ""}${topPerformer.pnlPct.toFixed(2)}%)\n- **Weakest:** ${worstPerformer.symbol} (${worstPerformer.pnlPct >= 0 ? "+" : ""}${worstPerformer.pnlPct.toFixed(2)}%)\n${concentrationWarning}`;
+    } catch (err) {
+      console.error("Portfolio analysis error:", err);
+      return `### 📊 Portfolio Analysis\nUnable to fetch portfolio data at this moment. Please try again shortly.`;
+    }
+  }
+
+  // ── Intent: Stock Comparison (X vs Y) ─────────────────────────────────────
+  const compareMatch = q.match(/(.+?)\s+(?:vs\.?|versus|compared? (?:to|with))\s+(.+)/);
+  if (compareMatch) {
+    const stockA = compareMatch[1].trim();
+    const stockB = compareMatch[2].trim();
+    const symA = await resolveStockFromQuery(stockA, activeStock);
+    const symB = await resolveStockFromQuery(stockB, activeStock);
+
+    if (symA && symB) {
+      let quoteA = null, quoteB = null;
+      try { quoteA = await getQuote(symA); } catch {}
+      try { quoteB = await getQuote(symB); } catch {}
+
+      const infoA = STOCK_KNOWLEDGE[symA] || { name: symA, sector: "Equities" };
+      const infoB = STOCK_KNOWLEDGE[symB] || { name: symB, sector: "Equities" };
+      const nameA = infoA.name || symA;
+      const nameB = infoB.name || symB;
+
+      const priceA = quoteA?.price || 0;
+      const priceB = quoteB?.price || 0;
+      const isIndianA = symA.endsWith(".NS") || symA.endsWith(".BO");
+      const isIndianB = symB.endsWith(".NS") || symB.endsWith(".BO");
+      const curA = isIndianA ? "₹" : "$";
+      const curB = isIndianB ? "₹" : "$";
+
+      const scoreA = calculateMomentumScore(quoteA, priceA);
+      const scoreB = calculateMomentumScore(quoteB, priceB);
+      const labelA = scoreA != null ? getMomentumLabel(scoreA) : null;
+      const labelB = scoreB != null ? getMomentumLabel(scoreB) : null;
+
+      const changePctA = quoteA?.changePercent != null ? Number(quoteA.changePercent).toFixed(2) : "—";
+      const changePctB = quoteB?.changePercent != null ? Number(quoteB.changePercent).toFixed(2) : "—";
+
+      const peA = quoteA?.pe ? Number(quoteA.pe).toFixed(2) : "—";
+      const peB = quoteB?.pe ? Number(quoteB.pe).toFixed(2) : "—";
+
+      const mCapA = quoteA?.marketCap
+        ? (isIndianA ? `₹${(quoteA.marketCap / 1e12).toFixed(2)}L Cr` : `$${(quoteA.marketCap / 1e9).toFixed(2)}B`)
+        : "—";
+      const mCapB = quoteB?.marketCap
+        ? (isIndianB ? `₹${(quoteB.marketCap / 1e12).toFixed(2)}L Cr` : `$${(quoteB.marketCap / 1e9).toFixed(2)}B`)
+        : "—";
+
+      const dma50A = quoteA?.fiftyDayAverage ? `${curA}${formatCurrency(quoteA.fiftyDayAverage, isIndianA)}` : "—";
+      const dma50B = quoteB?.fiftyDayAverage ? `${curB}${formatCurrency(quoteB.fiftyDayAverage, isIndianB)}` : "—";
+
+      const w52RangeA = quoteA ? `${curA}${formatCurrency(quoteA.fiftyTwoWeekLow, isIndianA)} – ${curA}${formatCurrency(quoteA.fiftyTwoWeekHigh, isIndianA)}` : "—";
+      const w52RangeB = quoteB ? `${curB}${formatCurrency(quoteB.fiftyTwoWeekLow, isIndianB)} – ${curB}${formatCurrency(quoteB.fiftyTwoWeekHigh, isIndianB)}` : "—";
+
+      // Determine winner
+      let verdict = "";
+      if (scoreA != null && scoreB != null) {
+        if (scoreA > scoreB + 10) {
+          verdict = `\n#### 🏆 Verdict:\n**${nameA}** shows stronger momentum (${scoreA} vs ${scoreB}). Better positioned for short-term strength.`;
+        } else if (scoreB > scoreA + 10) {
+          verdict = `\n#### 🏆 Verdict:\n**${nameB}** shows stronger momentum (${scoreB} vs ${scoreA}). Better positioned for short-term strength.`;
+        } else {
+          verdict = `\n#### 🏆 Verdict:\nBoth stocks show **similar momentum** (${scoreA} vs ${scoreB}). Choose based on your sector preference and risk appetite.`;
+        }
+      }
+
+      return `### ⚔️ Head-to-Head: **${nameA}** vs **${nameB}**\n\n| Metric | **${symA}** | **${symB}** |\n|--------|------------|------------|\n| **Price** | ${curA}${formatCurrency(priceA, isIndianA)} | ${curB}${formatCurrency(priceB, isIndianB)} |\n| **Day Change** | ${changePctA}% | ${changePctB}% |\n| **Momentum Score** | ${scoreA != null ? `**${scoreA}/100** ${labelA.color}` : "—"} | ${scoreB != null ? `**${scoreB}/100** ${labelB.color}` : "—"} |\n| **P/E (TTM)** | ${peA} | ${peB} |\n| **Market Cap** | ${mCapA} | ${mCapB} |\n| **50-DMA** | ${dma50A} | ${dma50B} |\n| **52-Week Range** | ${w52RangeA} | ${w52RangeB} |\n| **Sector** | ${infoA.sector || "—"} | ${infoB.sector || "—"} |\n${verdict}`;
+    }
+  }
 
   // ── Security: off-topic / coding request detection ────────────────────────
   if (isOffTopicOrCodingRequest(q)) {
@@ -597,10 +828,32 @@ ${info.catalysts}
 Recognized as a leading active constituent with strong market presence and institutional sponsorship in ${displaySector}.`;
     }
 
-    // Intent 4: Unified Institutional Tear Sheet (Default when typing stock name or clicking AI Analytics)
+    // Intent 4: Unified Institutional Tear Sheet with Momentum Score
+    const momentumScore = calculateMomentumScore(liveQuote, currentPrice);
+    const momentumInfo = momentumScore != null ? getMomentumLabel(momentumScore) : null;
+    const momentumBlock = momentumInfo
+      ? `\n#### ⚡ Momentum Score: **${momentumScore}/100** ${momentumInfo.color} ${momentumInfo.label}\n- Score is calculated using 50-DMA, 200-DMA, volume ratio, 52-week position, and daily momentum.`
+      : "";
+
+    // Check if user holds this stock
+    let holdingBlock = "";
+    if (userId) {
+      try {
+        const userHolding = await Holding.findOne({ user: userId, symbol: matchedSymbol }).lean();
+        if (userHolding && userHolding.quantity > 0) {
+          const invested = userHolding.avgPrice * userHolding.quantity;
+          const currentVal = currentPrice * userHolding.quantity;
+          const pnl = currentVal - invested;
+          const pnlPct = invested > 0 ? ((pnl / invested) * 100).toFixed(2) : "0.00";
+          holdingBlock = `\n#### 💼 Your Position:\n- **${userHolding.quantity} shares** @ avg ${stockCurSym}${formatCurrency(userHolding.avgPrice, stockIsIndian)}\n- **Invested:** ${stockCurSym}${formatCurrency(invested, stockIsIndian)} → **Current:** ${stockCurSym}${formatCurrency(currentVal, stockIsIndian)}\n- **Unrealized P\u0026L:** ${pnl >= 0 ? "+" : ""}${stockCurSym}${formatCurrency(Math.abs(pnl), stockIsIndian)} (${pnl >= 0 ? "+" : ""}${pnlPct}%) ${pnl >= 0 ? "🟢" : "🔴"}`;
+        }
+      } catch {}
+    }
+
     return `### ⚡ Financial Tear Sheet: **${displayName} (${matchedSymbol})**
 - **Current Price:** **${stockCurSym}${formatCurrency(currentPrice, stockIsIndian)}** (${isGain ? "+" : ""}${Number(changePct).toFixed(2)}%)
 - **Market Capitalization:** **${mCapVal}** | **Sector:** ${displaySector}
+${momentumBlock}
 
 #### 📊 Valuation & Multiples:
 - **P/E (TTM):** **${peRatio}** | **EPS (TTM):** ${stockCurSym}${epsVal}
@@ -609,6 +862,7 @@ Recognized as a leading active constituent with strong market presence and insti
 #### 📈 Technical Stance & Levels:
 ${dma50 ? `- **50-Day Moving Average:** ${stockCurSym}${formatCurrency(dma50, stockIsIndian)} (${currentPrice >= Number(dma50) ? "Trading Above 🟢" : "Trading Below 🔴"})` : ""}
 - **Primary Support:** **${stockCurSym}${formatCurrency(s1, stockIsIndian)}** | **Breakout Resistance:** **${stockCurSym}${formatCurrency(r1, stockIsIndian)}**
+${holdingBlock}
 
 #### 🏢 Business Moat:
 ${info.moat}
@@ -1021,7 +1275,7 @@ I specialize in:
 /**
  * Main Gemini AI Copilot Query Function
  */
-const askMarketCopilot = async ({ userQuery, marketContext }) => {
+const askMarketCopilot = async ({ userQuery, marketContext, userId }) => {
   const apiKey = process.env.GEMINI_API_KEY;
 
   const safeContext = {
@@ -1034,11 +1288,11 @@ const askMarketCopilot = async ({ userQuery, marketContext }) => {
 
   // If no Gemini API key configured, use our comprehensive intelligent fallback engine
   if (!apiKey || apiKey.startsWith("CHANGE_ME") || apiKey.trim() === "") {
-    const text = await generateLocalAnalysis({ userQuery, marketContext: safeContext });
+    const text = await generateLocalAnalysis({ userQuery, marketContext: safeContext, userId });
     return { text, source: "market-copilot-engine" };
   }
 
-  // Call Google Gemini 2.5 Flash
+  // Call Google Gemini 3.6 Flash
   try {
     const curSym = safeContext.currency === "USD" ? "$" : "₹";
     const contextPrompt = `<market_context>
@@ -1056,7 +1310,7 @@ ${
 ${userQuery}
 </user_query>`;
 
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
 
     const payload = {
       systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
@@ -1083,14 +1337,14 @@ ${userQuery}
     const outputText = candidate?.content?.parts?.[0]?.text;
 
     if (outputText) {
-      return { text: outputText, source: "gemini-2.5-flash" };
+      return { text: outputText, source: "gemini-3.6-flash" };
     }
 
-    const fallbackText = await generateLocalAnalysis({ userQuery, marketContext: safeContext });
+    const fallbackText = await generateLocalAnalysis({ userQuery, marketContext: safeContext, userId });
     return { text: fallbackText, source: "market-copilot-engine" };
   } catch (err) {
     console.error("Gemini API Error, using Market Copilot Engine:", err.response?.data || err.message);
-    const fallbackText = await generateLocalAnalysis({ userQuery, marketContext: safeContext });
+    const fallbackText = await generateLocalAnalysis({ userQuery, marketContext: safeContext, userId });
     return { text: fallbackText, source: "market-copilot-engine" };
   }
 };

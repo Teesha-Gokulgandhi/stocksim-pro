@@ -90,6 +90,21 @@
   transform: translateY(-1px);
 }
 
+.ai-chip-pill.accent {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(5, 150, 105, 0.08) 100%);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.ai-chip-pill.accent:hover {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.22) 0%, rgba(5, 150, 105, 0.15) 100%);
+  border-color: #10b981;
+}
+
+.ai-chip-pill.accent .chip-ico {
+  color: #059669;
+  filter: drop-shadow(0 0 4px rgba(16, 185, 129, 0.3));
+}
+
 .chip-ico {
   font-size: 0.85rem;
   color: #10b981;

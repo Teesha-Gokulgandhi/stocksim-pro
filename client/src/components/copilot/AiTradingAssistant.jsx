@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { HiSparkles } from "react-icons/hi2";
-import { FiTrendingUp, FiFileText, FiInfo, FiBarChart2, FiSend } from "react-icons/fi";
+import { FiTrendingUp, FiFileText, FiInfo, FiBarChart2, FiSend, FiZap, FiGitMerge } from "react-icons/fi";
 import "./AiTradingAssistant.css";
 
 export default function AiTradingAssistant({
@@ -9,6 +9,8 @@ export default function AiTradingAssistant({
 }) {
   const [customInput, setCustomInput] = useState("");
   const [showInput, setShowInput] = useState(false);
+  const [compareInput, setCompareInput] = useState("");
+  const [showCompare, setShowCompare] = useState(false);
 
   const cleanSymbol = symbol || "Market";
   const displayTitle = companyName ? `${companyName} (${cleanSymbol})` : cleanSymbol;
@@ -29,6 +31,14 @@ export default function AiTradingAssistant({
     setShowInput(false);
   };
 
+  const handleCompareSubmit = (e) => {
+    e.preventDefault();
+    if (!compareInput.trim()) return;
+    triggerQuery(`${cleanSymbol} vs ${compareInput.trim()}`);
+    setCompareInput("");
+    setShowCompare(false);
+  };
+
   return (
     <div className="ai-assistant-card">
       <div className="ai-assistant-header">
@@ -41,7 +51,7 @@ export default function AiTradingAssistant({
         </p>
       </div>
 
-      {/* 4 Contextual Quick-Action Chips (Matching Design Reference) */}
+      {/* 6 Contextual Quick-Action Chips */}
       <div className="ai-chips-grid">
         <button
           type="button"
@@ -94,7 +104,44 @@ export default function AiTradingAssistant({
           <FiInfo className="chip-ico" />
           <span>Tell me about this company</span>
         </button>
+
+        <button
+          type="button"
+          className="ai-chip-pill accent"
+          onClick={() =>
+            triggerQuery(`Give complete AI analytics for ${cleanSymbol}`)
+          }
+        >
+          <FiZap className="chip-ico" />
+          <span>Momentum Score</span>
+        </button>
+
+        <button
+          type="button"
+          className="ai-chip-pill"
+          onClick={() => setShowCompare(true)}
+        >
+          <FiGitMerge className="chip-ico" />
+          <span>Compare with...</span>
+        </button>
       </div>
+
+      {/* Compare Input */}
+      {showCompare && (
+        <form className="ai-custom-form" onSubmit={handleCompareSubmit}>
+          <input
+            type="text"
+            className="ai-custom-input"
+            placeholder={`Compare ${cleanSymbol} vs... (e.g. TCS, Apple)`}
+            value={compareInput}
+            onChange={(e) => setCompareInput(e.target.value)}
+            autoFocus
+          />
+          <button type="submit" className="ai-custom-send-btn" disabled={!compareInput.trim()}>
+            <FiSend />
+          </button>
+        </form>
+      )}
 
       {/* Ask Custom Question Input or Button */}
       {showInput ? (
