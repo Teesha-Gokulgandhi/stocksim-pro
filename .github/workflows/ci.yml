@@ -71,10 +71,15 @@ jobs:
     name: Deploy to Production Server
     needs: docker-build
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.VM_HOST != ''
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    env:
+      VM_HOST: ${{ secrets.VM_HOST }}
+      VM_USER: ${{ secrets.VM_USER }}
+      VM_SSH_KEY: ${{ secrets.VM_SSH_KEY }}
 
     steps:
       - name: Deploy via SSH
+        if: env.VM_HOST != ''
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VM_HOST }}
@@ -86,4 +91,8 @@ jobs:
             docker compose up --build -d
             docker image prune -f
             echo "Deployment complete at $(date)"
+
+      - name: Skip Deployment Notice
+        if: env.VM_HOST == ''
+        run: echo "VM_HOST secret is not configured in repository settings. Automated SSH deployment skipped safely."
 
