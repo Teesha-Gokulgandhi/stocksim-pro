@@ -182,30 +182,33 @@ ${userQuery}
     ],
   };
 
-  // 4. Direct Transfer to Google Gemini API (Primary: gemini-3.6-flash, Secondary: gemini-flash-latest)
+  // 4. Direct Transfer to Google Gemini API with automatic model failover
+  // Uses verified active Gemini Flash models; if one is temporarily rate-limited, immediately hops to the next.
+  const activeModels = [
+    "gemini-3.5-flash",
+    "gemini-3.7-flash",
+    "gemini-flash-latest",
+    "gemini-3.6-flash",
+  ];
+
   let outputText = null;
-  let modelSource = "gemini-3.6-flash";
+  let modelSource = null;
 
-  try {
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
-    const response = await axios.post(endpoint, payload, {
-      timeout: 12000,
-      headers: { "Content-Type": "application/json" },
-    });
-    outputText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
-  } catch (primaryErr) {
-    console.error("Gemini 3.6 Flash primary call failed:", primaryErr.response?.data || primaryErr.message);
-
+  for (const modelName of activeModels) {
     try {
-      modelSource = "gemini-flash-latest";
-      const endpoint2 = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
-      const response2 = await axios.post(endpoint2, payload, {
-        timeout: 10000,
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+      const response = await axios.post(endpoint, payload, {
+        timeout: 9000,
         headers: { "Content-Type": "application/json" },
       });
-      outputText = response2.data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    } catch (fallbackErr) {
-      console.error("Gemini fallback model also failed:", fallbackErr.response?.data || fallbackErr.message);
+      const candidateText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (candidateText && candidateText.trim().length > 0) {
+        outputText = candidateText;
+        modelSource = modelName;
+        break;
+      }
+    } catch (err) {
+      console.warn(`Gemini model ${modelName} unavailable (${err.response?.status || err.message}), trying next...`);
     }
   }
 
