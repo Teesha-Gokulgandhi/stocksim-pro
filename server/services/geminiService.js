@@ -182,11 +182,25 @@ ${userQuery}
     ],
   };
 
-  // 4. Direct Transfer to Google Gemini API with rapid failover
-  // Try fast primary Gemini models with 4.5s timeout. If busy or rate-limited, immediately fail over to Grok.
+  // 4. Primary Provider: Grok / Groq High-Speed LPU Engine (Sub-second responses, 0.8s inference)
+  try {
+    const grokResult = await askGrok({
+      systemPrompt: SYSTEM_PROMPT,
+      contextPrompt,
+      userQuery,
+    });
+    if (grokResult && grokResult.text && grokResult.text.trim().length > 0) {
+      return grokResult;
+    }
+  } catch (grokErr) {
+    console.warn("Primary Grok engine unavailable, falling back to Google Gemini:", grokErr.message);
+  }
+
+  // 5. Automatic Failover: Google Gemini AI Pool
   const activeGeminiModels = [
     "gemini-flash-latest",
     "gemini-3.6-flash",
+    "gemini-3.5-flash",
   ];
 
   let outputText = null;
@@ -196,7 +210,7 @@ ${userQuery}
     try {
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
       const response = await axios.post(endpoint, payload, {
-        timeout: 4500,
+        timeout: 6000,
         headers: { "Content-Type": "application/json" },
       });
       const candidateText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -214,23 +228,9 @@ ${userQuery}
     return { text: outputText, source: modelSource };
   }
 
-  // 5. Provider Tier 2: Grok / Groq Engine Failover (Ultra-Fast LPU Inference)
-  try {
-    const grokResult = await askGrok({
-      systemPrompt: SYSTEM_PROMPT,
-      contextPrompt,
-      userQuery,
-    });
-    if (grokResult && grokResult.text) {
-      return grokResult;
-    }
-  } catch (grokErr) {
-    console.error("Grok failover error:", grokErr.message);
-  }
-
   // Pure error reporting — NO hardcoded canned answers
   return {
-    text: "### ⚠️ AI Service Busy\nBoth Gemini and Grok AI engines are temporarily experiencing peak traffic. Please try your request again in a few moments.",
+    text: "### ⚠️ AI Service Busy\nBoth Grok and Gemini AI engines are temporarily experiencing peak traffic. Please try your request again in a few moments.",
     source: "ai-error",
   };
 };
