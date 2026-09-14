@@ -228,16 +228,14 @@ export default function FloatingCopilot() {
   const urlStockMatch = location.pathname.match(/\/market\/([A-Za-z0-9._-]+)/);
   const activeStockSymbol = urlStockMatch ? urlStockMatch[1] : null;
 
-  // Initial welcome message
+  // Initial welcome message (clean, modern, no filler text)
   const [messages, setMessages] = useState([
     {
       id: "welcome",
       role: "assistant",
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      text: `### ⚡ StockSim Pro Market Copilot
-Hello! I am your real-time **Financial Market Copilot**.
-
-Type any stock name or symbol (e.g., **SUNPHARMA**, **RELIANCE**, **TCS**, **AAPL**, **NVDA**) to receive an instant real-time tear sheet with **50/200 DMA trends, P/E multiples, and support/resistance zones**.`,
+      text: `### ⚡ Market Copilot Ready
+Real-time equity intelligence & portfolio insights for **Indian (NSE/BSE)** and **US (NASDAQ)** markets. Ask about any stock, check your portfolio health, or compare momentum setups.`,
     },
   ]);
 
@@ -298,13 +296,13 @@ Type any stock name or symbol (e.g., **SUNPHARMA**, **RELIANCE**, **TCS**, **AAP
     setLoading(true);
 
     try {
-      const activeBalance =
-        selectedMarket === "US"
-          ? (userPortfolio?.balanceUSD ?? 10000)
-          : (userPortfolio?.balance ?? 100000);
+      const isUS = copilotMarket === "US";
+      const activeBalance = isUS
+        ? (userPortfolio?.balanceUSD ?? 10000)
+        : (userPortfolio?.balance ?? 100000);
 
       const activeHoldings = (userPortfolio?.holdings || []).filter((h) =>
-        selectedMarket === "US"
+        isUS
           ? h.currency === "USD" || (!h.symbol.endsWith(".NS") && !h.symbol.endsWith(".BO"))
           : h.currency === "INR" || h.symbol.endsWith(".NS") || h.symbol.endsWith(".BO")
       );
@@ -312,8 +310,8 @@ Type any stock name or symbol (e.g., **SUNPHARMA**, **RELIANCE**, **TCS**, **AAP
       const payload = {
         message: userText,
         marketContext: {
-          market: selectedMarket,
-          currency,
+          market: copilotMarket,
+          currency: isUS ? "USD" : "INR",
           balance: activeBalance,
           activeStock: activeStockSymbol ? { symbol: activeStockSymbol } : null,
           holdingsCount: activeHoldings.length,
@@ -392,27 +390,43 @@ Ready for fresh market analysis. Type any stock name (e.g. SUNPHARMA, RELIANCE, 
     return () => window.removeEventListener("open-copilot", handleOpenCopilot);
   }, []);
 
-  // Actionable suggestion chips — stock-specific when on a stock page, portfolio-aware otherwise
+  const [copilotMarket, setCopilotMarket] = useState(selectedMarket || "IN");
+
+  useEffect(() => {
+    if (selectedMarket) {
+      setCopilotMarket(selectedMarket);
+    }
+  }, [selectedMarket]);
+
+  // Actionable suggestion chips — 3 high-value features
   const suggestionChips = activeStockSymbol
     ? [
         {
-          label: `⚡ AI Analytics: ${activeStockSymbol}`,
-          query: `Give complete AI analytics for ${activeStockSymbol}`,
+          label: `⚡ ${activeStockSymbol} Tear Sheet`,
+          query: `Analyze ${activeStockSymbol}`,
         },
         {
           label: `⚔️ Compare ${activeStockSymbol}`,
           query: `${activeStockSymbol} vs `,
           isCompare: true,
         },
+        {
+          label: "⚡ Momentum Score",
+          query: `What is the momentum score for ${activeStockSymbol}?`,
+        },
       ]
     : [
         {
-          label: "🏥 Portfolio Health Check",
+          label: "💼 Portfolio Health",
           query: "Analyze my portfolio holdings and show P&L",
         },
         {
-          label: "📈 Live Market Pulse",
-          query: "What is the dominant trend across the benchmark indices and where are key support levels?",
+          label: copilotMarket === "US" ? "⚔️ NVDA vs AMD" : "⚔️ Reliance vs TCS",
+          query: copilotMarket === "US" ? "NVDA vs AMD" : "Reliance vs TCS",
+        },
+        {
+          label: "⚡ Momentum Scan",
+          query: copilotMarket === "US" ? "Top momentum stocks in US market" : "Top momentum stocks in Indian market",
         },
       ];
 
@@ -456,38 +470,44 @@ Ready for fresh market analysis. Type any stock name (e.g. SUNPHARMA, RELIANCE, 
               <div className="copilot-icon-badge">
                 <FiZap />
               </div>
-              <div className="copilot-name-row">
-                <h3>Market Copilot</h3>
-                {activeStockSymbol && (
-                  <span className="stock-context-pill">
-                    <FiActivity /> {activeStockSymbol}
-                  </span>
-                )}
+              <div className="copilot-title-text-group">
+                <div className="copilot-name-row">
+                  <h3>Market Copilot</h3>
+                  {activeStockSymbol && (
+                    <span className="stock-context-pill">
+                      <FiActivity /> {activeStockSymbol}
+                    </span>
+                  )}
+                </div>
+                {/* Market Switcher Pill */}
+                <div className="copilot-market-switch" role="group" aria-label="Select active market">
+                  <button
+                    type="button"
+                    className={`copilot-switch-btn ${copilotMarket === "IN" ? "active" : ""}`}
+                    onClick={() => setCopilotMarket("IN")}
+                    title="Switch advice context to Indian Market"
+                  >
+                    🇮🇳 IN (₹)
+                  </button>
+                  <button
+                    type="button"
+                    className={`copilot-switch-btn ${copilotMarket === "US" ? "active" : ""}`}
+                    onClick={() => setCopilotMarket("US")}
+                    title="Switch advice context to US Market"
+                  >
+                    🇺🇸 US ($)
+                  </button>
+                </div>
               </div>
             </div>
 
             <div className="copilot-header-actions">
               <button
                 type="button"
-                className="copilot-icon-btn"
-                onClick={handleClearChat}
-                title="Clear Conversation"
-              >
-                <FiTrash2 />
-              </button>
-              <button
-                type="button"
-                className="copilot-icon-btn"
-                onClick={() => setIsMinimized((prev) => !prev)}
-                title={isMinimized ? "Expand" : "Minimize"}
-              >
-                {isMinimized ? <FiMaximize2 /> : <FiMinus />}
-              </button>
-              <button
-                type="button"
-                className="copilot-icon-btn close"
+                className="copilot-close-btn"
                 onClick={() => setIsOpen(false)}
                 title="Close Copilot"
+                aria-label="Close Copilot"
               >
                 <FiX />
               </button>

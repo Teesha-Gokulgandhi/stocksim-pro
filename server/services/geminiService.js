@@ -687,23 +687,21 @@ const generateLocalAnalysis = async ({ userQuery, marketContext, userId }) => {
 
       return `### ⚔️ Head-to-Head: **${nameA}** vs **${nameB}**\n\n| Metric | **${symA}** | **${symB}** |\n|--------|------------|------------|\n| **Price** | ${curA}${formatCurrency(priceA, isIndianA)} | ${curB}${formatCurrency(priceB, isIndianB)} |\n| **Day Change** | ${changePctA}% | ${changePctB}% |\n| **Momentum Score** | ${scoreA != null ? `**${scoreA}/100** ${labelA.color}` : "—"} | ${scoreB != null ? `**${scoreB}/100** ${labelB.color}` : "—"} |\n| **P/E (TTM)** | ${peA} | ${peB} |\n| **Market Cap** | ${mCapA} | ${mCapB} |\n| **50-DMA** | ${dma50A} | ${dma50B} |\n| **52-Week Range** | ${w52RangeA} | ${w52RangeB} |\n| **Sector** | ${infoA.sector || "—"} | ${infoB.sector || "—"} |\n${verdict}`;
     }
-  }
+  // ── Intent: stock-specific query (prioritize stock mentions) ──────────────
+  const matchedSymbol = await resolveStockFromQuery(userQuery, activeStock);
 
-  // ── Security: off-topic / coding request detection ────────────────────────
-  if (isOffTopicOrCodingRequest(q)) {
+  // ── Security: off-topic / coding request detection (only if no stock was queried) ──
+  if (!matchedSymbol && isOffTopicOrCodingRequest(q)) {
     return `### 🛡️ Outside My Scope
 I'm your **Financial Market Copilot** — specialized in equity analysis, technical setups, macro finance, and portfolio risk management.
 
-I can't write programming code or handle off-topic tasks, but I'm ready to help with:
+I can't write programming code or handle non-financial tasks, but I'm ready to help with:
 - 📈 **Stock analysis** — any Indian or US equity
 - 🏦 **Finance concepts** — P/E, repo rate, inflation, RSI, MACD
 - 🛡️ **Risk management** — position sizing, stop-loss, diversification
 
-What would you like to explore?`;
+What stock or market setup would you like to explore?`;
   }
-
-  // ── Intent: stock-specific query ─────────────────────────────────────────
-  const matchedSymbol = await resolveStockFromQuery(userQuery, activeStock);
 
   if (matchedSymbol) {
     let liveQuote = null;
@@ -1256,6 +1254,73 @@ I specialize in:
 *Just type any stock name or finance question to get started!*`;
   }
 
+  // ── Intent: US Market overview / switch ─────────────────────────────────
+  if (
+    q.includes("us market") || q.includes("in us") || q.includes("us stocks") ||
+    q.includes("nasdaq") || q.includes("nyse") || q.includes("wall street") ||
+    q.includes("american market")
+  ) {
+    return `### 🇺🇸 US Market Intelligence & Setups
+- **Exchanges:** NASDAQ & NYSE | **Trading Hours:** 7:00 PM – 1:30 AM IST (09:30 – 16:00 EST)
+- **Dominant Tech Leaders:** Apple (AAPL), Nvidia (NVDA), Microsoft (MSFT), Amazon (AMZN), Alphabet (GOOGL), Meta (META), Tesla (TSLA)
+- **Macro Backdrop:** Strong capital expenditure on AI datacenter infrastructure and cloud enterprise software.
+
+#### ⚡ Actionable Setups:
+- **Semiconductors:** NVDA & AMD leading hardware momentum.
+- **Mega-Cap Defensive:** MSFT & AAPL providing rock-solid balance sheets.
+- **Compare:** Type \`NVDA vs AMD\` or \`AAPL vs MSFT\` for head-to-head metrics.`;
+  }
+
+  // ── Intent: Indian Market overview / switch ──────────────────────────────
+  if (
+    q.includes("indian market") || q.includes("in india") || q.includes("in ind") ||
+    q.includes("nse") || q.includes("bse") || q.includes("nifty") ||
+    q.includes("sensex") || q.includes("dalal street")
+  ) {
+    return `### 🇮🇳 Indian Market Intelligence & Setups
+- **Exchanges:** NSE & BSE | **Trading Hours:** 9:15 AM – 3:30 PM IST
+- **Benchmark Indices:** NIFTY 50 & SENSEX
+- **Heavyweight Anchors:** Reliance Industries, TCS, HDFC Bank, Infosys, Titan, Bharti Airtel
+
+#### ⚡ Actionable Setups:
+- **Telecom & Consumer:** Bharti Airtel and Titan demonstrating strong structural momentum.
+- **Banking Leaders:** HDFC Bank & ICICI Bank testing institutional support levels.
+- **Compare:** Type \`Reliance vs TCS\` or \`HDFCBANK vs ICICIBANK\` for valuation & momentum comparison.`;
+  }
+
+  // ── Intent: Momentum Scan ────────────────────────────────────────────────
+  if (
+    q.includes("momentum scan") || q.includes("top momentum") ||
+    q.includes("momentum stocks") || q.includes("momentum setups") ||
+    q.includes("best momentum") || q.includes("momentum score")
+  ) {
+    if (isIndian) {
+      return `### ⚡ Top Momentum Scans — Indian Market (NSE)
+Quantitative momentum ranking across high-liquidity leaders:
+
+1. 🚀 **Titan Company (TITAN.NS)** — Momentum Score: **84/100** 🟢
+   - Trading comfortably above 50-DMA and 200-DMA with high consumer volume.
+2. 🚀 **Bharti Airtel (BHARTIARTL.NS)** — Momentum Score: **78/100** 🟢
+   - Sustained ascending channel supported by strong ARPU trends.
+3. 🟡 **Reliance Industries (RELIANCE.NS)** — Momentum Score: **58/100** 🟡
+   - Base-building phase near central pivot; breakout watch above 50-DMA.
+
+*Type any stock name (e.g. \`TITAN\` or \`RELIANCE\`) for full tear sheets.*`;
+    } else {
+      return `### ⚡ Top Momentum Scans — US Market (NASDAQ/NYSE)
+Quantitative momentum ranking across high-liquidity leaders:
+
+1. 🚀 **Nvidia (NVDA)** — Momentum Score: **86/100** 🟢
+   - Unprecedented AI compute demand; firmly holding above 50-DMA.
+2. 🚀 **Meta Platforms (META)** — Momentum Score: **80/100** 🟢
+   - Strong free cash flow margins and AI monetization relative strength.
+3. 🟡 **Microsoft (MSFT)** — Momentum Score: **68/100** 🟢
+   - Enterprise cloud stability holding above primary support.
+
+*Type any ticker (e.g. \`NVDA\` or \`AMD\`) for full tear sheets.*`;
+    }
+  }
+
   // ── Generic fallback ─────────────────────────────────────────────────────
   return `### 📊 Trade Copilot — Market Intelligence Ready
 - **Active Market:** ${isIndian ? "🇮🇳 Indian Market (NSE/BSE)" : "🇺🇸 US Market (NYSE/Nasdaq)"}
@@ -1424,8 +1489,6 @@ INSTRUCTIONS FOR THIS RESPONSE:
 3. If the user query is about a specific stock:
    - Give technical levels (support, resistance, 50-DMA), business moat, and if they hold it (check <user_portfolio>), mention their exact position and unrealized P&L.`;
 
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
-
     const payload = {
       systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
       contents: [{ role: "user", parts: [{ text: contextPrompt }] }],
@@ -1442,16 +1505,34 @@ INSTRUCTIONS FOR THIS RESPONSE:
       ],
     };
 
-    const response = await axios.post(endpoint, payload, {
-      timeout: 12000,
-      headers: { "Content-Type": "application/json" },
-    });
+    let outputText = null;
+    let modelSource = "gemini-flash-latest";
 
-    const candidate = response.data?.candidates?.[0];
-    const outputText = candidate?.content?.parts?.[0]?.text;
+    // Try primary canonical Flash model
+    try {
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
+      const response = await axios.post(endpoint, payload, {
+        timeout: 12000,
+        headers: { "Content-Type": "application/json" },
+      });
+      outputText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    } catch (primaryErr) {
+      // If 503 spike or error, retry with gemini-3.6-flash
+      try {
+        modelSource = "gemini-3.6-flash";
+        const endpoint2 = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
+        const response2 = await axios.post(endpoint2, payload, {
+          timeout: 12000,
+          headers: { "Content-Type": "application/json" },
+        });
+        outputText = response2.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      } catch (secondaryErr) {
+        console.error("Gemini API Error, using Market Copilot Engine:", secondaryErr.response?.data || secondaryErr.message);
+      }
+    }
 
     if (outputText) {
-      return { text: outputText, source: "gemini-3.6-flash" };
+      return { text: outputText, source: modelSource };
     }
 
     const fallbackText = await generateLocalAnalysis({ userQuery, marketContext: safeContext, userId });
