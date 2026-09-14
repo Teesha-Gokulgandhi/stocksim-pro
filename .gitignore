@@ -44,3 +44,9 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# Private Handbooks & Docs
+StockSim_Pro_DevOps_Handbook.*
+docs/StockSim_Pro_DevOps_Handbook.*
+*.pdf
+

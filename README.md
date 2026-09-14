@@ -13,7 +13,6 @@
 
 ## 🌐 Live Application
 - **Production Web App**: [https://stocksimpro.in](https://stocksimpro.in)
-- **DevOps Master Handbook**: [StockSim_Pro_DevOps_Handbook.pdf](StockSim_Pro_DevOps_Handbook.pdf) (Complete A-to-Z Guide for DNS, Nginx, Docker & EC2)
 
 ---
 
@@ -343,7 +342,7 @@ Every `push` or `pull_request` to `main`:
 | **Order Automation**| Simple buy/sell buttons only | **Automated TP/SL (Take-Profit & Stop-Loss)** with background trigger checking |
 | **Deployment** | Localhost only or single free Dyno | **Multi-stage Docker Compose, AWS EC2, Nginx Reverse Proxy & SSL** |
 | **Security** | Plain text / basic JWT | **Bcrypt 10 rounds, Zod input validation, Express Rate Limiting, HTTPOnly ready** |
-| **DevOps & CI/CD** | None | **Automated GitHub Actions workflow + Production DevOps Handbook PDF** |
+| **DevOps & CI/CD** | None | **Automated GitHub Actions workflow & Docker Compose setup** |
 | **Simulation Depth**| Current snapshot only | **Historical Market Replay Backtesting + Admin Volatility Injection Engine** |
 
 ---
