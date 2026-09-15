@@ -28,6 +28,7 @@ const adminAuditLogSchema = new mongoose.Schema(
         "US_MARKET_MESSAGE_UPDATED",
         "USER_ROLE_CHANGED",
         "USER_STATUS_CHANGED",
+        "USER_DELETED",
         "USER_BALANCE_RESET",
         "NOTIFICATION_SENT",
         "NOTIFICATION_DELETED",
