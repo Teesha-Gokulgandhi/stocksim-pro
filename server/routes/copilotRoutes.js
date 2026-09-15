@@ -3,7 +3,7 @@ const router = express.Router();
 
 const { protect } = require("../middleware/authMiddleware");
 const { copilotLimiter } = require("../middleware/rateLimiters");
-const { askMarketCopilot } = require("../services/geminiService");
+const { askMarketCopilot } = require("../services/copilot");
 
 /**
  * Input sanitizer and attack detector
@@ -35,9 +35,10 @@ const hasOvertJailbreakSignature = (text) => {
 
 router.post("/chat", protect, copilotLimiter, async (req, res) => {
   try {
-    const { message, marketContext } = req.body;
+    const rawMessage = req.body.message || req.body.query || "";
+    const { marketContext } = req.body;
 
-    if (!message || typeof message !== "string" || message.trim().length === 0) {
+    if (!rawMessage || typeof rawMessage !== "string" || rawMessage.trim().length === 0) {
       return res.status(400).json({
         success: false,
         message: "A query message is required.",

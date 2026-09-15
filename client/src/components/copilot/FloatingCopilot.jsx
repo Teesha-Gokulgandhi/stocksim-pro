@@ -309,6 +309,7 @@ Real-time equity intelligence & portfolio insights for **Indian (NSE/BSE)** and 
 
       const payload = {
         message: userText,
+        query: userText,
         marketContext: {
           market: copilotMarket,
           currency: isUS ? "USD" : "INR",
@@ -398,37 +399,7 @@ Ready for fresh market analysis. Type any stock name (e.g. SUNPHARMA, RELIANCE, 
     }
   }, [selectedMarket]);
 
-  // Actionable suggestion chips — 3 high-value features
-  const suggestionChips = activeStockSymbol
-    ? [
-        {
-          label: `⚡ ${activeStockSymbol} Tear Sheet`,
-          query: `Analyze ${activeStockSymbol}`,
-        },
-        {
-          label: `⚔️ Compare ${activeStockSymbol}`,
-          query: `${activeStockSymbol} vs `,
-          isCompare: true,
-        },
-        {
-          label: "⚡ Momentum Score",
-          query: `What is the momentum score for ${activeStockSymbol}?`,
-        },
-      ]
-    : [
-        {
-          label: "💼 Portfolio Health",
-          query: "Analyze my portfolio holdings and show P&L",
-        },
-        {
-          label: copilotMarket === "US" ? "⚔️ NVDA vs AMD" : "⚔️ Reliance vs TCS",
-          query: copilotMarket === "US" ? "NVDA vs AMD" : "Reliance vs TCS",
-        },
-        {
-          label: "⚡ Momentum Scan",
-          query: copilotMarket === "US" ? "Top momentum stocks in US market" : "Top momentum stocks in Indian market",
-        },
-      ];
+
 
   return (
     <div className="floating-copilot-container" id="trade-copilot">
@@ -484,25 +455,6 @@ Ready for fresh market analysis. Type any stock name (e.g. SUNPHARMA, RELIANCE, 
             </div>
 
             <div className="copilot-header-right">
-              {/* Sleek Market Toggle Pill */}
-              <div className="copilot-market-switch" role="group" aria-label="Select active market">
-                <button
-                  type="button"
-                  className={`copilot-switch-btn ${copilotMarket === "IN" ? "active" : ""}`}
-                  onClick={() => setCopilotMarket("IN")}
-                  title="Indian Market (NSE/BSE)"
-                >
-                  🇮🇳 IN
-                </button>
-                <button
-                  type="button"
-                  className={`copilot-switch-btn ${copilotMarket === "US" ? "active" : ""}`}
-                  onClick={() => setCopilotMarket("US")}
-                  title="US Market (NYSE/NASDAQ)"
-                >
-                  🇺🇸 US
-                </button>
-              </div>
 
               {/* Crisp High-Contrast Cross Button */}
               <button
@@ -590,26 +542,7 @@ Ready for fresh market analysis. Type any stock name (e.g. SUNPHARMA, RELIANCE, 
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Quick Action Suggestion Chips */}
-              <div className="copilot-chips-row">
-                {suggestionChips.map((chip, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    className="copilot-chip-btn"
-                    onClick={() => {
-                      if (chip.isCompare) {
-                        setInputVal(chip.query);
-                      } else {
-                        handleSendMessage(chip.query);
-                      }
-                    }}
-                    disabled={loading}
-                  >
-                    {chip.label}
-                  </button>
-                ))}
-              </div>
+
 
               {/* Input Area */}
               <div className="copilot-input-area">
