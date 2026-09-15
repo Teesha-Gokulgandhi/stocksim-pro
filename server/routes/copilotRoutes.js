@@ -45,7 +45,7 @@ router.post("/chat", protect, copilotLimiter, async (req, res) => {
       });
     }
 
-    const cleanMessage = sanitizeUserQuery(message);
+    const cleanMessage = sanitizeUserQuery(rawMessage);
 
     if (cleanMessage.length > 500) {
       return res.status(400).json({
